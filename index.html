@@ -57,7 +57,7 @@
             </div>
             
             <nav class="flex-1 space-y-4">
-                <a href="#" class="flex items-center space-x-4 py-3 px-4 bg-yellow-900/10 border-l-2 border-yellow-600 text-white rounded-r-lg">
+                <a href="index.html" class="flex items-center space-x-4 py-3 px-4 bg-yellow-900/10 border-l-2 border-yellow-600 text-white rounded-r-lg">
                     <span class="text-xl">⚜️</span> <span class="text-sm font-semibold uppercase tracking-widest">Analytics</span>
                 </a>
                 <a href="coach.html" class="flex items-center space-x-4 py-3 px-4 text-gray-500 hover:text-yellow-500 transition">
@@ -90,9 +90,9 @@
                 <div class="xl:col-span-4 space-y-10">
                     <div class="glass-card p-1 rounded-3xl gold-border overflow-hidden relative group">
                         <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60"></div>
-                        <img id="playerPhoto" class="w-full h-96 object-cover rounded-2xl" src="" alt="">
+                        <img id="playerPhoto" class="w-full h-96 object-cover rounded-2xl" src="https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=SELECT+PLAYER" alt="">
                         <div class="absolute bottom-8 left-8">
-                            <h3 id="playerName" class="text-3xl font-bold text-white uppercase tracking-tighter italic"></h3>
+                            <h3 id="playerName" class="text-3xl font-bold text-white uppercase tracking-tighter italic">LADEN...</h3>
                             <p id="playerRole" class="text-yellow-500 font-bold text-xs uppercase tracking-[0.2em]"></p>
                         </div>
                     </div>
@@ -100,11 +100,11 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="glass-card p-6 rounded-2xl gold-border text-center">
                             <p class="text-[10px] uppercase text-gray-500 mb-2">Squad Number</p>
-                            <span id="playerNumber" class="text-4xl font-black text-white italic"></span>
+                            <span id="playerNumber" class="text-4xl font-black text-white italic">--</span>
                         </div>
                         <div class="glass-card p-6 rounded-2xl gold-border text-center">
                             <p class="text-[10px] uppercase text-gray-500 mb-2">Condition</p>
-                            <span id="playerStatus" class="text-xl font-bold gold-gradient uppercase"></span>
+                            <span id="playerStatus" class="text-xl font-bold gold-gradient uppercase">--</span>
                         </div>
                     </div>
                 </div>
@@ -127,7 +127,8 @@
                             <span class="text-yellow-600 font-serif italic text-xl">vs</span>
                             <select id="compareSelect2" class="bg-transparent border-b border-yellow-900/50 p-2 flex-1 text-xs uppercase tracking-widest outline-none focus:border-yellow-500"></select>
                         </div>
-                        <div id="comparisonContainer"></div>
+                        <div id="comparisonContainer" class="space-y-4">
+                            </div>
                     </div>
                 </div>
             </div>
@@ -137,12 +138,12 @@
                 <table class="w-full text-left">
                     <thead>
                         <tr class="text-[10px] uppercase text-yellow-600 tracking-widest border-b border-yellow-900/30">
-                            <th class="pb-4">Position</th>
                             <th class="pb-4">Athlete Asset</th>
                             <th class="pb-4 text-right">Performance Index</th>
                         </tr>
                     </thead>
-                    <tbody id="rankingTable" class="divide-y divide-white/5"></tbody>
+                    <tbody id="rankingTable" class="divide-y divide-white/5">
+                        </tbody>
                 </table>
             </div>
         </main>
