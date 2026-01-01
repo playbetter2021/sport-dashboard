@@ -1,0 +1,44 @@
+[
+  {
+    "id": "p1",
+    "sport": "voetbal",
+    "bio": {
+      "name": "Arjen Robben",
+      "photo": "https://via.placeholder.com/150",
+      "birthDate": "1984-01-23",
+      "number": 11,
+      "role": "Aanvaller",
+      "label": "Talent"
+    },
+    "stats": {
+      "Snelheid": 95,
+      "Techniek": 92,
+      "Conditie": 88,
+      "Tactiek": 85,
+      "Mentaliteit": 90
+    },
+    "history": [80, 85, 88, 92, 95],
+    "status": "Fit"
+  },
+  {
+    "id": "p2",
+    "sport": "hockey",
+    "bio": {
+      "name": "Eva de Goede",
+      "photo": "https://via.placeholder.com/150",
+      "birthDate": "1989-03-23",
+      "number": 24,
+      "role": "Middenvelder",
+      "label": "Senior"
+    },
+    "stats": {
+      "Snelheid": 82,
+      "Techniek": 95,
+      "Conditie": 90,
+      "Tactiek": 94,
+      "Mentaliteit": 92
+    },
+    "history": [88, 89, 90, 92, 95],
+    "status": "Revalidatie"
+  }
+]
