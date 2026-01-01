@@ -1,125 +1,51 @@
-import DataProvider from './data_provider.js';
-import { renderRankingTable } from './components/ranking.js';
-import { renderComparison } from './components/comparison.js';
-
-// Globale variabele voor de grafiek om deze te kunnen vernieuwen
-let currentRadarChart = null;
-
 async function initDashboard() {
-    // 1. Haal alle spelers op uit de JSON database
+    // 1. Haal de data op
     const players = await DataProvider.getAllPlayers();
-    if (players.length === 0) {
-        console.error("Geen spelers gevonden in de database.");
+    
+    // Debug: check in de console of er data binnenkomt
+    console.log("Geladen spelers:", players);
+
+    if (!players || players.length === 0) {
+        document.getElementById('playerName').innerText = "GEEN DATA GEVONDEN";
         return;
     }
 
-    // UI Elementen ophalen
     const playerSelector = document.getElementById('playerSelector');
-    const compSelect1 = document.getElementById('compareSelect1');
-    const compSelect2 = document.getElementById('compareSelect2');
+    
+    // Maak de dropdown eerst leeg voor de zekerheid
+    playerSelector.innerHTML = "";
 
-    // 2. Vul alle dropdowns met spelers uit de database
+    // 2. Vul de dropdown met gouden styling-logica
     players.forEach(player => {
-        const name = player.bio.name.toUpperCase(); // Luxe uitstraling (hoofdletters)
-        playerSelector.add(new Option(name, player.id));
-        compSelect1.add(new Option(name, player.id));
-        compSelect2.add(new Option(name, player.id));
+        const option = document.createElement('option');
+        option.value = player.id;
+        option.text = player.bio.name.toUpperCase();
+        option.style.color = "#D4AF37"; // Forceer goud per optie
+        playerSelector.appendChild(option);
     });
 
-    // Selecteer standaard de tweede speler in de tweede vergelijking-box
-    if (players.length > 1) compSelect2.selectedIndex = 1;
-
-    // 3. De Hoofd-update functie (voor de profielkaart en radar chart)
+    // 3. De Hoofd-update functie
     const updateMainProfile = (playerId) => {
         const player = players.find(p => p.id === playerId);
         if (!player) return;
         
-        // Update Profiel Teksten (Luxe styling)
+        // Update visuele elementen
         document.getElementById('playerName').innerText = player.bio.name;
         document.getElementById('playerRole').innerText = `${player.bio.role} | ${player.sport.toUpperCase()}`;
         document.getElementById('playerPhoto').src = player.bio.photo;
-        document.getElementById('playerStatus').innerText = player.status.toUpperCase();
+        document.getElementById('playerStatus').innerText = player.status;
         document.getElementById('playerNumber').innerText = player.bio.number;
 
-        // Update Radar Chart met Elite Gold visuals
+        // Teken de gouden radar chart
         updateRadarChart(player);
-        
-        // Update de Ranking Tabel (gebaseerd op de eerste beschikbare metric)
-        const metrics = Object.keys(player.stats);
-        if (metrics.length > 0) {
-            renderRankingTable(player.sport, metrics[0]);
-        }
     };
 
-    // 4. Luister naar veranderingen in de dropdowns
-    playerSelector.addEventListener('change', (e) => updateMainProfile(e.target.value));
-    
-    // Vergelijking luisteraars
-    const handleComparison = () => renderComparison(compSelect1.value, compSelect2.value);
-    compSelect1.addEventListener('change', handleComparison);
-    compSelect2.addEventListener('change', handleComparison);
-
-    // 5. Initialiseer de eerste weergave
-    updateMainProfile(players[0].id);
-    handleComparison();
-}
-
-/**
- * Tekent of ververst de Radar Chart met Elite Gold Styling
- */
-function updateRadarChart(player) {
-    const ctx = document.getElementById('radarChart').getContext('2d');
-    
-    if (currentRadarChart) {
-        currentRadarChart.destroy();
-    }
-
-    const labels = Object.keys(player.stats);
-    const dataValues = Object.values(player.stats);
-
-    currentRadarChart = new Chart(ctx, {
-        type: 'radar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: `ELITE ASSET: ${player.bio.name}`,
-                data: dataValues,
-                // LUXE GOLD STYLING
-                backgroundColor: 'rgba(212, 175, 55, 0.15)', // Transparant goud
-                borderColor: '#D4AF37', // Metallic Goud
-                borderWidth: 3,
-                pointBackgroundColor: '#F9E272', // Licht goud punt
-                pointBorderColor: '#0a0a0a', // Obsidian zwarte rand om punt
-                pointHoverRadius: 7,
-                pointRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                r: {
-                    angleLines: { color: 'rgba(212, 175, 55, 0.2)' }, // Gouden lijnen
-                    grid: { color: 'rgba(212, 175, 55, 0.1)' },
-                    pointLabels: { 
-                        color: '#9ca3af', 
-                        font: { 
-                            size: 11, 
-                            family: 'ui-sans-serif', 
-                            weight: '700' 
-                        } 
-                    },
-                    ticks: { display: false },
-                    suggestedMin: 0,
-                    suggestedMax: 100
-                }
-            },
-            plugins: {
-                legend: { display: false } // Geen legenda voor een cleaner uiterlijk
-            }
-        }
+    // Luister naar verandering
+    playerSelector.addEventListener('change', (e) => {
+        console.log("Nieuwe speler geselecteerd:", e.target.value);
+        updateMainProfile(e.target.value);
     });
-}
 
-// Start het Elite Dashboard
-initDashboard();
+    // Start de eerste speler in de lijst
+    updateMainProfile(players[0].id);
+}
