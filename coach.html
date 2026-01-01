@@ -100,26 +100,37 @@
                 </div>
             </section>
 
+            <section class="space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-yellow-600">Cloud Sync Settings</h3>
+                <input type="password" id="ghToken" placeholder="GITHUB PERSONAL ACCESS TOKEN (GHP_...)" class="w-full input-luxe p-4 rounded-none text-xs tracking-widest" required>
+                <input type="text" id="ghRepo" placeholder="REPO PATH (GEBRUIKER/REBONAAM)" class="w-full input-luxe p-4 rounded-none text-xs tracking-widest" required>
+            </section>
+
             <button type="submit" class="w-full btn-gold py-5 rounded-none shadow-2xl uppercase tracking-[0.3em] text-sm">
-                Generate Elite Asset JSON
+                Generate & Sync with GitHub
             </button>
         </form>
 
-        <div id="outputContainer" class="mt-12 hidden animate-pulse">
+        <div id="outputContainer" class="mt-12 hidden">
             <div class="bg-yellow-900/20 border border-yellow-600/50 p-6 rounded-2xl">
                 <div class="flex justify-between items-center mb-4">
-                    <span class="text-[10px] text-yellow-500 font-bold uppercase tracking-widest">Ready for Deployment</span>
+                    <span id="syncStatus" class="text-[10px] text-yellow-500 font-bold uppercase tracking-widest italic">Ready for Deployment</span>
                     <button onclick="copyToClipboard()" class="text-[9px] bg-yellow-600 text-black px-3 py-1 font-bold hover:bg-yellow-400 transition">COPY DATA</button>
                 </div>
-                <textarea id="jsonOutput" readonly class="w-full h-64 bg-black/50 text-yellow-200 p-6 font-mono text-xs border border-yellow-900/50 outline-none rounded-xl"></textarea>
+                <textarea id="jsonOutput" readonly class="w-full h-48 bg-black/50 text-yellow-200 p-6 font-mono text-xs border border-yellow-900/50 outline-none rounded-xl"></textarea>
             </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('coachForm').addEventListener('submit', (e) => {
+        document.getElementById('coachForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const token = document.getElementById('ghToken').value;
+            const repo = document.getElementById('ghRepo').value;
+            const filePath = "data/players.json";
+
+            // 1. Maak het speler object aan
             const playerEntry = {
                 id: "p_" + Math.random().toString(36).substr(2, 9),
                 sport: document.getElementById('sport').value,
@@ -142,8 +153,50 @@
                 status: "ACTIVE"
             };
 
+            // Toon de JSON in de UI
             document.getElementById('outputContainer').classList.remove('hidden');
             document.getElementById('jsonOutput').value = JSON.stringify(playerEntry, null, 2);
+            document.getElementById('syncStatus').innerText = "SYNCHRONISEREN...";
+
+            try {
+                // 2. Haal de huidige lijst op van GitHub
+                const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+                const res = await fetch(url, {
+                    headers: { "Authorization": `token ${token}` }
+                });
+
+                if(!res.ok) throw new Error("Kan players.json niet vinden op GitHub.");
+                const fileData = await res.json();
+                
+                // Decodeer de huidige inhoud (Base64 -> String -> JSON)
+                let currentPlayers = JSON.parse(atob(fileData.content));
+                currentPlayers.push(playerEntry);
+
+                // 3. Schrijf de nieuwe lijst terug naar GitHub
+                const updateRes = await fetch(url, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `token ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: `Coach Command: Added ${playerEntry.bio.name}`,
+                        content: btoa(unescape(encodeURIComponent(JSON.stringify(currentPlayers, null, 2)))),
+                        sha: fileData.sha
+                    })
+                });
+
+                if(updateRes.ok) {
+                    document.getElementById('syncStatus').innerText = "SUCCESS: ASSET SYNCED TO CLOUD";
+                    alert("Elite Asset succesvol opgeslagen op GitHub!");
+                } else {
+                    throw new Error("Update mislukt.");
+                }
+            } catch (error) {
+                document.getElementById('syncStatus').innerText = "SYNC FAILED";
+                alert("Fout: " + error.message);
+            }
+            
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         });
 
