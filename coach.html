@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Coach Panel - Data Invoer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-10">
+    <div class="max-w-2xl mx-auto bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+        <h1 class="text-2xl font-bold mb-6 text-green-400">Nieuwe Meting Invoeren</h1>
+        
+        <form id="coachForm" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm text-gray-400">Voornaam</label>
+                    <input type="text" id="fname" class="w-full bg-gray-700 p-2 rounded border border-gray-600" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400">Achternaam</label>
+                    <input type="text" id="lname" class="w-full bg-gray-700 p-2 rounded border border-gray-600" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm text-gray-400">Snelheid (0-100)</label>
+                    <input type="number" id="stat_speed" class="w-full bg-gray-700 p-2 rounded border border-gray-600">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400">Techniek</label>
+                    <input type="number" id="stat_tech" class="w-full bg-gray-700 p-2 rounded border border-gray-600">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400">Conditie</label>
+                    <input type="number" id="stat_stamina" class="w-full bg-gray-700 p-2 rounded border border-gray-600">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded font-bold transition">
+                Genereer JSON voor GitHub
+            </button>
+        </form>
+
+        <div id="outputContainer" class="mt-10 hidden">
+            <p class="text-sm text-yellow-400 mb-2">Kopieer deze code naar players.json in GitHub:</p>
+            <textarea id="jsonOutput" class="w-full h-48 bg-black text-green-500 p-4 font-mono text-xs rounded"></textarea>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('coachForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const newPlayer = {
+                id: "p" + Date.now(),
+                sport: "voetbal",
+                bio: {
+                    name: document.getElementById('fname').value + " " + document.getElementById('lname').value,
+                    photo: "https://via.placeholder.com/150",
+                    role: "Speler"
+                },
+                stats: {
+                    "Snelheid": parseInt(document.getElementById('stat_speed').value),
+                    "Techniek": parseInt(document.getElementById('stat_tech').value),
+                    "Conditie": parseInt(document.getElementById('stat_stamina').value)
+                },
+                history: [parseInt(document.getElementById('stat_speed').value)],
+                status: "Fit"
+            };
+
+            document.getElementById('outputContainer').classList.remove('hidden');
+            document.getElementById('jsonOutput').value = JSON.stringify(newPlayer, null, 2);
+        });
+    </script>
+</body>
+</html>
