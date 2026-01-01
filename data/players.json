@@ -42,3 +42,26 @@
     "status": "Revalidatie"
   }
 ]
+{
+  "id": "p_xpx5vor0b",
+  "sport": "voetbal",
+  "bio": {
+    "name": "DAVE VADER",
+    "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=ELITE+ASSET",
+    "birthDate": "2000-01-01",
+    "number": "2",
+    "role": "AANVALLER",
+    "label": "ELITE"
+  },
+  "stats": {
+    "Snelheid": 80,
+    "Techniek": 80,
+    "Conditie": 80,
+    "Tactiek": 80,
+    "Mentaliteit": 80
+  },
+  "history": [
+    80
+  ],
+  "status": "ACTIVE"
+}
