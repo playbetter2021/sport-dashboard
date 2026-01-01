@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sport SaaS Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+
+    <div class="flex h-screen">
+        <aside class="w-64 bg-gray-800 p-6 space-y-6">
+            <h1 class="text-2xl font-bold text-blue-400">SportAnalytics</h1>
+            <nav class="space-y-4">
+                <a href="#" class="block py-2 px-4 bg-blue-600 rounded">Dashboard</a>
+                <a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded">Spelers</a>
+                <a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded">Vergelijken</a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 p-10 overflow-y-auto">
+            <header class="flex justify-between items-center mb-10">
+                <h2 class="text-3xl font-bold">Speler Analyse</h2>
+                <select id="playerSelector" class="bg-gray-800 p-2 border border-gray-700 rounded"></select>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+                    <img id="playerPhoto" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-blue-500" src="" alt="">
+                    <h3 id="playerName" class="text-center text-xl font-bold"></h3>
+                    <p id="playerRole" class="text-center text-gray-400"></p>
+                    <div class="mt-6 space-y-2 text-sm">
+                        <p>Status: <span id="playerStatus" class="font-bold"></span></p>
+                        <p>Rugnummer: <span id="playerNumber"></span></p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 col-span-2">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="mt-10 bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+                <h3 class="text-xl font-bold mb-4">Team Ranking</h3>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="py-2">Naam</th>
+                            <th class="py-2">Positie</th>
+                            <th class="py-2">Gem. Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingTable"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
