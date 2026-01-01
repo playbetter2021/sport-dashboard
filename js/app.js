@@ -8,7 +8,10 @@ let currentRadarChart = null;
 async function initDashboard() {
     // 1. Haal alle spelers op uit de JSON database
     const players = await DataProvider.getAllPlayers();
-    if (players.length === 0) return;
+    if (players.length === 0) {
+        console.error("Geen spelers gevonden in de database.");
+        return;
+    }
 
     // UI Elementen ophalen
     const playerSelector = document.getElementById('playerSelector');
@@ -17,7 +20,7 @@ async function initDashboard() {
 
     // 2. Vul alle dropdowns met spelers uit de database
     players.forEach(player => {
-        const name = player.bio.name;
+        const name = player.bio.name.toUpperCase(); // Luxe uitstraling (hoofdletters)
         playerSelector.add(new Option(name, player.id));
         compSelect1.add(new Option(name, player.id));
         compSelect2.add(new Option(name, player.id));
@@ -29,20 +32,23 @@ async function initDashboard() {
     // 3. De Hoofd-update functie (voor de profielkaart en radar chart)
     const updateMainProfile = (playerId) => {
         const player = players.find(p => p.id === playerId);
+        if (!player) return;
         
-        // Update Profiel Teksten
+        // Update Profiel Teksten (Luxe styling)
         document.getElementById('playerName').innerText = player.bio.name;
-        document.getElementById('playerRole').innerText = `${player.bio.role} (${player.sport})`;
+        document.getElementById('playerRole').innerText = `${player.bio.role} | ${player.sport.toUpperCase()}`;
         document.getElementById('playerPhoto').src = player.bio.photo;
-        document.getElementById('playerStatus').innerText = player.status;
+        document.getElementById('playerStatus').innerText = player.status.toUpperCase();
         document.getElementById('playerNumber').innerText = player.bio.number;
 
-        // Update Radar Chart
+        // Update Radar Chart met Elite Gold visuals
         updateRadarChart(player);
         
-        // Update de Ranking Tabel (bijv. gebaseerd op de eerste metric van deze speler)
-        const firstMetric = Object.keys(player.stats)[0];
-        renderRankingTable(player.sport, firstMetric);
+        // Update de Ranking Tabel (gebaseerd op de eerste beschikbare metric)
+        const metrics = Object.keys(player.stats);
+        if (metrics.length > 0) {
+            renderRankingTable(player.sport, metrics[0]);
+        }
     };
 
     // 4. Luister naar veranderingen in de dropdowns
@@ -59,7 +65,7 @@ async function initDashboard() {
 }
 
 /**
- * Tekent of ververst de Radar Chart met Chart.js
+ * Tekent of ververst de Radar Chart met Elite Gold Styling
  */
 function updateRadarChart(player) {
     const ctx = document.getElementById('radarChart').getContext('2d');
@@ -76,12 +82,16 @@ function updateRadarChart(player) {
         data: {
             labels: labels,
             datasets: [{
-                label: `Skills: ${player.bio.name}`,
+                label: `ELITE ASSET: ${player.bio.name}`,
                 data: dataValues,
-                backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                borderColor: 'rgba(59, 130, 246, 1)',
-                borderWidth: 2,
-                pointBackgroundColor: 'rgba(59, 130, 246, 1)'
+                // LUXE GOLD STYLING
+                backgroundColor: 'rgba(212, 175, 55, 0.15)', // Transparant goud
+                borderColor: '#D4AF37', // Metallic Goud
+                borderWidth: 3,
+                pointBackgroundColor: '#F9E272', // Licht goud punt
+                pointBorderColor: '#0a0a0a', // Obsidian zwarte rand om punt
+                pointHoverRadius: 7,
+                pointRadius: 4
             }]
         },
         options: {
@@ -89,20 +99,27 @@ function updateRadarChart(player) {
             maintainAspectRatio: false,
             scales: {
                 r: {
-                    angleLines: { color: '#374151' },
-                    grid: { color: '#374151' },
-                    pointLabels: { color: '#9ca3af', font: { size: 12 } },
+                    angleLines: { color: 'rgba(212, 175, 55, 0.2)' }, // Gouden lijnen
+                    grid: { color: 'rgba(212, 175, 55, 0.1)' },
+                    pointLabels: { 
+                        color: '#9ca3af', 
+                        font: { 
+                            size: 11, 
+                            family: 'ui-sans-serif', 
+                            weight: '700' 
+                        } 
+                    },
                     ticks: { display: false },
                     suggestedMin: 0,
                     suggestedMax: 100
                 }
             },
             plugins: {
-                legend: { display: false }
+                legend: { display: false } // Geen legenda voor een cleaner uiterlijk
             }
         }
     });
 }
 
-// Start het dashboard
+// Start het Elite Dashboard
 initDashboard();
