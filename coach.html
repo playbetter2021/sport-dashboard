@@ -2,48 +2,117 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Coach Panel - Data Invoer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Command | Elite Gold Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
+        body { 
+            background-color: var(--obsidian); 
+            background-image: radial-gradient(circle at 50% 100%, #1a1a1a 0%, #0a0a0a 100%);
+            min-height: 100vh;
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gold-border { border: 1px solid rgba(212, 175, 55, 0.3); }
+        .input-luxe {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .input-luxe:focus {
+            border-color: #D4AF37;
+            background: rgba(255, 255, 255, 0.07);
+            outline: none;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+            color: black;
+            font-weight: 800;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-white p-10">
-    <div class="max-w-2xl mx-auto bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
-        <h1 class="text-2xl font-bold mb-6 text-green-400">Nieuwe Meting Invoeren</h1>
-        
-        <form id="coachForm" class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm text-gray-400">Voornaam</label>
-                    <input type="text" id="fname" class="w-full bg-gray-700 p-2 rounded border border-gray-600" required>
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-400">Achternaam</label>
-                    <input type="text" id="lname" class="w-full bg-gray-700 p-2 rounded border border-gray-600" required>
-                </div>
-            </div>
+<body class="text-gray-400 font-sans p-6 md:p-12">
 
-            <div class="grid grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm text-gray-400">Snelheid (0-100)</label>
-                    <input type="number" id="stat_speed" class="w-full bg-gray-700 p-2 rounded border border-gray-600">
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-400">Techniek</label>
-                    <input type="number" id="stat_tech" class="w-full bg-gray-700 p-2 rounded border border-gray-600">
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-400">Conditie</label>
-                    <input type="number" id="stat_stamina" class="w-full bg-gray-700 p-2 rounded border border-gray-600">
-                </div>
+    <div class="max-w-4xl mx-auto">
+        <header class="flex justify-between items-center mb-12 border-b border-yellow-900/30 pb-8">
+            <div>
+                <h1 class="text-3xl font-black italic gold-gradient-text tracking-tighter">COACH<span class="text-white not-italic font-light">COMMAND</span></h1>
+                <p class="text-[10px] uppercase tracking-[0.4em] text-gray-600">Athlete Data Entry & Asset Management</p>
             </div>
+            <a href="index.html" class="text-[10px] uppercase tracking-widest border border-yellow-700/50 px-4 py-2 hover:bg-yellow-700/10 transition">← Back to Analytics</a>
+        </header>
 
-            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 p-3 rounded font-bold transition">
-                Genereer JSON voor GitHub
+        <form id="coachForm" class="space-y-10">
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-yellow-600">Personal Asset Data</h3>
+                    <input type="text" id="fname" placeholder="VOORNAAM" class="w-full input-luxe p-4 rounded-none text-sm tracking-widest" required>
+                    <input type="text" id="lname" placeholder="ACHTERNAAM" class="w-full input-luxe p-4 rounded-none text-sm tracking-widest" required>
+                    <input type="text" id="role" placeholder="POSITIE (BIJV. AANVALLER)" class="w-full input-luxe p-4 rounded-none text-sm tracking-widest" required>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-yellow-600">Physical Identity</h3>
+                    <input type="number" id="number" placeholder="RUGNUMMER" class="w-full input-luxe p-4 rounded-none text-sm tracking-widest">
+                    <select id="sport" class="w-full input-luxe p-4 rounded-none text-sm tracking-widest appearance-none">
+                        <option value="voetbal">VOETBAL</option>
+                        <option value="hockey">HOCKEY</option>
+                        <option value="fitness">FITNESS</option>
+                    </select>
+                    <input type="text" id="photo" placeholder="IMAGE URL (PNG/JPG)" class="w-full input-luxe p-4 rounded-none text-sm tracking-widest">
+                </div>
+            </section>
+
+            <section class="space-y-6 bg-white/5 p-8 border gold-border rounded-3xl">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-center text-yellow-500 mb-4">Core Performance Metrics (0-100)</h3>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                    <div class="text-center">
+                        <label class="text-[9px] uppercase mb-2 block tracking-widest">Snelheid</label>
+                        <input type="number" id="s_speed" value="80" class="w-full input-luxe p-3 text-center text-lg font-bold">
+                    </div>
+                    <div class="text-center">
+                        <label class="text-[9px] uppercase mb-2 block tracking-widest">Techniek</label>
+                        <input type="number" id="s_tech" value="80" class="w-full input-luxe p-3 text-center text-lg font-bold">
+                    </div>
+                    <div class="text-center">
+                        <label class="text-[9px] uppercase mb-2 block tracking-widest">Conditie</label>
+                        <input type="number" id="s_stamina" value="80" class="w-full input-luxe p-3 text-center text-lg font-bold">
+                    </div>
+                    <div class="text-center">
+                        <label class="text-[9px] uppercase mb-2 block tracking-widest">Tactiek</label>
+                        <input type="number" id="s_tactic" value="80" class="w-full input-luxe p-3 text-center text-lg font-bold">
+                    </div>
+                    <div class="text-center">
+                        <label class="text-[9px] uppercase mb-2 block tracking-widest">Mentaliteit</label>
+                        <input type="number" id="s_mental" value="80" class="w-full input-luxe p-3 text-center text-lg font-bold">
+                    </div>
+                </div>
+            </section>
+
+            <button type="submit" class="w-full btn-gold py-5 rounded-none shadow-2xl uppercase tracking-[0.3em] text-sm">
+                Generate Elite Asset JSON
             </button>
         </form>
 
-        <div id="outputContainer" class="mt-10 hidden">
-            <p class="text-sm text-yellow-400 mb-2">Kopieer deze code naar players.json in GitHub:</p>
-            <textarea id="jsonOutput" class="w-full h-48 bg-black text-green-500 p-4 font-mono text-xs rounded"></textarea>
+        <div id="outputContainer" class="mt-12 hidden animate-pulse">
+            <div class="bg-yellow-900/20 border border-yellow-600/50 p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-[10px] text-yellow-500 font-bold uppercase tracking-widest">Ready for Deployment</span>
+                    <button onclick="copyToClipboard()" class="text-[9px] bg-yellow-600 text-black px-3 py-1 font-bold hover:bg-yellow-400 transition">COPY DATA</button>
+                </div>
+                <textarea id="jsonOutput" readonly class="w-full h-64 bg-black/50 text-yellow-200 p-6 font-mono text-xs border border-yellow-900/50 outline-none rounded-xl"></textarea>
+            </div>
         </div>
     </div>
 
@@ -51,26 +120,39 @@
         document.getElementById('coachForm').addEventListener('submit', (e) => {
             e.preventDefault();
             
-            const newPlayer = {
-                id: "p" + Date.now(),
-                sport: "voetbal",
+            const playerEntry = {
+                id: "p_" + Math.random().toString(36).substr(2, 9),
+                sport: document.getElementById('sport').value,
                 bio: {
-                    name: document.getElementById('fname').value + " " + document.getElementById('lname').value,
-                    photo: "https://via.placeholder.com/150",
-                    role: "Speler"
+                    name: (document.getElementById('fname').value + " " + document.getElementById('lname').value).toUpperCase(),
+                    photo: document.getElementById('photo').value || "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=ELITE+ASSET",
+                    birthDate: "2000-01-01",
+                    number: document.getElementById('number').value,
+                    role: document.getElementById('role').value.toUpperCase(),
+                    label: "ELITE"
                 },
                 stats: {
-                    "Snelheid": parseInt(document.getElementById('stat_speed').value),
-                    "Techniek": parseInt(document.getElementById('stat_tech').value),
-                    "Conditie": parseInt(document.getElementById('stat_stamina').value)
+                    "Snelheid": parseInt(document.getElementById('s_speed').value),
+                    "Techniek": parseInt(document.getElementById('s_tech').value),
+                    "Conditie": parseInt(document.getElementById('s_stamina').value),
+                    "Tactiek": parseInt(document.getElementById('s_tactic').value),
+                    "Mentaliteit": parseInt(document.getElementById('s_mental').value)
                 },
-                history: [parseInt(document.getElementById('stat_speed').value)],
-                status: "Fit"
+                history: [parseInt(document.getElementById('s_stamina').value)],
+                status: "ACTIVE"
             };
 
             document.getElementById('outputContainer').classList.remove('hidden');
-            document.getElementById('jsonOutput').value = JSON.stringify(newPlayer, null, 2);
+            document.getElementById('jsonOutput').value = JSON.stringify(playerEntry, null, 2);
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         });
+
+        function copyToClipboard() {
+            const copyText = document.getElementById("jsonOutput");
+            copyText.select();
+            document.execCommand("copy");
+            alert("Elite Asset Data gekopieerd!");
+        }
     </script>
 </body>
 </html>
