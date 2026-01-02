@@ -47,26 +47,31 @@
   },
   {
     "id": "p_hc4wx14qb",
-    "sport": "voetbal",
     "bio": {
       "name": "CHABO VADER",
-      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=ELITE+ASSET",
-      "birthDate": "2000-01-01",
-      "number": "18",
+      "team": "U15",
       "role": "AANVALLER",
-      "label": "ELITE"
+      "foot": "rechts",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=CHABO VADER",
+      "date": "2-1-2026"
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "3",
+      "speed": "4",
+      "samen": "3",
+      "terug": "4",
+      "mental": "4"
+    },
+    "analysis": {
+      "growth": ""
     },
     "stats": {
-      "Snelheid": 80,
       "Techniek": 80,
-      "Conditie": 80,
-      "Tactiek": 80,
-      "Mentaliteit": 80
-    },
-    "history": [
-      80
-    ],
-    "status": "ACTIVE"
+      "Tactiek": 60,
+      "Fysiek": 80,
+      "Mentaal": 80
+    }
   },
   {
     "id": "p_1767355820730",
