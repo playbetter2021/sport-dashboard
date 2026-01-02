@@ -3,81 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Pro Analytics | Official Scout Report</title>
+    <title>Elite Pro Analytics | Official POP Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
         body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
         .gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; }
-        .btn-pro { background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); color: black; font-weight: 900; letter-spacing: 2px; }
-        .skill-row { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 8px 0; display: flex; justify-content: space-between; align-items: center; font-size: 11px; text-transform: uppercase; }
-        .score-box { background: rgba(212, 175, 55, 0.1); color: var(--gold); padding: 2px 8px; border-radius: 4px; font-weight: 800; }
+        .skill-row { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 10px 0; display: flex; flex-direction: column; }
+        .skill-info { display: flex; justify-content: space-between; align-items: center; font-size: 11px; text-transform: uppercase; font-weight: 700; }
+        .comment-text { font-size: 10px; color: #888; font-style: italic; margin-top: 4px; text-transform: none; }
+        .score-box { background: rgba(212, 175, 55, 0.1); color: var(--gold); padding: 2px 8px; border-radius: 4px; font-weight: 900; }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
     <div class="max-w-7xl mx-auto">
-        <header class="flex justify-between items-center mb-10 border-b border-yellow-900/30 pb-6">
+        <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-yellow-900/30 pb-8 gap-4">
             <div>
-                <h1 class="text-3xl font-black italic gold-gradient tracking-tighter">ELITE<span class="text-white not-italic">PRO</span></h1>
-                <p class="text-[9px] uppercase tracking-[0.5em] text-gray-500">Player Intelligence & Performance System</p>
+                <h1 class="text-4xl font-black italic gold-gradient tracking-tighter">ELITE<span class="text-white not-italic font-light">REPORT</span></h1>
+                <p class="text-[9px] uppercase tracking-[0.5em] text-gray-500">Persoonlijk Ontwikkelingsplan Dashboard</p>
             </div>
-            <select id="playerSelector" class="bg-black border border-yellow-700/50 text-yellow-500 py-2 px-6 rounded-none uppercase text-xs font-bold outline-none cursor-pointer"></select>
+            <div class="flex gap-4">
+                <select id="playerSelector" class="bg-black border border-yellow-700/50 text-yellow-500 py-2 px-6 rounded uppercase text-xs font-bold outline-none cursor-pointer"></select>
+                <a href="coach.html" class="bg-yellow-600/10 border border-yellow-600/50 text-yellow-500 py-2 px-6 rounded uppercase text-xs font-bold hover:bg-yellow-600/20 transition">Coach Login</a>
+            </div>
         </header>
 
-        <div id="captureArea" class="bg-[#0a0a0a] p-8 rounded-[2.5rem] border border-yellow-900/20">
+        <div id="captureArea" class="bg-[#0a0a0a] p-8 rounded-[2.5rem] border border-yellow-900/20 shadow-2xl">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
                 <div class="lg:col-span-4 space-y-6">
                     <div class="glass-card overflow-hidden relative group">
-                        <img id="playerPhoto" class="w-full h-96 object-cover transition duration-700 group-hover:scale-110" src="" crossorigin="anonymous">
+                        <img id="playerPhoto" class="w-full h-96 object-cover" src="" crossorigin="anonymous">
                         <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
                         <div class="absolute bottom-6 left-6">
                             <h2 id="pName" class="text-3xl font-black uppercase italic text-white leading-none"></h2>
-                            <p id="pRole" class="text-yellow-500 font-bold text-[10px] tracking-[0.3em] mt-2"></p>
+                            <p id="pMeta" class="text-yellow-500 font-bold text-[10px] tracking-[0.2em] mt-2"></p>
                         </div>
                     </div>
                     <div class="glass-card p-8">
-                        <h3 class="text-[10px] uppercase tracking-widest text-gray-500 mb-6 text-center italic">Core Performance Radar</h3>
                         <canvas id="radarChart"></canvas>
                     </div>
                 </div>
 
                 <div class="lg:col-span-8 space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
                         <div class="glass-card p-6">
-                            <h3 class="text-xs font-black gold-gradient uppercase mb-4 tracking-widest border-b border-white/5 pb-2">Teamfunctie Verdedigen</h3>
-                            <div class="skill-row"><span>Afschermen ruimte / Positioneel</span> <span class="score-box" id="r_pos">0/6</span></div>
-                            <div class="skill-row"><span>Dekking geven (Rug/Man/Door)</span> <span class="score-box" id="r_dek">0/6</span></div>
-                            <div class="skill-row"><span>Knijpen / Duel om de bal</span> <span class="score-box" id="r_duel">0/6</span></div>
-                            <div class="skill-row"><span>Koppen / Sliding / Tackle</span> <span class="score-box" id="r_fys">0/6</span></div>
+                            <h3 class="text-xs font-black gold-gradient uppercase mb-4 tracking-widest border-b border-white/5 pb-2">Technische Vaardigheden</h3>
+                            <div id="techContainer"></div>
                         </div>
+
                         <div class="glass-card p-6">
-                            <h3 class="text-xs font-black gold-gradient uppercase mb-4 tracking-widest border-b border-white/5 pb-2">Teamfunctie Aanvallen</h3>
-                            <div class="skill-row"><span>Vrijlopen / Aanbieden</span> <span class="score-box" id="r_vrij">0/6</span></div>
-                            <div class="skill-row"><span>Keuzes (Passen/Dribbelen)</span> <span class="score-box" id="r_keuze">0/6</span></div>
-                            <div class="skill-row"><span>Specifieke kwaliteiten (Voorzet/Schot)</span> <span class="score-box" id="r_spec">0/6</span></div>
-                            <div class="skill-row"><span>Kansen creëren & benutten</span> <span class="score-box" id="r_kans">0/6</span></div>
+                            <h3 class="text-xs font-black gold-gradient uppercase mb-4 tracking-widest border-b border-white/5 pb-2">Fysieke Aspecten</h3>
+                            <div id="fysContainer"></div>
                         </div>
+
                         <div class="glass-card p-6 md:col-span-2">
-                            <h3 class="text-xs font-black gold-gradient uppercase mb-4 tracking-widest border-b border-white/5 pb-2 text-center">Teamfunctie Omschakelen</h3>
-                            <div class="grid grid-cols-2 gap-10">
-                                <div class="skill-row"><span>Omschakelen Aanval > Verdediging</span> <span class="score-box" id="r_om_v">0/6</span></div>
-                                <div class="skill-row"><span>Omschakelen Verdediging > Aanval</span> <span class="score-box" id="r_om_a">0/6</span></div>
-                            </div>
+                            <h3 class="text-xs font-black gold-gradient uppercase mb-4 tracking-widest border-b border-white/5 pb-2">Mentaal & Houding</h3>
+                            <div id="mentalContainer" class="grid grid-cols-1 md:grid-cols-2 gap-x-8"></div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="mt-8 pt-8 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-4 text-[9px] uppercase tracking-widest text-gray-500">
+                <div>Coach: <span id="pCoach" class="text-white"></span></div>
+                <div>Periode: <span id="pPeriod" class="text-white"></span></div>
+                <div>Datum: <span id="pDate" class="text-white"></span></div>
+                <div class="text-right">Elite Analytics System © 2024</div>
+            </div>
         </div>
 
-        <div class="mt-10 flex justify-center gap-6">
-            <button id="downloadBtn" class="btn-pro px-10 py-4 rounded-full text-[10px] uppercase shadow-2xl hover:scale-105 transition">Generate Pro PDF Report</button>
-            <a href="coach.html" class="glass-card px-10 py-4 rounded-full text-[10px] font-bold uppercase hover:bg-white/5 transition border border-white/10 flex items-center">Open Command Center</a>
+        <div class="mt-10 flex justify-center">
+            <button id="downloadBtn" class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-black px-12 py-4 rounded-full text-xs uppercase tracking-[0.3em] hover:scale-105 transition shadow-2xl">
+                Genereer Pro POP Rapport (PDF)
+            </button>
         </div>
     </div>
 
@@ -95,15 +101,46 @@
             const update = (id) => {
                 const p = players.find(x => x.id === id);
                 document.getElementById('pName').innerText = p.bio.name;
-                document.getElementById('pRole').innerText = `SQUAD NUMBER #${p.bio.number} | ${p.bio.role}`;
+                document.getElementById('pMeta').innerText = `${p.bio.team} | ${p.bio.role} | #${p.bio.number}`;
                 document.getElementById('playerPhoto').src = p.bio.photo;
+                
+                // Algemene info onderaan
+                document.getElementById('pCoach').innerText = p.bio.coach || 'N/A';
+                document.getElementById('pPeriod').innerText = p.bio.period || 'N/A';
+                document.getElementById('pDate').innerText = p.bio.date || 'N/A';
 
-                const dr = p.detail_ratings || {};
-                const fields = ['pos','dek','duel','fys','vrij','keuze','spec','kans','om_v','om_a'];
-                fields.forEach(f => {
-                    const el = document.getElementById('r_' + f);
-                    if(el) el.innerText = (dr[f] || 0) + '/6';
-                });
+                const r = p.ratings || {};
+                const c = p.comments || {};
+
+                // Render functie voor rijen
+                const renderRows = (containerId, keys) => {
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = keys.map(k => `
+                        <div class="skill-row">
+                            <div class="skill-info">
+                                <span>${k.label}</span>
+                                <span class="score-box">${r[k.id] || 0}/5</span>
+                            </div>
+                            <div class="comment-text">${c[k.id] || 'Geen opmerkingen.'}</div>
+                        </div>
+                    `).join('');
+                };
+
+                renderRows('techContainer', [
+                    {id: 'bal', label: 'Balcontrole'},
+                    {id: 'pas', label: 'Passen / Aannemen'},
+                    {id: 'schot', label: 'Schieten / Afwerken'}
+                ]);
+
+                renderRows('fysContainer', [
+                    {id: 'speed', label: 'Snelheid'},
+                    {id: 'stamina', label: 'Uithoudingsvermogen'}
+                ]);
+
+                renderRows('mentalContainer', [
+                    {id: 'mental', label: 'Inzet & Motivatie'},
+                    {id: 'coach', label: 'Coachbaarheid'}
+                ]);
 
                 renderChart(p.stats);
             };
@@ -136,7 +173,7 @@
                 const pdf = new jspdf.jsPDF('l', 'mm', 'a4');
                 const width = pdf.internal.pageSize.getWidth();
                 pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, width, (canvas.height * width) / canvas.width);
-                pdf.save(`ELITE_PRO_${document.getElementById('pName').innerText}.pdf`);
+                pdf.save(`POP_REPORT_${document.getElementById('pName').innerText}.pdf`);
             });
 
             selector.addEventListener('change', e => update(e.target.value));
