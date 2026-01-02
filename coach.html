@@ -2,79 +2,222 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Coach Command | Data Ingestion</title>
+    <title>Coach Command | Full Data & POP Entry</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
         body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
-        .input-luxe { background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); padding: 12px; border-radius: 8px; width: 100%; }
-        .section-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 25px; border-radius: 1.5rem; margin-bottom: 2rem; }
+        .gold-text { color: var(--gold) !important; }
+        .input-luxe { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(212, 175, 55, 0.3); color: var(--gold); border-radius: 8px; padding: 10px; width: 100%; font-size: 0.8rem; }
+        .section-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 1.5rem; margin-bottom: 1.5rem; }
+        h3 { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 8px; margin-bottom: 15px; font-weight: 800; }
+        label { font-size: 9px; text-transform: uppercase; color: #888; font-weight: bold; margin-bottom: 4px; display: block; }
+        .slider-gold { accent-color: var(--gold); cursor: pointer; width: 100%; }
     </style>
 </head>
-<body class="p-10">
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-2xl font-black gold-gradient uppercase mb-10 text-center italic">Coach Data Entry Terminal</h1>
-        
-        <form id="proForm" class="space-y-6">
-            <div class="section-card grid grid-cols-2 gap-4">
-                <input type="text" id="pName" placeholder="Volledige Naam" class="input-luxe" required>
-                <input type="number" id="pBirth" placeholder="Geboortejaar (bijv. 2010)" class="input-luxe" required>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 border-b border-yellow-900/30 pb-6 flex justify-between items-center">
+            <h1 class="text-2xl font-black italic text-white uppercase tracking-tighter">Coach<span class="gold-text">Command</span></h1>
+            <div class="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-yellow-900/30">
+                <select id="assetSearch" class="bg-transparent text-white text-[10px] font-bold uppercase outline-none"></select>
+                <button id="loadBtn" class="bg-yellow-700/20 text-yellow-500 px-3 py-1 rounded text-[10px] font-bold">LADEN</button>
             </div>
+        </header>
 
+        <form id="proPopForm" class="space-y-4">
             <div class="section-card">
-                <h3 class="text-[10px] font-black text-yellow-600 uppercase mb-4 tracking-widest">Objectieve Data (Prioriteit 1)</h3>
-                <div class="grid grid-cols-2 gap-6">
-                    <div><label class="text-[10px] block mb-2">Trainingsaanwezigheid (%)</label><input type="number" id="pAtt" class="input-luxe" value="100"></div>
-                    <div><label class="text-[10px] block mb-2">Gespeelde Minuten (Totaal)</label><input type="number" id="pMin" class="input-luxe" value="1200"></div>
+                <h3>1. Identificatie & Harde Data (65% Weging)</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div><label>Naam Speler</label><input type="text" id="pName" class="input-luxe" required></div>
+                    <div><label>Geboortejaar</label><input type="number" id="pBirth" class="input-luxe" required></div>
+                    <div><label>Aanwezigheid (%)</label><input type="number" id="pAtt" class="input-luxe" value="100"></div>
+                    <div><label>Minuten</label><input type="number" id="pMin" class="input-luxe" value="1200"></div>
                 </div>
             </div>
 
             <div class="section-card">
-                <h3 class="text-[10px] font-black text-yellow-600 uppercase mb-4 tracking-widest">Techniek & Tactiek (1-5 Schaal)</h3>
-                <div class="grid grid-cols-2 gap-6">
-                    <div><label class="text-[10px] block mb-2">Technisch Niveau</label><input type="range" id="s_tech" min="1" max="5" value="3" class="w-full accent-yellow-500"></div>
-                    <div><label class="text-[10px] block mb-2">Tactisch Inzicht</label><input type="range" id="s_tact" min="1" max="5" value="3" class="w-full accent-yellow-500"></div>
+                <h3>2. Technische Vaardigheden</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[10px]"><label>Balcontrole</label><span id="v_bal" class="gold-text font-bold">3</span></div>
+                        <input type="range" id="s_bal" min="1" max="5" value="3" class="slider-gold" oninput="v_bal.innerText=this.value">
+                        <input type="text" id="o_bal" placeholder="Opmerking" class="input-luxe">
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[10px]"><label>Passen</label><span id="v_pas" class="gold-text font-bold">3</span></div>
+                        <input type="range" id="s_pas" min="1" max="5" value="3" class="slider-gold" oninput="v_pas.innerText=this.value">
+                        <input type="text" id="o_pas" placeholder="Opmerking" class="input-luxe">
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[10px]"><label>Aannemen</label><span id="v_aan" class="gold-text font-bold">3</span></div>
+                        <input type="range" id="s_aan" min="1" max="5" value="3" class="slider-gold" oninput="v_aan.innerText=this.value">
+                        <input type="text" id="o_aan" placeholder="Opmerking" class="input-luxe">
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[10px]"><label>Dribbelen</label><span id="v_drib" class="gold-text font-bold">3</span></div>
+                        <input type="range" id="s_drib" min="1" max="5" value="3" class="slider-gold" oninput="v_drib.innerText=this.value">
+                        <input type="text" id="o_drib" placeholder="Opmerking" class="input-luxe">
+                    </div>
                 </div>
             </div>
 
-            <input type="password" id="ghToken" placeholder="GitHub Access Token" class="input-luxe mb-4" required>
-            <button type="submit" class="w-full bg-yellow-600 text-black font-black py-4 rounded uppercase tracking-widest shadow-2xl hover:scale-105 transition">Submit Player Data</button>
+            <div class="section-card">
+                <h3>3. Tactiek & Omschakeling</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[10px]"><label>Positiespel</label><span id="v_posi" class="gold-text">3</span></div>
+                        <input type="range" id="s_posi" min="1" max="5" value="3" class="slider-gold" oninput="v_posi.innerText=this.value">
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[10px]"><label>Samenwerken</label><span id="v_sam" class="gold-text">3</span></div>
+                        <input type="range" id="s_sam" min="1" max="5" value="3" class="slider-gold" oninput="v_sam.innerText=this.value">
+                    </div>
+                    <div class="space-y-1 md:col-span-2">
+                        <div class="flex justify-between text-[10px]"><label>Omschakeling (Terugschakelen)</label><span id="v_oms" class="gold-text">3</span></div>
+                        <input type="range" id="s_oms" min="1" max="5" value="3" class="slider-gold" oninput="v_oms.innerText=this.value">
+                        <input type="text" id="o_oms" placeholder="Opmerking over omschakeling" class="input-luxe">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h3>4. Persoonlijk Ontwikkelplan (POP)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-3 bg-white/5 rounded-lg">
+                        <label>Doel 1</label>
+                        <input type="text" id="goal1" placeholder="Wat?" class="input-luxe mb-2">
+                        <input type="text" id="action1" placeholder="Hoe?" class="input-luxe mb-2">
+                        <input type="text" id="time1" placeholder="Wanneer?" class="input-luxe">
+                    </div>
+                    <div class="p-3 bg-white/5 rounded-lg">
+                        <label>Doel 2</label>
+                        <input type="text" id="goal2" placeholder="Wat?" class="input-luxe mb-2">
+                        <input type="text" id="action2" placeholder="Hoe?" class="input-luxe mb-2">
+                        <input type="text" id="time2" placeholder="Wanneer?" class="input-luxe">
+                    </div>
+                    <div class="p-3 bg-white/5 rounded-lg">
+                        <label>Sterktes & Ontwikkelpunten</label>
+                        <textarea id="pStrengths" class="input-luxe h-16 mb-2" placeholder="Sterktes..."></textarea>
+                        <textarea id="pGrowthPoints" class="input-luxe h-16" placeholder="Ontwikkelpunten..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card flex gap-4 items-end">
+                <div class="flex-1">
+                    <label>GitHub Access Token</label>
+                    <input type="password" id="ghToken" class="input-luxe" required>
+                </div>
+                <button type="submit" id="saveBtn" class="bg-yellow-600 text-black font-black px-10 py-3 rounded uppercase text-[10px] tracking-widest shadow-2xl">
+                    Sync Cloud & Valideer
+                </button>
+            </div>
         </form>
     </div>
 
-    <script>
-        document.getElementById('proForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button');
-            btn.innerText = "VALIDEREN & VERZENDEN...";
+    <script type="module">
+        import DataProvider from './js/data_provider.js';
+        let allPlayers = [];
 
+        async function loadAssets() {
+            allPlayers = await DataProvider.getAllPlayers();
+            document.getElementById('assetSearch').innerHTML = '<option value="">-- KIES SPELER --</option>' + 
+                allPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
+        }
+
+        document.getElementById('loadBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            const p = allPlayers.find(x => x.id === document.getElementById('assetSearch').value);
+            if (!p) return;
+
+            document.getElementById('pName').value = p.bio.name;
+            document.getElementById('pBirth').value = p.bio.birthYear;
+            document.getElementById('pAtt').value = p.obj?.attendance || 100;
+            document.getElementById('pMin').value = p.obj?.minutes || 1200;
+            document.getElementById('pStrengths').value = p.analysis.strengths || "";
+            document.getElementById('pGrowthPoints').value = p.analysis.growthPoints || "";
+
+            // Doelen
+            document.getElementById('goal1').value = p.pop?.goal1 || "";
+            document.getElementById('action1').value = p.pop?.action1 || "";
+            document.getElementById('time1').value = p.pop?.time1 || "";
+
+            const r = p.ratings || {};
+            const sync = (id, val) => {
+                if(document.getElementById('s_'+id)) {
+                    document.getElementById('s_'+id).value = val || 3;
+                    document.getElementById('v_'+id).innerText = val || 3;
+                }
+            };
+            sync('bal', r.bal); sync('pas', r.pas); sync('aan', r.aan); sync('drib', r.drib);
+            sync('posi', r.posi); sync('sam', r.sam); sync('oms', r.oms);
+            
+            alert("Data geladen.");
+        });
+
+        document.getElementById('proPopForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('saveBtn');
+            btn.innerText = "VALIDEREN...";
+
+            const pId = document.getElementById('assetSearch').value || "p_" + Date.now();
             const pData = {
-                id: "p_" + Date.now(),
-                bio: { name: document.getElementById('pName').value, birthYear: document.getElementById('pBirth').value, photo: "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=ASSET" },
-                obj: { attendance: parseInt(document.getElementById('pAtt').value), minutes: parseInt(document.getElementById('pMin').value) },
-                ratings: { tech: document.getElementById('s_tech').value, tact: document.getElementById('s_tact').value },
-                stats: { "Techniek": document.getElementById('s_tech').value * 20, "Omschakeling": document.getElementById('s_tact').value * 20 },
-                analysis: { strengths: "Objectieve seizoensscore berekend op basis van aanwezigheid en speeltijd." }
+                id: pId,
+                bio: {
+                    name: document.getElementById('pName').value.toUpperCase(),
+                    birthYear: document.getElementById('pBirth').value,
+                    photo: "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=" + document.getElementById('pName').value
+                },
+                obj: {
+                    attendance: parseInt(document.getElementById('pAtt').value),
+                    minutes: parseInt(document.getElementById('pMin').value)
+                },
+                ratings: {
+                    bal: document.getElementById('s_bal').value,
+                    pas: document.getElementById('s_pas').value,
+                    aan: document.getElementById('s_aan').value,
+                    drib: document.getElementById('s_drib').value,
+                    posi: document.getElementById('s_posi').value,
+                    sam: document.getElementById('s_sam').value,
+                    oms: document.getElementById('s_oms').value
+                },
+                pop: {
+                    goal1: document.getElementById('goal1').value,
+                    action1: document.getElementById('action1').value,
+                    time1: document.getElementById('time1').value
+                },
+                analysis: {
+                    strengths: document.getElementById('pStrengths').value,
+                    growthPoints: document.getElementById('pGrowthPoints').value
+                },
+                stats: {
+                    "Techniek": parseInt(document.getElementById('s_bal').value) * 20,
+                    "Tactiek": parseInt(document.getElementById('s_posi').value) * 20,
+                    "Omschakelen": parseInt(document.getElementById('s_oms').value) * 20,
+                    "Fysiek": 75 // Default of via andere slider
+                }
             };
 
             const token = document.getElementById('ghToken').value;
-            const repo = "playbetter2021/sport-dashboard";
-            const path = "data/players.json";
-
             try {
-                const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+                const url = `https://api.github.com/repos/playbetter2021/sport-dashboard/contents/data/players.json`;
                 const res = await fetch(url, { headers: { "Authorization": `token ${token}` } });
                 const file = await res.json();
                 let players = JSON.parse(atob(file.content));
-                players.push(pData);
+                const index = players.findIndex(p => p.id === pId);
+                if (index !== -1) players[index] = pData; else players.push(pData);
+
                 await fetch(url, {
                     method: "PUT",
                     headers: { "Authorization": `token ${token}` },
-                    body: JSON.stringify({ message: "Data-Driven Submission", content: btoa(unescape(encodeURIComponent(JSON.stringify(players, null, 2)))), sha: file.sha })
+                    body: JSON.stringify({ message: "Full Data Entry", content: btoa(unescape(encodeURIComponent(JSON.stringify(players, null, 2)))), sha: file.sha })
                 });
-                alert("Data succesvol opgeslagen en gevalideerd!");
-            } catch (err) { alert(err.message); } finally { btn.innerText = "Submit Player Data"; }
+                alert("Cloud Sync Succesvol!");
+                location.reload();
+            } catch (err) { alert(err.message); }
         });
+        loadAssets();
     </script>
 </body>
 </html>
