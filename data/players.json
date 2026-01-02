@@ -49,28 +49,64 @@
     "id": "p_hc4wx14qb",
     "bio": {
       "name": "CHABO VADER",
-      "team": "U15",
-      "role": "AANVALLER",
-      "foot": "rechts",
-      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=CHABO VADER",
-      "date": "2-1-2026"
+      "team": "JO12",
+      "role": "Aanvaller",
+      "coach": "Angel",
+      "date": "2026-01-02",
+      "period": "Voorseizoen",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=CHABO VADER"
     },
     "ratings": {
       "bal": "4",
-      "pas": "3",
-      "speed": "4",
-      "samen": "3",
-      "terug": "4",
-      "mental": "4"
+      "pas": "4",
+      "aan": "4",
+      "drib": "3",
+      "schot": "4",
+      "posi": "4",
+      "vrij": "4",
+      "sam": "4",
+      "oms": "4",
+      "sne": "4",
+      "inz": "4",
+      "mot": "4",
+      "coa": "4",
+      "tea": "4"
+    },
+    "comments": {
+      "bal": "mag nog iets beter",
+      "pas": "",
+      "aan": "",
+      "drib": "wees sterker aan de bal",
+      "schot": "",
+      "posi": "",
+      "vrij": "",
+      "sam": "",
+      "oms": "",
+      "inz": "",
+      "mot": "",
+      "coa": "",
+      "tea": "laat je niet mee sleuren door anderen"
+    },
+    "pop": {
+      "goal1": "sterker aan de bal",
+      "action1": "meer oeffenen ook thuis",
+      "time1": "2 maanden",
+      "goal2": "",
+      "action2": "",
+      "time2": "",
+      "goal3": "",
+      "action3": "",
+      "time3": ""
     },
     "analysis": {
-      "growth": ""
+      "strengths": "overzicht",
+      "growthPoints": "sterker aan de bal"
     },
     "stats": {
-      "Techniek": 80,
-      "Tactiek": 60,
-      "Fysiek": 80,
-      "Mentaal": 80
+      "Techniek": 76,
+      "Tactiek": 80,
+      "Mentaal": 80,
+      "Fysiek": 80
     }
   },
   {
