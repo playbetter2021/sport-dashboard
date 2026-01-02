@@ -102,19 +102,55 @@
                 <div class="section-card">
                     <h3>Tactiek & Fysiek</h3>
                     <div class="space-y-4">
-                        <div class="flex justify-between items-center"><label>Samenwerken</label><span id="v_sam" class="gold-text">3</span></div>
-                        <input type="range" id="s_sam" min="1" max="5" value="3" class="slider-gold" oninput="v_sam.innerText=this.value">
-                        <div class="flex justify-between items-center"><label>Snelheid</label><span id="v_sne" class="gold-text">3</span></div>
-                        <input type="range" id="s_sne" min="1" max="5" value="3" class="slider-gold" oninput="v_sne.innerText=this.value">
+                        <div class="grid grid-cols-1 gap-2 border-b border-white/5 pb-2">
+                            <div class="flex justify-between items-center"><label>Positiespel</label><span id="v_posi" class="gold-text">3</span></div>
+                            <input type="range" id="s_posi" min="1" max="5" value="3" class="slider-gold" oninput="v_posi.innerText=this.value">
+                            <input type="text" id="o_posi" placeholder="Opmerking" class="input-luxe text-xs">
+                        </div>
+                        <div class="grid grid-cols-1 gap-2 border-b border-white/5 pb-2">
+                            <div class="flex justify-between items-center"><label>Vrijlopen</label><span id="v_vrij" class="gold-text">3</span></div>
+                            <input type="range" id="s_vrij" min="1" max="5" value="3" class="slider-gold" oninput="v_vrij.innerText=this.value">
+                            <input type="text" id="o_vrij" placeholder="Opmerking" class="input-luxe text-xs">
+                        </div>
+                        <div class="grid grid-cols-1 gap-2 border-b border-white/5 pb-2">
+                            <div class="flex justify-between items-center"><label>Samenwerken</label><span id="v_sam" class="gold-text">3</span></div>
+                            <input type="range" id="s_sam" min="1" max="5" value="3" class="slider-gold" oninput="v_sam.innerText=this.value">
+                            <input type="text" id="o_sam" placeholder="Opmerking" class="input-luxe text-xs">
+                        </div>
+                        <div class="grid grid-cols-1 gap-2 border-b border-white/5 pb-2">
+                            <div class="flex justify-between items-center"><label>Omschakeling</label><span id="v_oms" class="gold-text">3</span></div>
+                            <input type="range" id="s_oms" min="1" max="5" value="3" class="slider-gold" oninput="v_oms.innerText=this.value">
+                            <input type="text" id="o_oms" placeholder="Opmerking" class="input-luxe text-xs">
+                        </div>
+                        <div class="grid grid-cols-1 gap-2">
+                            <div class="flex justify-between items-center"><label>Snelheid</label><span id="v_sne" class="gold-text">3</span></div>
+                            <input type="range" id="s_sne" min="1" max="5" value="3" class="slider-gold" oninput="v_sne.innerText=this.value">
+                        </div>
                     </div>
                 </div>
                 <div class="section-card">
                     <h3>Mentaal & Houding</h3>
                     <div class="space-y-4">
-                        <div class="flex justify-between items-center"><label>Inzet</label><span id="v_inz" class="gold-text">3</span></div>
-                        <input type="range" id="s_inz" min="1" max="5" value="3" class="slider-gold" oninput="v_inz.innerText=this.value">
-                        <div class="flex justify-between items-center"><label>Coachbaarheid</label><span id="v_coa" class="gold-text">3</span></div>
-                        <input type="range" id="s_coa" min="1" max="5" value="3" class="slider-gold" oninput="v_coa.innerText=this.value">
+                        <div class="grid grid-cols-1 gap-2 border-b border-white/5 pb-2">
+                            <div class="flex justify-between items-center"><label>Inzet</label><span id="v_inz" class="gold-text">3</span></div>
+                            <input type="range" id="s_inz" min="1" max="5" value="3" class="slider-gold" oninput="v_inz.innerText=this.value">
+                            <input type="text" id="o_inz" placeholder="Opmerking" class="input-luxe text-xs">
+                        </div>
+                        <div class="grid grid-cols-1 gap-2 border-b border-white/5 pb-2">
+                            <div class="flex justify-between items-center"><label>Motivatie</label><span id="v_mot" class="gold-text">3</span></div>
+                            <input type="range" id="s_mot" min="1" max="5" value="3" class="slider-gold" oninput="v_mot.innerText=this.value">
+                            <input type="text" id="o_mot" placeholder="Opmerking" class="input-luxe text-xs">
+                        </div>
+                        <div class="grid grid-cols-1 gap-2 border-b border-white/5 pb-2">
+                            <div class="flex justify-between items-center"><label>Coachbaarheid</label><span id="v_coa" class="gold-text">3</span></div>
+                            <input type="range" id="s_coa" min="1" max="5" value="3" class="slider-gold" oninput="v_coa.innerText=this.value">
+                            <input type="text" id="o_coa" placeholder="Opmerking" class="input-luxe text-xs">
+                        </div>
+                        <div class="grid grid-cols-1 gap-2 border-b border-white/5 pb-2">
+                            <div class="flex justify-between items-center"><label>Teamgedrag</label><span id="v_tea" class="gold-text">3</span></div>
+                            <input type="range" id="s_tea" min="1" max="5" value="3" class="slider-gold" oninput="v_tea.innerText=this.value">
+                            <input type="text" id="o_tea" placeholder="Opmerking" class="input-luxe text-xs">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -126,8 +162,21 @@
                     <textarea id="pGrowthPoints" class="input-luxe h-24" placeholder="Ontwikkelpunten..."></textarea>
                 </div>
                 <div class="space-y-4">
-                    <input type="text" id="goal1" placeholder="Doel 1 | Actie | Tijdspad" class="input-luxe">
-                    <input type="text" id="goal2" placeholder="Doel 2 | Actie | Tijdspad" class="input-luxe">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 border-b border-white/5 pb-2">
+                        <input type="text" id="goal1" placeholder="Doel 1" class="input-luxe">
+                        <input type="text" id="action1" placeholder="Actie" class="input-luxe">
+                        <input type="text" id="time1" placeholder="Tijdspad" class="input-luxe">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 border-b border-white/5 pb-2">
+                        <input type="text" id="goal2" placeholder="Doel 2" class="input-luxe">
+                        <input type="text" id="action2" placeholder="Actie" class="input-luxe">
+                        <input type="text" id="time2" placeholder="Tijdspad" class="input-luxe">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <input type="text" id="goal3" placeholder="Doel 3" class="input-luxe">
+                        <input type="text" id="action3" placeholder="Actie" class="input-luxe">
+                        <input type="text" id="time3" placeholder="Tijdspad" class="input-luxe">
+                    </div>
                 </div>
             </div>
 
@@ -157,22 +206,55 @@
             const p = allPlayers.find(x => x.id === id);
             if (!p) return;
 
-            document.getElementById('pName').value = p.bio.name;
-            document.getElementById('pTeam').value = p.bio.team;
-            document.getElementById('pPos').value = p.bio.role;
+            // Basis info
+            document.getElementById('pName').value = p.bio.name || "";
+            document.getElementById('pTeam').value = p.bio.team || "JO8";
+            document.getElementById('pPos').value = p.bio.role || "Keeper";
             document.getElementById('pCoach').value = p.bio.coach || "";
-            document.getElementById('pGrowthPoints').value = p.analysis.growthPoints || "";
+            document.getElementById('pDate').value = p.bio.date || "";
+            document.getElementById('pPeriod').value = p.bio.period || "Voorseizoen";
+            
+            // POP
             document.getElementById('pStrengths').value = p.analysis.strengths || "";
+            document.getElementById('pGrowthPoints').value = p.analysis.growthPoints || "";
+            
+            // Doelen
+            document.getElementById('goal1').value = p.pop?.goal1 || "";
+            document.getElementById('action1').value = p.pop?.action1 || "";
+            document.getElementById('time1').value = p.pop?.time1 || "";
+            document.getElementById('goal2').value = p.pop?.goal2 || "";
+            document.getElementById('action2').value = p.pop?.action2 || "";
+            document.getElementById('time2').value = p.pop?.time2 || "";
+            document.getElementById('goal3').value = p.pop?.goal3 || "";
+            document.getElementById('action3').value = p.pop?.action3 || "";
+            document.getElementById('time3').value = p.pop?.time3 || "";
 
             const r = p.ratings || {};
-            const sync = (sId, vId, val) => {
+            const o = p.comments || {};
+
+            const sync = (sId, vId, oId, val, comm) => {
                 if(document.getElementById(sId)) {
                     document.getElementById(sId).value = val || 3;
                     document.getElementById(vId).innerText = val || 3;
+                    if(oId) document.getElementById(oId).value = comm || "";
                 }
             };
-            sync('s_bal', 'v_bal', r.bal); sync('s_pas', 'v_pas', r.pas);
-            sync('s_sam', 'v_sam', r.sam); sync('s_sne', 'v_sne', r.sne);
+
+            sync('s_bal', 'v_bal', 'o_bal', r.bal, o.bal);
+            sync('s_pas', 'v_pas', 'o_pas', r.pas, o.pas);
+            sync('s_aan', 'v_aan', 'o_aan', r.aan, o.aan);
+            sync('s_drib', 'v_drib', 'o_drib', r.drib, o.drib);
+            sync('s_schot', 'v_schot', 'o_schot', r.schot, o.schot);
+            sync('s_posi', 'v_posi', 'o_posi', r.posi, o.posi);
+            sync('s_vrij', 'v_vrij', 'o_vrij', r.vrij, o.vrij);
+            sync('s_sam', 'v_sam', 'o_sam', r.sam, o.sam);
+            sync('s_oms', 'v_oms', 'o_oms', r.oms, o.oms);
+            sync('s_sne', 'v_sne', null, r.sne, null);
+            sync('s_inz', 'v_inz', 'o_inz', r.inz, o.inz);
+            sync('s_mot', 'v_mot', 'o_mot', r.mot, o.mot);
+            sync('s_coa', 'v_coa', 'o_coa', r.coa, o.coa);
+            sync('s_tea', 'v_tea', 'o_tea', r.tea, o.tea);
+
             alert("Data geladen voor " + p.bio.name);
         });
 
@@ -190,21 +272,59 @@
                     role: document.getElementById('pPos').value,
                     coach: document.getElementById('pCoach').value,
                     date: document.getElementById('pDate').value,
+                    period: document.getElementById('pPeriod').value,
                     photo: "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=" + document.getElementById('pName').value
                 },
                 ratings: {
                     bal: document.getElementById('s_bal').value,
                     pas: document.getElementById('s_pas').value,
+                    aan: document.getElementById('s_aan').value,
+                    drib: document.getElementById('s_drib').value,
+                    schot: document.getElementById('s_schot').value,
+                    posi: document.getElementById('s_posi').value,
+                    vrij: document.getElementById('s_vrij').value,
                     sam: document.getElementById('s_sam').value,
-                    sne: document.getElementById('s_sne').value
+                    oms: document.getElementById('s_oms').value,
+                    sne: document.getElementById('s_sne').value,
+                    inz: document.getElementById('s_inz').value,
+                    mot: document.getElementById('s_mot').value,
+                    coa: document.getElementById('s_coa').value,
+                    tea: document.getElementById('s_tea').value
+                },
+                comments: {
+                    bal: document.getElementById('o_bal').value,
+                    pas: document.getElementById('o_pas').value,
+                    aan: document.getElementById('o_aan').value,
+                    drib: document.getElementById('o_drib').value,
+                    schot: document.getElementById('o_schot').value,
+                    posi: document.getElementById('o_posi').value,
+                    vrij: document.getElementById('o_vrij').value,
+                    sam: document.getElementById('o_sam').value,
+                    oms: document.getElementById('o_oms').value,
+                    inz: document.getElementById('o_inz').value,
+                    mot: document.getElementById('o_mot').value,
+                    coa: document.getElementById('o_coa').value,
+                    tea: document.getElementById('o_tea').value
+                },
+                pop: {
+                    goal1: document.getElementById('goal1').value,
+                    action1: document.getElementById('action1').value,
+                    time1: document.getElementById('time1').value,
+                    goal2: document.getElementById('goal2').value,
+                    action2: document.getElementById('action2').value,
+                    time2: document.getElementById('time2').value,
+                    goal3: document.getElementById('goal3').value,
+                    action3: document.getElementById('action3').value,
+                    time3: document.getElementById('time3').value
                 },
                 analysis: {
                     strengths: document.getElementById('pStrengths').value,
                     growthPoints: document.getElementById('pGrowthPoints').value
                 },
                 stats: {
-                    "Techniek": parseInt(document.getElementById('s_bal').value) * 20,
-                    "Tactiek": parseInt(document.getElementById('s_sam').value) * 20,
+                    "Techniek": Math.round(((parseInt(document.getElementById('s_bal').value) + parseInt(document.getElementById('s_pas').value) + parseInt(document.getElementById('s_aan').value) + parseInt(document.getElementById('s_drib').value) + parseInt(document.getElementById('s_schot').value)) / 25) * 100),
+                    "Tactiek": Math.round(((parseInt(document.getElementById('s_posi').value) + parseInt(document.getElementById('s_vrij').value) + parseInt(document.getElementById('s_sam').value) + parseInt(document.getElementById('s_oms').value)) / 20) * 100),
+                    "Mentaal": Math.round(((parseInt(document.getElementById('s_inz').value) + parseInt(document.getElementById('s_mot').value) + parseInt(document.getElementById('s_coa').value) + parseInt(document.getElementById('s_tea').value)) / 20) * 100),
                     "Fysiek": parseInt(document.getElementById('s_sne').value) * 20
                 }
             };
