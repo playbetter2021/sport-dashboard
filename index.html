@@ -3,106 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Sport Analytics | World Class Dashboard</title>
+    <title>Elite Gold | Professional Scout Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
     <style>
         :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
-        body { background-color: var(--obsidian); background-image: radial-gradient(circle at 50% -20%, #1a1a1a 0%, #0a0a0a 100%); }
+        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
         .gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .gold-border { border: 1px solid rgba(212, 175, 55, 0.3); }
-        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .gold-btn { background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); color: black; transition: all 0.3s ease; }
-        .gold-btn:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+        .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(12px); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; }
+        .skill-bar-bg { background: rgba(255, 255, 255, 0.05); height: 6px; border-radius: 3px; overflow: hidden; }
+        .skill-bar-fill { background: linear-gradient(90deg, #B8860B, #D4AF37); height: 100%; transition: width 1s ease-in-out; }
     </style>
 </head>
-<body class="text-gray-300 font-sans antialiased p-4 md:p-8">
+<body class="p-4 md:p-10">
 
     <div class="max-w-7xl mx-auto">
-        <header class="flex justify-between items-center mb-8 border-b border-yellow-900/30 pb-6">
+        <header class="flex justify-between items-end mb-12 border-b border-yellow-900/20 pb-8">
             <div>
-                <h1 class="text-3xl font-black italic gold-gradient tracking-tighter">ELITE<span class="text-white not-italic">GOLD</span></h1>
-                <p class="text-[10px] uppercase tracking-[0.3em] text-gray-500 font-bold">Intelligence System v2.0</p>
+                <h1 class="text-4xl font-black italic gold-gradient tracking-tighter">ELITE<span class="text-white not-italic font-light">SCOUT</span></h1>
+                <p class="text-[10px] uppercase tracking-[0.5em] text-gray-500">Professional Performance Analysis</p>
             </div>
-            <div class="flex items-center gap-4">
-                <select id="playerSelector" class="bg-black border gold-border text-[#D4AF37] py-2 px-4 rounded outline-none cursor-pointer text-xs font-bold uppercase"></select>
-            </div>
+            <select id="playerSelector" class="bg-black border border-yellow-700/50 text-yellow-500 py-2 px-6 rounded uppercase text-xs font-bold outline-none"></select>
         </header>
 
-        <div id="reportArea" class="grid grid-cols-1 xl:grid-cols-12 gap-6 p-4">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <div class="xl:col-span-4 space-y-6">
-                <div class="glass-card p-1 rounded-3xl gold-border overflow-hidden relative">
-                    <img id="playerPhoto" class="w-full h-96 object-cover rounded-2xl" src="" alt="" crossorigin="anonymous">
-                    <div class="absolute bottom-6 left-6 bg-black/60 p-4 rounded-xl backdrop-blur-md">
-                        <h3 id="playerName" class="text-2xl font-bold text-white uppercase italic tracking-tighter">Laden...</h3>
-                        <p id="playerRoleLabel" class="text-yellow-500 font-bold text-xs uppercase tracking-widest"></p>
+            <div class="lg:col-span-4 space-y-8">
+                <div class="glass-card p-2 relative group">
+                    <img id="playerPhoto" class="w-full h-[450px] object-cover rounded-[1.2rem]" src="" alt="">
+                    <div class="absolute bottom-8 left-8">
+                        <h2 id="playerName" class="text-3xl font-black uppercase italic text-white drop-shadow-2xl"></h2>
+                        <p id="playerRole" class="text-yellow-500 font-bold tracking-widest text-xs uppercase"></p>
                     </div>
                 </div>
 
-                <div class="glass-card p-6 rounded-2xl gold-border space-y-4">
-                    <h3 class="text-[10px] uppercase text-yellow-600 font-bold tracking-widest border-b border-white/10 pb-2">Asset Details</h3>
-                    <div class="flex justify-between"><span class="text-xs text-gray-500">Squad Number</span><span id="playerNumber" class="text-xs text-white font-bold italic">--</span></div>
-                    <div class="flex justify-between"><span class="text-xs text-gray-500">Condition</span><span id="playerStatus" class="text-xs gold-gradient font-bold uppercase">--</span></div>
-                    <div class="flex justify-between"><span class="text-xs text-gray-500">Sport</span><span id="playerSport" class="text-xs text-white font-bold uppercase">--</span></div>
+                <div class="glass-card p-8">
+                    <h3 class="text-[10px] uppercase tracking-widest text-gray-500 mb-6 text-center">Core Performance Index</h3>
+                    <canvas id="radarChart"></canvas>
                 </div>
             </div>
 
-            <div class="xl:col-span-8 space-y-6">
-                <div class="glass-card p-10 rounded-3xl gold-border relative h-full flex flex-col justify-center">
-                    <h3 class="text-xs uppercase tracking-widest font-bold text-gray-400 italic mb-8 text-center">Tactical Performance Radar</h3>
-                    <canvas id="performanceChart"></canvas>
-                </div>
-            </div>
-        </div>
+            <div class="lg:col-span-8 space-y-8">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <div class="glass-card p-6">
+                        <h3 class="text-sm font-bold gold-gradient uppercase mb-4 tracking-tighter">Teamfunctie Verdedigen</h3>
+                        <div class="space-y-4 text-[11px]">
+                            <div class="flex justify-between items-center"><span>Afschermen ruimte / positioneel staan</span> <span class="text-yellow-500 font-bold" id="v_pos">0/6</span></div>
+                            <div class="skill-bar-bg"><div id="b_pos" class="skill-bar-fill" style="width: 0%"></div></div>
+                            
+                            <div class="flex justify-between items-center"><span>Dekking geven (ruimte/man/rug/door)</span> <span class="text-yellow-500 font-bold" id="v_dek">0/6</span></div>
+                            <div class="skill-bar-bg"><div id="b_dek" class="skill-bar-fill" style="width: 0%"></div></div>
+                            
+                            <div class="flex justify-between items-center"><span>Knijpen / Duel om de bal</span> <span class="text-yellow-500 font-bold" id="v_duel">0/6</span></div>
+                            <div class="skill-bar-bg"><div id="b_duel" class="skill-bar-fill" style="width: 0%"></div></div>
+                        </div>
+                    </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-            <div class="glass-card p-6 rounded-3xl border border-white/5 flex flex-col justify-center">
-                <h3 class="text-[10px] uppercase text-gray-500 font-bold tracking-widest mb-4">Report Generation</h3>
-                <button id="downloadPDF" class="gold-btn w-full py-3 rounded-lg text-[10px] font-black tracking-widest uppercase">
-                    Download Elite Report (PDF)
-                </button>
-            </div>
-            
-            <div class="glass-card p-6 rounded-3xl border border-white/5 flex flex-col justify-center">
-                <h3 class="text-[10px] uppercase text-gray-500 font-bold tracking-widest mb-4">Command Center</h3>
-                <a href="coach.html" class="block w-full text-center py-3 bg-white/5 hover:bg-yellow-600/10 text-[10px] font-bold tracking-widest uppercase transition rounded-lg border border-white/10 text-white">
-                    Open Coach Command
-                </a>
+                    <div class="glass-card p-6">
+                        <h3 class="text-sm font-bold gold-gradient uppercase mb-4 tracking-tighter">Teamfunctie Aanvallen</h3>
+                        <div class="space-y-4 text-[11px]">
+                            <div class="flex justify-between items-center"><span>Vrijlopen / Aanbieden</span> <span class="text-yellow-500 font-bold" id="v_vrij">0/6</span></div>
+                            <div class="skill-bar-bg"><div id="b_vrij" class="skill-bar-fill" style="width: 0%"></div></div>
+                            
+                            <div class="flex justify-between items-center"><span>Keuzes t.a.v. passen / dribbelen</span> <span class="text-yellow-500 font-bold" id="v_keuze">0/6</span></div>
+                            <div class="skill-bar-bg"><div id="b_keuze" class="skill-bar-fill" style="width: 0%"></div></div>
+                            
+                            <div class="flex justify-between items-center"><span>Kansen creëren & benutten</span> <span class="text-yellow-500 font-bold" id="v_kans">0/6</span></div>
+                            <div class="skill-bar-bg"><div id="b_kans" class="skill-bar-fill" style="width: 0%"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 md:col-span-2">
+                        <h3 class="text-sm font-bold gold-gradient uppercase mb-4 tracking-tighter">Teamfunctie Omschakelen</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <p class="text-[9px] text-gray-500 uppercase mb-2">Van Aanval naar Verdediging</p>
+                                <div class="flex justify-between items-center text-[11px]"><span>Reageert alert op de situatie</span> <span id="v_oms_v" class="text-yellow-500 font-bold">0/6</span></div>
+                                <div class="skill-bar-bg mt-1"><div id="b_oms_v" class="skill-bar-fill" style="width: 0%"></div></div>
+                            </div>
+                            <div>
+                                <p class="text-[9px] text-gray-500 uppercase mb-2">Van Verdediging naar Aanval</p>
+                                <div class="flex justify-between items-center text-[11px]"><span>Reageert alert op de situatie</span> <span id="v_oms_a" class="text-yellow-500 font-bold">0/6</span></div>
+                                <div class="skill-bar-bg mt-1"><div id="b_oms_a" class="skill-bar-fill" style="width: 0%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
 
     <script type="module">
         import DataProvider from './js/data_provider.js';
-        let myChart = null;
-        let activePlayer = null;
+        let chart = null;
 
         async function init() {
             const players = await DataProvider.getAllPlayers();
             const selector = document.getElementById('playerSelector');
-            if (!players || players.length === 0) return;
+            if (!players) return;
 
-            selector.innerHTML = players.map(p => `<option value="${p.id}">${p.bio.name.toUpperCase()}</option>`).join('');
+            selector.innerHTML = players.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
 
-            const updateUI = (id) => {
-                activePlayer = players.find(player => player.id === id);
-                document.getElementById('playerName').textContent = activePlayer.bio.name;
-                document.getElementById('playerRoleLabel').textContent = activePlayer.bio.role;
-                document.getElementById('playerPhoto').src = activePlayer.bio.photo;
-                document.getElementById('playerStatus').textContent = activePlayer.status;
-                document.getElementById('playerNumber').textContent = `#${activePlayer.bio.number}`;
-                document.getElementById('playerSport').textContent = activePlayer.sport;
-                drawChart(activePlayer.stats);
+            const update = (id) => {
+                const p = players.find(x => x.id === id);
+                document.getElementById('playerName').innerText = p.bio.name;
+                document.getElementById('playerRole').innerText = p.bio.role;
+                document.getElementById('playerPhoto').src = p.bio.photo;
+
+                // We pakken de ratings (1-6) uit je nieuwe coach data
+                const r = p.ratings || { algemeen: 3, techniek: 3, tactiek: 3, fysiek: 3 };
+
+                // Update de voortgangsbalken op basis van de 1-6 schaal
+                const setBar = (id, val) => {
+                    document.getElementById('v_' + id).innerText = val + '/6';
+                    document.getElementById('b_' + id).style.width = (val / 6 * 100) + '%';
+                };
+
+                // Voorbeeld koppeling (afhankelijk van je coach input namen)
+                setBar('pos', r.tactiek || 3);
+                setBar('dek', r.tactiek || 3);
+                setBar('duel', r.fysiek || 3);
+                setBar('vrij', r.techniek || 3);
+                setBar('keuze', r.techniek || 3);
+                setBar('kans', r.techniek || 3);
+                setBar('oms_v', r.algemeen || 3);
+                setBar('oms_a', r.algemeen || 3);
+
+                renderChart(p.stats);
             };
 
-            const drawChart = (stats) => {
-                const ctx = document.getElementById('performanceChart').getContext('2d');
-                if (myChart) myChart.destroy();
-                myChart = new Chart(ctx, {
+            const renderChart = (stats) => {
+                const ctx = document.getElementById('radarChart');
+                if (chart) chart.destroy();
+                chart = new Chart(ctx, {
                     type: 'radar',
                     data: {
                         labels: Object.keys(stats),
@@ -110,61 +146,19 @@
                             data: Object.values(stats),
                             backgroundColor: 'rgba(212, 175, 55, 0.2)',
                             borderColor: '#D4AF37',
-                            borderWidth: 3,
                             pointBackgroundColor: '#F9E272'
                         }]
                     },
                     options: {
-                        devicePixelRatio: 2, // Hogere resolutie voor PDF
-                        scales: {
-                            r: {
-                                grid: { color: 'rgba(255,255,255,0.1)' },
-                                angleLines: { color: 'rgba(255,255,255,0.1)' },
-                                pointLabels: { color: '#888', font: { size: 12, weight: 'bold' } },
-                                ticks: { display: false },
-                                suggestedMin: 0, suggestedMax: 100
-                            }
-                        },
+                        scales: { r: { grid: { color: '#333' }, ticks: { display: false }, suggestedMin: 0, suggestedMax: 100 } },
                         plugins: { legend: { display: false } }
                     }
                 });
             };
 
-            // PDF EXPORT FUNCTIE
-            document.getElementById('downloadPDF').addEventListener('click', async () => {
-                const { jsPDF } = window.jspdf;
-                const element = document.getElementById('reportArea');
-                const btn = document.getElementById('downloadPDF');
-                
-                btn.textContent = "GENERATING REPORT...";
-                
-                try {
-                    const canvas = await html2canvas(element, {
-                        backgroundColor: '#0a0a0a',
-                        scale: 2, // Betere kwaliteit
-                        useCORS: true // Belangrijk voor externe foto's
-                    });
-
-                    const imgData = canvas.toDataURL('image/png');
-                    const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape A4
-                    const imgProps = pdf.getImageProperties(imgData);
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                    pdf.save(`Elite_Report_${activePlayer.bio.name}.pdf`);
-                } catch (err) {
-                    console.error("PDF Error:", err);
-                    alert("Er is een probleem met de export. Controleer of de foto-link beveiligd is.");
-                } finally {
-                    btn.textContent = "Download Elite Report (PDF)";
-                }
-            });
-
-            selector.addEventListener('change', (e) => updateUI(e.target.value));
-            updateUI(players[0].id);
+            selector.addEventListener('change', e => update(e.target.value));
+            update(players[0].id);
         }
-
         init();
     </script>
 </body>
