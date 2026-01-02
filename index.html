@@ -2,88 +2,77 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Pro Analytics | Official POP Report</title>
+    <title>Elite Pro | Intelligence Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
-        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; letter-spacing: -0.02em; }
         .gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; }
-        .skill-row { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 10px 0; display: flex; flex-direction: column; }
-        .skill-info { display: flex; justify-content: space-between; align-items: center; font-size: 11px; text-transform: uppercase; font-weight: 700; }
-        .comment-text { font-size: 10px; color: #888; font-style: italic; margin-top: 4px; text-transform: none; }
-        .score-box { background: rgba(212, 175, 55, 0.1); color: var(--gold); padding: 2px 8px; border-radius: 4px; font-weight: 900; }
+        .persona-badge { background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); color: black; padding: 4px 12px; font-weight: 900; font-size: 10px; border-radius: 4px; text-transform: uppercase; }
     </style>
 </head>
-<body class="p-4 md:p-10">
-
+<body class="p-6">
     <div class="max-w-7xl mx-auto">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-yellow-900/30 pb-8 gap-4">
+        <header class="flex justify-between items-center mb-8 border-b border-yellow-900/30 pb-6">
             <div>
-                <h1 class="text-4xl font-black italic gold-gradient tracking-tighter">ELITE<span class="text-white not-italic font-light">REPORT</span></h1>
-                <p class="text-[9px] uppercase tracking-[0.5em] text-gray-500">Persoonlijk Ontwikkelingsplan Dashboard</p>
+                <h1 class="text-3xl font-black gold-gradient italic">ELITE<span class="text-white not-italic">PRO</span></h1>
+                <p id="personaLabel" class="text-[10px] text-gray-400 tracking-[0.3em] uppercase">Analyzing performance...</p>
             </div>
-            <div class="flex gap-4">
-                <select id="playerSelector" class="bg-black border border-yellow-700/50 text-yellow-500 py-2 px-6 rounded uppercase text-xs font-bold outline-none cursor-pointer"></select>
-                <a href="coach.html" class="bg-yellow-600/10 border border-yellow-600/50 text-yellow-500 py-2 px-6 rounded uppercase text-xs font-bold hover:bg-yellow-600/20 transition">Coach Login</a>
-            </div>
+            <select id="playerSelector" class="bg-black border border-yellow-700/50 text-yellow-500 py-2 px-6 rounded uppercase text-xs font-bold outline-none"></select>
         </header>
 
-        <div id="captureArea" class="bg-[#0a0a0a] p-8 rounded-[2.5rem] border border-yellow-900/20 shadow-2xl">
+        <div id="captureArea" class="bg-[#0a0a0a] p-8 rounded-[2.5rem] border border-yellow-900/10 shadow-2xl">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
-                <div class="lg:col-span-4 space-y-6">
+                <div class="lg:col-span-4 space-y-4">
                     <div class="glass-card overflow-hidden relative group">
-                        <img id="playerPhoto" class="w-full h-96 object-cover" src="" crossorigin="anonymous">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                        <div class="absolute bottom-6 left-6">
-                            <h2 id="pName" class="text-3xl font-black uppercase italic text-white leading-none"></h2>
-                            <p id="pMeta" class="text-yellow-500 font-bold text-[10px] tracking-[0.2em] mt-2"></p>
+                        <img id="playerPhoto" class="w-full h-80 object-cover" src="" crossorigin="anonymous">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <div id="pPersona" class="persona-badge mb-2">PROSPECT</div>
+                            <h2 id="pName" class="text-2xl font-black uppercase text-white"></h2>
+                            <p id="pMeta" class="text-yellow-500 font-bold text-[10px] tracking-widest uppercase"></p>
                         </div>
                     </div>
-                    <div class="glass-card p-8">
+                    <div class="glass-card p-6">
                         <canvas id="radarChart"></canvas>
+                        <p class="text-[8px] text-gray-600 text-center mt-4 uppercase">Geel: Speler | Grijs: Team Gemiddelde</p>
                     </div>
                 </div>
 
                 <div class="lg:col-span-8 space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <div class="glass-card p-6">
-                            <h3 class="text-xs font-black gold-gradient uppercase mb-4 tracking-widest border-b border-white/5 pb-2">Technische Vaardigheden</h3>
-                            <div id="techContainer"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="glass-card p-5">
+                            <h3 class="text-[10px] font-black text-yellow-600 uppercase mb-4 border-b border-white/5 pb-2 italic">Technische Analyse</h3>
+                            <div id="techRows" class="space-y-3"></div>
                         </div>
-
-                        <div class="glass-card p-6">
-                            <h3 class="text-xs font-black gold-gradient uppercase mb-4 tracking-widest border-b border-white/5 pb-2">Fysieke Aspecten</h3>
-                            <div id="fysContainer"></div>
+                        <div class="glass-card p-5">
+                            <h3 class="text-[10px] font-black text-yellow-600 uppercase mb-4 border-b border-white/5 pb-2 italic">Tactiek & Houding</h3>
+                            <div id="tactRows" class="space-y-3"></div>
                         </div>
+                    </div>
 
-                        <div class="glass-card p-6 md:col-span-2">
-                            <h3 class="text-xs font-black gold-gradient uppercase mb-4 tracking-widest border-b border-white/5 pb-2">Mentaal & Houding</h3>
-                            <div id="mentalContainer" class="grid grid-cols-1 md:grid-cols-2 gap-x-8"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="glass-card p-5 md:col-span-2">
+                            <h3 class="text-[10px] font-black text-yellow-600 uppercase mb-2 italic">Focus Ontwikkelplan</h3>
+                            <p id="pGrowth" class="text-xs text-gray-400 italic leading-relaxed"></p>
+                        </div>
+                        <div class="glass-card p-5 flex flex-col justify-center items-center">
+                            <span class="text-[9px] text-gray-500 uppercase">Dominante Voet</span>
+                            <span id="pFootDisplay" class="text-xl font-black text-white uppercase">RECHTS</span>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="mt-8 pt-8 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-4 text-[9px] uppercase tracking-widest text-gray-500">
-                <div>Coach: <span id="pCoach" class="text-white"></span></div>
-                <div>Periode: <span id="pPeriod" class="text-white"></span></div>
-                <div>Datum: <span id="pDate" class="text-white"></span></div>
-                <div class="text-right">Elite Analytics System © 2024</div>
-            </div>
         </div>
 
-        <div class="mt-10 flex justify-center">
-            <button id="downloadBtn" class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-black px-12 py-4 rounded-full text-xs uppercase tracking-[0.3em] hover:scale-105 transition shadow-2xl">
-                Genereer Pro POP Rapport (PDF)
-            </button>
+        <div class="mt-8 flex justify-center gap-4">
+            <button id="downloadBtn" class="bg-yellow-600 text-black font-black px-10 py-3 rounded-full text-[10px] uppercase tracking-widest hover:bg-yellow-500 transition">Download PDF Report</button>
+            <a href="coach.html" class="border border-white/10 px-10 py-3 rounded-full text-[10px] uppercase font-bold text-gray-400 hover:bg-white/5 transition">Coach Panel</a>
         </div>
     </div>
 
@@ -96,73 +85,82 @@
             const selector = document.getElementById('playerSelector');
             if (!players) return;
 
+            // Bereken Team Gemiddelden voor Benchmark
+            const getTeamAvg = () => {
+                const keys = ["Techniek", "Fysiek", "Mentaal", "Tactiek", "Omschakelen"];
+                const avg = {};
+                keys.forEach(k => {
+                    avg[k] = players.reduce((sum, p) => sum + (p.stats[k] || 0), 0) / players.length;
+                });
+                return avg;
+            };
+            const teamAvg = getTeamAvg();
+
             selector.innerHTML = players.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
 
             const update = (id) => {
                 const p = players.find(x => x.id === id);
                 document.getElementById('pName').innerText = p.bio.name;
-                document.getElementById('pMeta').innerText = `${p.bio.team} | ${p.bio.role} | #${p.bio.number}`;
+                document.getElementById('pMeta').innerText = `${p.bio.team} | ${p.bio.role} | EVAL: ${p.bio.date || 'RECENT'}`;
                 document.getElementById('playerPhoto').src = p.bio.photo;
-                
-                // Algemene info onderaan
-                document.getElementById('pCoach').innerText = p.bio.coach || 'N/A';
-                document.getElementById('pPeriod').innerText = p.bio.period || 'N/A';
-                document.getElementById('pDate').innerText = p.bio.date || 'N/A';
+                document.getElementById('pGrowth').innerText = p.analysis.growth || "De focus ligt op de algemene ontwikkeling van de basistechnieken.";
+                document.getElementById('pFootDisplay').innerText = p.bio.foot || "Rechts";
 
-                const r = p.ratings || {};
-                const c = p.comments || {};
+                // Persona Analyse (De 'Elite' Touch)
+                let persona = "Prospect";
+                if(p.ratings.speed > 4 && p.ratings.bal > 4) persona = "Explosive Winger";
+                else if(p.ratings.samen > 4 && p.ratings.pas > 4) persona = "Tactical Engine";
+                else if(p.ratings.schot > 4) persona = "Elite Finisher";
+                document.getElementById('pPersona').innerText = persona;
 
-                // Render functie voor rijen
-                const renderRows = (containerId, keys) => {
-                    const container = document.getElementById(containerId);
-                    container.innerHTML = keys.map(k => `
-                        <div class="skill-row">
-                            <div class="skill-info">
-                                <span>${k.label}</span>
-                                <span class="score-box">${r[k.id] || 0}/5</span>
+                // Render Rijen
+                const render = (container, data) => {
+                    document.getElementById(container).innerHTML = data.map(d => `
+                        <div class="flex justify-between items-center text-[10px]">
+                            <span class="text-gray-400 uppercase font-bold">${d.label}</span>
+                            <div class="flex items-center gap-2">
+                                <div class="w-24 bg-gray-900 h-1.5 rounded-full overflow-hidden">
+                                    <div class="bg-yellow-600 h-full" style="width: ${(d.val/5)*100}%"></div>
+                                </div>
+                                <span class="text-yellow-500 font-black w-4 text-right">${d.val}/5</span>
                             </div>
-                            <div class="comment-text">${c[k.id] || 'Geen opmerkingen.'}</div>
                         </div>
                     `).join('');
                 };
 
-                renderRows('techContainer', [
-                    {id: 'bal', label: 'Balcontrole'},
-                    {id: 'pas', label: 'Passen / Aannemen'},
-                    {id: 'schot', label: 'Schieten / Afwerken'}
+                render('techRows', [
+                    {label: 'Balcontrole', val: p.ratings.bal},
+                    {label: 'Passen/Aanname', val: p.ratings.pas},
+                    {label: 'Schieten/Afw.', val: p.ratings.schot},
+                    {label: 'Linkervoet', val: p.ratings.lfoot},
+                    {label: 'Rechtervoet', val: p.ratings.rfoot}
                 ]);
 
-                renderRows('fysContainer', [
-                    {id: 'speed', label: 'Snelheid'},
-                    {id: 'stamina', label: 'Uithoudingsvermogen'}
+                render('tactRows', [
+                    {label: 'Samenwerken', val: p.ratings.samen},
+                    {label: 'Terugschakelen', val: p.ratings.terug},
+                    {label: 'Inzet/Mentaliteit', val: p.ratings.mental},
+                    {label: 'Coachbaarheid', val: p.ratings.coach}
                 ]);
 
-                renderRows('mentalContainer', [
-                    {id: 'mental', label: 'Inzet & Motivatie'},
-                    {id: 'coach', label: 'Coachbaarheid'}
-                ]);
-
-                renderChart(p.stats);
+                renderRadar(p.stats, teamAvg);
             };
 
-            const renderChart = (stats) => {
+            const renderRadar = (pStats, tAvg) => {
                 const ctx = document.getElementById('radarChart');
                 if (chart) chart.destroy();
                 chart = new Chart(ctx, {
                     type: 'radar',
                     data: {
-                        labels: Object.keys(stats),
-                        datasets: [{
-                            data: Object.values(stats),
-                            backgroundColor: 'rgba(212, 175, 55, 0.2)',
-                            borderColor: '#D4AF37',
-                            borderWidth: 2,
-                            pointBackgroundColor: '#F9E272'
-                        }]
+                        labels: Object.keys(pStats),
+                        datasets: [
+                            { label: 'Speler', data: Object.values(pStats), backgroundColor: 'rgba(212, 175, 55, 0.3)', borderColor: '#D4AF37', borderWidth: 2 },
+                            { label: 'Team', data: Object.values(tAvg), backgroundColor: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255,255,255,0.2)', borderWidth: 1, borderDash: [5,5] }
+                        ]
                     },
                     options: { 
-                        scales: { r: { angleLines: {color: '#333'}, grid: { color: '#333' }, ticks: { display: false }, suggestedMin: 0, suggestedMax: 100 } },
-                        plugins: { legend: { display: false } } 
+                        scales: { r: { grid: { color: '#222' }, angleLines: { color: '#222' }, ticks: { display: false }, suggestedMin: 0, suggestedMax: 100 } },
+                        plugins: { legend: { display: false } }
                     }
                 });
             };
@@ -171,9 +169,8 @@
                 const area = document.getElementById('captureArea');
                 const canvas = await html2canvas(area, { backgroundColor: '#0a0a0a', scale: 2, useCORS: true });
                 const pdf = new jspdf.jsPDF('l', 'mm', 'a4');
-                const width = pdf.internal.pageSize.getWidth();
-                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, width, (canvas.height * width) / canvas.width);
-                pdf.save(`POP_REPORT_${document.getElementById('pName').innerText}.pdf`);
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 297, 210);
+                pdf.save(`ELITE_REPORT_${document.getElementById('pName').innerText}.pdf`);
             });
 
             selector.addEventListener('change', e => update(e.target.value));
