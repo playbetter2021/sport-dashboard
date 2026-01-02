@@ -3,186 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coach Command | Player Evaluation Elite</title>
+    <title>Coach Command | Elite Evaluation System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
-        body { 
-            background-color: var(--obsidian); 
-            background-image: radial-gradient(circle at 50% 100%, #1a1a1a 0%, #0a0a0a 100%);
-            color: #d1d1d1;
-        }
-        .gold-gradient-text {
-            background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .input-field {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            padding: 0.75rem;
-            width: 100%;
-            border-radius: 4px;
-            color: white;
-            transition: all 0.3s ease;
-        }
-        .input-field:focus {
-            border-color: var(--gold);
-            outline: none;
-            background: rgba(255, 255, 255, 0.07);
-        }
-        .section-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 2rem;
-            border-radius: 1rem;
-        }
-        .slider-gold {
-            accent-color: var(--gold);
-            width: 100%;
-        }
+        body { background-color: var(--obsidian); color: #d1d1d1; font-family: 'Inter', sans-serif; }
+        .gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .input-luxe { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(212, 175, 55, 0.2); color: white; }
+        .input-luxe:focus { border-color: var(--gold); outline: none; background: rgba(255, 255, 255, 0.07); }
+        .card-elite { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.5rem; }
+        .slider-gold { accent-color: var(--gold); }
     </style>
 </head>
-<body class="p-4 md:p-12">
+<body class="p-4 md:p-10">
 
-    <div class="max-w-5xl mx-auto">
-        <header class="mb-10 text-center md:text-left border-b border-yellow-900/30 pb-8">
-            <h1 class="text-4xl font-black italic gold-gradient-text tracking-tighter">PLAYER<span class="text-white not-italic font-light">EVALUATION</span></h1>
-            <p class="text-[10px] uppercase tracking-[0.5em] text-gray-500 mt-2">Elite Scouting & Performance Management System</p>
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-12 border-b border-yellow-900/30 pb-8 flex justify-between items-end">
+            <div>
+                <h1 class="text-4xl font-black italic gold-gradient tracking-tighter uppercase">Coach<span class="text-white not-italic font-light">Command</span></h1>
+                <p class="text-[10px] uppercase tracking-[0.4em] text-gray-500 mt-2">Spelersvolgsysteem & Voortgangsanalyse</p>
+            </div>
+            <a href="index.html" class="text-[10px] border border-yellow-700/50 px-6 py-2 hover:bg-yellow-700/10 transition uppercase tracking-widest text-white">Dashboard</a>
         </header>
 
         <form id="evalForm" class="space-y-8">
             
-            <div class="section-card grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="md:col-span-3 border-b border-yellow-900/20 pb-2 mb-2">
-                    <h2 class="text-xs font-bold uppercase tracking-widest text-yellow-600">1. Algemene Informatie</h2>
-                </div>
-                <div>
-                    <label class="text-[10px] uppercase mb-1 block">Volledige Naam</label>
-                    <input type="text" id="playerName" class="input-field" placeholder="Bijv. Kylian Mbappé" required>
-                </div>
-                <div>
-                    <label class="text-[10px] uppercase mb-1 block">Positie</label>
-                    <select id="playerPosition" class="input-field">
-                        <option value="Keeper">Keeper</option>
-                        <option value="Verdediger">Verdediger</option>
-                        <option value="Middenvelder">Middenvelder</option>
-                        <option value="Aanvaller">Aanvaller</option>
+            <div class="card-elite p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-3 border-b border-yellow-900/20 pb-2"><h2 class="text-xs font-bold uppercase tracking-widest text-yellow-600">1. Identificatie Asset</h2></div>
+                <div><label class="text-[10px] uppercase mb-1 block">Naam Speler</label><input type="text" id="pName" class="w-full input-luxe p-3 rounded" required></div>
+                <div><label class="text-[10px] uppercase mb-1 block">Positie</label>
+                    <select id="pPos" class="w-full input-luxe p-3 rounded">
+                        <option>KEEPER</option><option>VERDEDIGER</option><option>MIDDENVELDER</option><option>AANVALLER</option>
                     </select>
                 </div>
-                <div>
-                    <label class="text-[10px] uppercase mb-1 block">Rugnummer</label>
-                    <input type="number" id="playerNum" class="input-field" placeholder="10">
+                <div><label class="text-[10px] uppercase mb-1 block">Rugnummer</label><input type="number" id="pNum" class="w-full input-luxe p-3 rounded"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="card-elite p-8 space-y-4 border-l-4 border-l-blue-500/30">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold uppercase tracking-widest text-white">Algemeen</h3>
+                        <span class="text-2xl font-black text-yellow-500" id="val_alg">3</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 italic">Mentaliteit, leerhouding, initiatief en gedrag.</p>
+                    <input type="range" id="s_alg" min="1" max="6" value="3" class="w-full slider-gold" oninput="val_alg.innerText = this.value">
+                    <textarea id="n_alg" class="w-full input-luxe p-3 rounded text-sm h-24" placeholder="Toelichting over gedrag en inzet..."></textarea>
+                </div>
+
+                <div class="card-elite p-8 space-y-4 border-l-4 border-l-green-500/30">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold uppercase tracking-widest text-white">Techniek</h3>
+                        <span class="text-2xl font-black text-yellow-500" id="val_tech">3</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 italic">Passen, balbeheersing, passeeracties en handelingssnelheid.</p>
+                    <input type="range" id="s_tech" min="1" max="6" value="3" class="w-full slider-gold" oninput="val_tech.innerText = this.value">
+                    <textarea id="n_tech" class="w-full input-luxe p-3 rounded text-sm h-24" placeholder="Toelichting over balvaardigheid..."></textarea>
+                </div>
+
+                <div class="card-elite p-8 space-y-4 border-l-4 border-l-red-500/30">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold uppercase tracking-widest text-white">Tactiek</h3>
+                        <span class="text-2xl font-black text-yellow-500" id="val_tact">3</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 italic">Balbezit (eigen/tegenstander) en omschakeling.</p>
+                    <input type="range" id="s_tact" min="1" max="6" value="3" class="w-full slider-gold" oninput="val_tact.innerText = this.value">
+                    <textarea id="n_tact" class="w-full input-luxe p-3 rounded text-sm h-24" placeholder="Toelichting over spelinzicht..."></textarea>
+                </div>
+
+                <div class="card-elite p-8 space-y-4 border-l-4 border-l-yellow-500/30">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold uppercase tracking-widest text-white">Fysiek</h3>
+                        <span class="text-2xl font-black text-yellow-500" id="val_fys">3</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 italic">Uithoudingsvermogen, snelheid, motoriek en duelkracht.</p>
+                    <input type="range" id="s_fys" min="1" max="6" value="3" class="w-full slider-gold" oninput="val_fys.innerText = this.value">
+                    <textarea id="n_fys" class="w-full input-luxe p-3 rounded text-sm h-24" placeholder="Toelichting over fysieke gesteldheid..."></textarea>
                 </div>
             </div>
 
-            <div class="section-card">
-                <div class="border-b border-yellow-900/20 pb-2 mb-6">
-                    <h2 class="text-xs font-bold uppercase tracking-widest text-yellow-600">2. Performance Matrix (1-6)</h2>
+            <div class="card-elite p-8 flex flex-col md:flex-row gap-6 items-end">
+                <div class="flex-1 w-full">
+                    <label class="text-[9px] uppercase mb-1 block text-gray-500">GitHub Access Token</label>
+                    <input type="password" id="ghToken" class="w-full input-luxe p-3 rounded text-xs" required placeholder="ghp_...">
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-                    <div class="flex flex-col gap-2">
-                        <div class="flex justify-between text-[10px] uppercase font-bold tracking-widest">
-                            <span>Snelheid & Agility</span>
-                            <span class="text-yellow-500" id="val_speed">3</span>
-                        </div>
-                        <input type="range" id="s_speed" min="1" max="6" value="3" class="slider-gold" oninput="val_speed.innerText = this.value">
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <div class="flex justify-between text-[10px] uppercase font-bold tracking-widest">
-                            <span>Balgevoel & Techniek</span>
-                            <span class="text-yellow-500" id="val_tech">3</span>
-                        </div>
-                        <input type="range" id="s_tech" min="1" max="6" value="3" class="slider-gold" oninput="val_tech.innerText = this.value">
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <div class="flex justify-between text-[10px] uppercase font-bold tracking-widest">
-                            <span>Tactisch Inzicht</span>
-                            <span class="text-yellow-500" id="val_tactic">3</span>
-                        </div>
-                        <input type="range" id="s_tactic" min="1" max="6" value="3" class="slider-gold" oninput="val_tactic.innerText = this.value">
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <div class="flex justify-between text-[10px] uppercase font-bold tracking-widest">
-                            <span>Mentale Weerbaarheid</span>
-                            <span class="text-yellow-500" id="val_mental">3</span>
-                        </div>
-                        <input type="range" id="s_mental" min="1" max="6" value="3" class="slider-gold" oninput="val_mental.innerText = this.value">
-                    </div>
+                <div class="flex-1 w-full">
+                    <label class="text-[9px] uppercase mb-1 block text-gray-500">Repo Pad</label>
+                    <input type="text" id="ghRepo" class="w-full input-luxe p-3 rounded text-xs" value="playbetter2021/sport-dashboard">
                 </div>
+                <button type="submit" class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-black uppercase tracking-widest py-4 px-12 rounded hover:scale-105 transition duration-300 w-full md:w-auto">
+                    Data Synchroniseren
+                </button>
             </div>
-
-            <div class="section-card grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="md:col-span-2 border-b border-yellow-900/20 pb-2 mb-2">
-                    <h2 class="text-xs font-bold uppercase tracking-widest text-yellow-600">3. Kwalitatieve Analyse</h2>
-                </div>
-                <div>
-                    <label class="text-[10px] uppercase mb-2 block font-bold text-green-500">Sterke Punten (Assets)</label>
-                    <textarea id="strengths" rows="4" class="input-field italic text-sm" placeholder="Wat maakt deze speler uniek?"></textarea>
-                </div>
-                <div>
-                    <label class="text-[10px] uppercase mb-2 block font-bold text-red-500">Verbeterpunten (Growth)</label>
-                    <textarea id="weaknesses" rows="4" class="input-field italic text-sm" placeholder="Waar moet de komende tijd op getraind worden?"></textarea>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="text-[10px] uppercase mb-2 block font-bold text-yellow-500">Conclusie Voortgangsgesprek</label>
-                    <textarea id="notes" rows="3" class="input-field italic text-sm" placeholder="Belangrijkste afspraken uit het gesprek..."></textarea>
-                </div>
-            </div>
-
-            <div class="section-card">
-                <div class="flex flex-col md:flex-row gap-4 items-end">
-                    <div class="flex-1 w-full">
-                        <label class="text-[9px] uppercase mb-1 block text-gray-500">GitHub Token</label>
-                        <input type="password" id="ghToken" class="input-field text-xs" placeholder="ghp_xxxxxxxxxxxx">
-                    </div>
-                    <div class="flex-1 w-full">
-                        <label class="text-[9px] uppercase mb-1 block text-gray-500">Repo Path</label>
-                        <input type="text" id="ghRepo" class="input-field text-xs" value="playbetter2021/sport-dashboard">
-                    </div>
-                    <button type="submit" class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-black uppercase tracking-widest py-3 px-10 rounded text-sm hover:scale-105 transition duration-300 w-full md:w-auto">
-                        Opslaan & Sync
-                    </button>
-                </div>
-            </div>
-
         </form>
     </div>
 
     <script>
         document.getElementById('evalForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const btn = e.target.querySelector('button');
-            btn.innerText = "Bezig met Sync...";
-            
+            const originalText = btn.innerText;
+            btn.innerText = "BEZIG MET SYNC...";
+
             const playerEntry = {
                 id: "p_" + Date.now(),
                 bio: {
-                    name: document.getElementById('playerName').value.toUpperCase(),
-                    role: document.getElementById('playerPosition').value,
-                    number: document.getElementById('playerNum').value
+                    name: document.getElementById('pName').value.toUpperCase(),
+                    role: document.getElementById('pPos').value,
+                    number: document.getElementById('pNum').value,
+                    photo: "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=ELITE+ASSET"
                 },
-                scores: {
-                    speed: document.getElementById('s_speed').value,
-                    tech: document.getElementById('s_tech').value,
-                    tactic: document.getElementById('s_tactic').value,
-                    mental: document.getElementById('s_mental').value
+                stats: {
+                    "Algemeen": parseInt(document.getElementById('s_alg').value) * 16.6, // Schaal naar 100 voor grafiek
+                    "Techniek": parseInt(document.getElementById('s_tech').value) * 16.6,
+                    "Tactiek": parseInt(document.getElementById('s_tact').value) * 16.6,
+                    "Fysiek": parseInt(document.getElementById('s_fys').value) * 16.6
                 },
-                analysis: {
-                    strengths: document.getElementById('strengths').value,
-                    weaknesses: document.getElementById('weaknesses').value,
-                    notes: document.getElementById('notes').value
+                coach_notes: {
+                    algemeen: document.getElementById('n_alg').value,
+                    techniek: document.getElementById('n_tech').value,
+                    tactiek: document.getElementById('n_tact').value,
+                    fysiek: document.getElementById('n_fys').value
                 },
                 date: new Date().toLocaleDateString('nl-NL')
             };
 
-            // Hier komt de GitHub Sync logica (zoals in de vorige stappen uitgelegd)
-            // ... fetch(url) -> atob() -> push -> btoa() -> fetch(PUT) ...
-            
-            console.log("Data klaar voor verzending:", playerEntry);
-            alert("Evaluatie opgeslagen voor " + playerEntry.bio.name);
-            btn.innerText = "Opslaan & Sync";
+            const token = document.getElementById('ghToken').value;
+            const repo = document.getElementById('ghRepo').value;
+            const path = "data/players.json";
+
+            try {
+                const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+                const getRes = await fetch(url, { headers: { "Authorization": `token ${token}` } });
+                const fileData = await getRes.json();
+                
+                let players = JSON.parse(atob(fileData.content));
+                players.push(playerEntry);
+
+                const putRes = await fetch(url, {
+                    method: "PUT",
+                    headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        message: `Evaluatie toegevoegd: ${playerEntry.bio.name}`,
+                        content: btoa(unescape(encodeURIComponent(JSON.stringify(players, null, 2)))),
+                        sha: fileData.sha
+                    })
+                });
+
+                if(putRes.ok) {
+                    alert("Evaluatie succesvol opgeslagen!");
+                    e.target.reset();
+                } else {
+                    throw new Error("GitHub weigert de update.");
+                }
+            } catch (err) {
+                alert("Fout bij synchroniseren: " + err.message);
+            } finally {
+                btn.innerText = originalText;
+            }
         });
     </script>
 </body>
