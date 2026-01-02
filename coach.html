@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite POP | Coach Command</title>
+    <title>Elite POP System | Coach Command</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
@@ -13,93 +13,132 @@
         .input-luxe:focus { border-color: var(--gold); outline: none; background: rgba(255, 255, 255, 0.07); }
         .section-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 25px; border-radius: 1.5rem; margin-bottom: 2rem; }
         .slider-gold { accent-color: var(--gold); height: 8px; width: 100%; cursor: pointer; }
-        .score-num { color: var(--gold); font-weight: 900; font-size: 1.2rem; min-width: 20px; text-align: right; }
+        .score-num { color: var(--gold); font-weight: 900; font-size: 1.2rem; min-width: 25px; text-align: right; }
         h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 8px; margin-bottom: 20px; }
+        label { font-size: 10px; text-transform: uppercase; color: #888; font-weight: bold; margin-bottom: 4px; display: block; }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
     <div class="max-w-6xl mx-auto">
-        <header class="mb-10 border-b border-yellow-900/30 pb-8">
-            <h1 class="text-4xl font-black italic gold-gradient tracking-tighter uppercase">Elite<span class="text-white not-italic font-light">POP System</span></h1>
-            <p class="text-[10px] uppercase tracking-[0.4em] text-gray-500 mt-2">Persoonlijk Ontwikkelingsplan & Evaluatie</p>
+        <header class="mb-10 border-b border-yellow-900/30 pb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-4xl font-black italic gold-gradient tracking-tighter uppercase">Elite<span class="text-white not-italic font-light">POP</span></h1>
+                <p class="text-[10px] uppercase tracking-[0.4em] text-gray-500 mt-2">Professional Player Assessment System</p>
+            </div>
+            <a href="index.html" class="text-[10px] border border-yellow-700/50 px-6 py-2 hover:bg-yellow-700/10 transition uppercase text-white font-bold tracking-widest">Dashboard</a>
         </header>
 
         <form id="popForm" class="space-y-8">
             
             <div class="section-card">
                 <h3>1. Algemene Gegevens</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <input type="text" id="pName" placeholder="Naam Speler" class="input-luxe" required>
-                    <input type="text" id="pTeam" placeholder="Team / Leeftijdscategorie" class="input-luxe">
-                    <input type="text" id="pPos" placeholder="Positie" class="input-luxe">
-                    <input type="text" id="pCoach" placeholder="Trainer / Coach" class="input-luxe">
-                    <input type="text" id="pPeriod" placeholder="Periode (bijv. Seizoenshelft)" class="input-luxe">
-                    <input type="date" id="pDate" class="input-luxe">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="section-card">
-                    <h3>Technische Vaardigheden (1-5)</h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center"><span class="text-xs uppercase">Balcontrole</span><span id="v_bal" class="score-num">3</span></div>
-                        <input type="range" id="s_bal" min="1" max="5" value="3" class="slider-gold" oninput="v_bal.innerText = this.value">
-                        
-                        <div class="flex justify-between items-center"><span class="text-xs uppercase">Passen</span><span id="v_pas" class="score-num">3</span></div>
-                        <input type="range" id="s_pas" min="1" max="5" value="3" class="slider-gold" oninput="v_pas.innerText = this.value">
-                        
-                        <div class="flex justify-between items-center"><span class="text-xs uppercase">Schieten</span><span id="v_schot" class="score-num">3</span></div>
-                        <input type="range" id="s_schot" min="1" max="5" value="3" class="slider-gold" oninput="v_schot.innerText = this.value">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label>Naam Speler</label>
+                        <input type="text" id="pName" placeholder="Volledige naam" class="input-luxe" required>
                     </div>
-                </div>
-
-                <div class="section-card">
-                    <h3>Tactisch Inzicht (1-5)</h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center"><span class="text-xs uppercase">Positiespel</span><span id="v_pos" class="score-num">3</span></div>
-                        <input type="range" id="s_pos" min="1" max="5" value="3" class="slider-gold" oninput="v_pos.innerText = this.value">
-                        
-                        <div class="flex justify-between items-center"><span class="text-xs uppercase">Vrijlopen</span><span id="v_vrij" class="score-num">3</span></div>
-                        <input type="range" id="s_vrij" min="1" max="5" value="3" class="slider-gold" oninput="v_vrij.innerText = this.value">
-                        
-                        <div class="flex justify-between items-center"><span class="text-xs uppercase">Omschakeling</span><span id="v_oms" class="score-num">3</span></div>
-                        <input type="range" id="s_oms" min="1" max="5" value="3" class="slider-gold" oninput="v_oms.innerText = this.value">
+                    <div>
+                        <label>Team / Leeftijdscategorie</label>
+                        <select id="pTeam" class="input-luxe">
+                            <option value="U13">U13 (O13)</option>
+                            <option value="U15">U15 (O15)</option>
+                            <option value="U17">U17 (O17)</option>
+                            <option value="U19">U19 (O19)</option>
+                            <option value="Senior">Senioren / Selectie</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Positie</label>
+                        <select id="pPos" class="input-luxe">
+                            <option value="Keeper">Keeper</option>
+                            <option value="Verdediger">Verdediger</option>
+                            <option value="Middenvelder">Middenvelder</option>
+                            <option value="Aanvaller">Aanvaller</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Trainer / Coach</label>
+                        <input type="text" id="pCoach" placeholder="Naam trainer" class="input-luxe">
+                    </div>
+                    <div>
+                        <label>Periode</label>
+                        <select id="pPeriod" class="input-luxe">
+                            <option value="Start-seizoen">Start seizoen</option>
+                            <option value="1e Seizoenshelft">1e Seizoenshelft (Winter)</option>
+                            <option value="2e Seizoenshelft">2e Seizoenshelft (Einde)</option>
+                            <option value="Tussenmeting">Tussenmeting</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Datum Evaluatie</label>
+                        <input type="date" id="pDate" class="input-luxe">
                     </div>
                 </div>
             </div>
 
             <div class="section-card">
-                <h3>Sterktes & Ontwikkelpunten</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <textarea id="strengths" placeholder="Wat zijn de sterke punten van de speler?" class="input-luxe h-32"></textarea>
-                    <textarea id="growth" placeholder="Waar liggen de ontwikkelpunten?" class="input-luxe h-32"></textarea>
-                </div>
-            </div>
-
-            <div class="section-card">
-                <h3>Persoonlijke Ontwikkeldoelen (POP)</h3>
+                <h3>Technische Vaardigheden (1-5)</h3>
                 <div class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-white/5 pb-4">
-                        <input type="text" id="goal1" placeholder="Doel 1" class="input-luxe">
-                        <input type="text" id="action1" placeholder="Acties / Training" class="input-luxe">
-                        <input type="text" id="time1" placeholder="Tijdspad" class="input-luxe">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-white/5 pb-4">
+                        <div class="flex justify-between items-center pr-4"><span class="text-xs font-bold">Balcontrole</span><span id="v_bal" class="score-num">3</span></div>
+                        <input type="range" id="s_bal" min="1" max="5" value="3" class="slider-gold" oninput="v_bal.innerText = this.value">
+                        <input type="text" id="o_bal" placeholder="Opmerkingen balcontrole" class="input-luxe text-xs">
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input type="text" id="goal2" placeholder="Doel 2" class="input-luxe">
-                        <input type="text" id="action2" placeholder="Acties / Training" class="input-luxe">
-                        <input type="text" id="time2" placeholder="Tijdspad" class="input-luxe">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-white/5 pb-4">
+                        <div class="flex justify-between items-center pr-4"><span class="text-xs font-bold">Passen</span><span id="v_pas" class="score-num">3</span></div>
+                        <input type="range" id="s_pas" min="1" max="5" value="3" class="slider-gold" oninput="v_pas.innerText = this.value">
+                        <input type="text" id="o_pas" placeholder="Opmerkingen passen" class="input-luxe text-xs">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-white/5 pb-4">
+                        <div class="flex justify-between items-center pr-4"><span class="text-xs font-bold">Schieten / Afwerken</span><span id="v_schot" class="score-num">3</span></div>
+                        <input type="range" id="s_schot" min="1" max="5" value="3" class="slider-gold" oninput="v_schot.innerText = this.value">
+                        <input type="text" id="o_schot" placeholder="Opmerkingen schieten" class="input-luxe text-xs">
                     </div>
                 </div>
             </div>
 
-            <div class="section-card grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="password" id="ghToken" placeholder="GitHub Access Token" class="input-luxe text-xs" required>
-                <button type="submit" class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-black uppercase tracking-widest py-4 rounded shadow-2xl hover:scale-[1.01] transition">
-                    Verwerk POP & Sync Cloud
+            <div class="section-card">
+                <h3>Fysieke Aspecten (1-5)</h3>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-white/5 pb-4">
+                        <div class="flex justify-between items-center pr-4"><span class="text-xs font-bold">Snelheid</span><span id="v_speed" class="score-num">3</span></div>
+                        <input type="range" id="s_speed" min="1" max="5" value="3" class="slider-gold" oninput="v_speed.innerText = this.value">
+                        <input type="text" id="o_speed" placeholder="Opmerkingen snelheid" class="input-luxe text-xs">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-white/5 pb-4">
+                        <div class="flex justify-between items-center pr-4"><span class="text-xs font-bold">Uithoudingsvermogen</span><span id="v_stamina" class="score-num">3</span></div>
+                        <input type="range" id="s_stamina" min="1" max="5" value="3" class="slider-gold" oninput="v_stamina.innerText = this.value">
+                        <input type="text" id="o_stamina" placeholder="Opmerkingen conditie" class="input-luxe text-xs">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h3>Mentaal & Houding (1-5)</h3>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-white/5 pb-4">
+                        <div class="flex justify-between items-center pr-4"><span class="text-xs font-bold">Inzet & Motivatie</span><span id="v_mental" class="score-num">3</span></div>
+                        <input type="range" id="s_mental" min="1" max="5" value="3" class="slider-gold" oninput="v_mental.innerText = this.value">
+                        <input type="text" id="o_mental" placeholder="Opmerkingen inzet" class="input-luxe text-xs">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-b border-white/5 pb-4">
+                        <div class="flex justify-between items-center pr-4"><span class="text-xs font-bold">Coachbaarheid</span><span id="v_coach" class="score-num">3</span></div>
+                        <input type="range" id="s_coach" min="1" max="5" value="3" class="slider-gold" oninput="v_coach.innerText = this.value">
+                        <input type="text" id="o_coach" placeholder="Opmerkingen houding" class="input-luxe text-xs">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card flex flex-col md:flex-row gap-4 items-end">
+                <div class="flex-1 w-full">
+                    <label>GitHub Access Token</label>
+                    <input type="password" id="ghToken" class="input-luxe text-xs" required placeholder="ghp_xxxxxxxx">
+                </div>
+                <button type="submit" class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-black uppercase tracking-widest py-4 px-10 rounded shadow-2xl hover:scale-[1.01] transition w-full md:w-auto">
+                    Verwerk Elite POP
                 </button>
             </div>
-
         </form>
     </div>
 
@@ -107,10 +146,10 @@
         document.getElementById('popForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = e.target.querySelector('button');
-            btn.innerText = "BEZIG MET SYNCHRONISEREN...";
+            btn.innerText = "SYNCHRONISEREN...";
 
             const popData = {
-                id: "pop_" + Date.now(),
+                id: "p_" + Date.now(),
                 bio: {
                     name: document.getElementById('pName').value,
                     team: document.getElementById('pTeam').value,
@@ -118,29 +157,28 @@
                     coach: document.getElementById('pCoach').value,
                     period: document.getElementById('pPeriod').value,
                     date: document.getElementById('pDate').value,
-                    photo: "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=ELITE+ASSET"
+                    photo: "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=PLAYER"
                 },
                 ratings: {
-                    balcontrole: document.getElementById('s_bal').value,
-                    passen: document.getElementById('s_pas').value,
-                    schieten: document.getElementById('s_schot').value,
-                    positiespel: document.getElementById('s_pos').value,
-                    vrijlopen: document.getElementById('s_vrij').value,
-                    omschakeling: document.getElementById('s_oms').value
+                    bal: document.getElementById('s_bal').value,
+                    pas: document.getElementById('s_pas').value,
+                    schot: document.getElementById('s_schot').value,
+                    speed: document.getElementById('s_speed').value,
+                    stamina: document.getElementById('s_stamina').value,
+                    mental: document.getElementById('s_mental').value
                 },
-                analysis: {
-                    sterktes: document.getElementById('strengths').value,
-                    ontwikkelpunten: document.getElementById('growth').value
+                comments: {
+                    bal: document.getElementById('o_bal').value,
+                    pas: document.getElementById('o_pas').value,
+                    schot: document.getElementById('o_schot').value,
+                    speed: document.getElementById('o_speed').value,
+                    stamina: document.getElementById('o_stamina').value,
+                    mental: document.getElementById('o_mental').value
                 },
-                goals: [
-                    { goal: document.getElementById('goal1').value, action: document.getElementById('action1').value, time: document.getElementById('time1').value },
-                    { goal: document.getElementById('goal2').value, action: document.getElementById('action2').value, time: document.getElementById('time2').value }
-                ],
-                // Voor de radar chart op de index (schaal 0-100)
                 stats: {
                     "Techniek": Math.round((parseInt(document.getElementById('s_bal').value) + parseInt(document.getElementById('s_pas').value)) * 10),
-                    "Tactiek": Math.round((parseInt(document.getElementById('s_pos').value) + parseInt(document.getElementById('s_vrij').value)) * 10),
-                    "Omschakeling": parseInt(document.getElementById('s_oms').value) * 20
+                    "Fysiek": Math.round((parseInt(document.getElementById('s_speed').value) + parseInt(document.getElementById('s_stamina').value)) * 10),
+                    "Mentaal": parseInt(document.getElementById('s_mental').value) * 20
                 }
             };
 
@@ -159,17 +197,17 @@
                     method: "PUT",
                     headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        message: `POP Update: ${popData.bio.name}`,
+                        message: `Elite POP: ${popData.bio.name}`,
                         content: btoa(unescape(encodeURIComponent(JSON.stringify(players, null, 2)))),
                         sha: fileData.sha
                     })
                 });
 
                 alert("POP succesvol gesynchroniseerd!");
-                btn.innerText = "Verwerk POP & Sync Cloud";
+                btn.innerText = "Verwerk Elite POP";
             } catch (err) {
-                alert("Sync mislukt: " + err.message);
-                btn.innerText = "Verwerk POP & Sync Cloud";
+                alert("Fout: " + err.message);
+                btn.innerText = "Verwerk Elite POP";
             }
         });
     </script>
