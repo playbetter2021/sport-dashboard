@@ -67,5 +67,41 @@
       80
     ],
     "status": "ACTIVE"
+  },
+  {
+    "id": "p_1767355820730",
+    "bio": {
+      "name": "DAVID",
+      "team": "U13",
+      "role": "Verdediger",
+      "foot": "Rechts",
+      "period": "1e Seizoenshelft",
+      "date": "2026-01-01",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=david",
+      "number": 32
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "3",
+      "schot": "4",
+      "lfoot": "3",
+      "rfoot": "4",
+      "samen": "4",
+      "pos": "3",
+      "terug": "4",
+      "fys": "4",
+      "mental": "4"
+    },
+    "analysis": {
+      "strengths": "test",
+      "growth": "test"
+    },
+    "stats": {
+      "Techniek": 70,
+      "Tactiek": 70,
+      "Omschakelen": 80,
+      "Fysiek": 80,
+      "Mentaal": 80
+    }
   }
 ]
