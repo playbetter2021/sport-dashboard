@@ -1,19 +1,30 @@
+/**
+ * Elite Pro Data Provider
+ * Verantwoordelijk voor het ophalen van de meest recente spelersdata.
+ */
+
 const DataProvider = {
     async getAllPlayers() {
         try {
-            // We gebruiken een relatief pad zonder slash aan het begin
-            // zodat het werkt binnen de 'sport-dashboard' map op GitHub Pages
-            const response = await fetch('data/players.json');
+            // We voegen '?t=' met een uniek tijdstempel toe aan de URL.
+            // Dit dwingt de browser om de cache te negeren en de 
+            // allernieuwste versie van players.json van GitHub te halen.
+            const timestamp = new Date().getTime();
+            const response = await fetch(`data/players.json?t=${timestamp}`);
             
             if (!response.ok) {
-                throw new Error(`Cloud Data niet bereikbaar: ${response.status}`);
+                console.error("Cloud Database kon niet worden bereikt.");
+                return [];
             }
-            
+
             const data = await response.json();
-            console.log("Elite Data succesvol geladen:", data);
+            
+            // Debugging: bekijk in de console of de data binnenkomt
+            console.log("Elite Cloud Data succesvol geladen:", data);
+            
             return data;
         } catch (error) {
-            console.error("Systeemfout bij laden data:", error);
+            console.error("Kritieke fout bij het laden van data:", error);
             return [];
         }
     }
