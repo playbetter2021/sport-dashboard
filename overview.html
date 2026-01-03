@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Elite Pro | Team Intelligence Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
+        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
+        .gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1rem; transition: all 0.3s ease; }
+        .trend-up { color: #22c55e; }
+        .trend-down { color: #ef4444; }
+        .trend-steady { color: #6b7280; }
+        .mini-chart { height: 50px !important; width: 120px !important; }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-[1600px] mx-auto">
+        <header class="flex justify-between items-center mb-10 border-b border-white/5 pb-6">
+            <div>
+                <h1 class="text-3xl font-black italic gold-gradient uppercase tracking-tighter">Elite<span class="text-white not-italic">Hub</span></h1>
+                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-[0.3em]">Team Groei & Stagnatie Analyse 2026</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="index.html" class="px-5 py-2 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/5 transition">Dashboard</a>
+                <a href="planner.html" class="px-5 py-2 bg-yellow-600/10 border border-yellow-600/30 rounded-full text-[10px] font-bold uppercase text-yellow-500 transition">Squad Planner</a>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div class="glass-card p-6 border-l-4 border-yellow-600">
+                <p class="text-[10px] text-gray-500 uppercase font-black">Team Gemiddelde</p>
+                <div id="avgScore" class="text-3xl font-black text-white">0%</div>
+            </div>
+            <div class="glass-card p-6 border-l-4 border-green-500">
+                <p class="text-[10px] text-gray-500 uppercase font-black">Grootste Groeier</p>
+                <div id="topGrower" class="text-xl font-black text-white uppercase italic">-</div>
+            </div>
+            <div class="glass-card p-6 border-l-4 border-red-500">
+                <p class="text-[10px] text-gray-500 uppercase font-black">Kritieke Stagnatie</p>
+                <div id="topStagnator" class="text-xl font-black text-white uppercase italic">-</div>
+            </div>
+            <div class="glass-card p-6 border-l-4 border-blue-500">
+                <p class="text-[10px] text-gray-500 uppercase font-black">Selectie Potentieel</p>
+                <div id="selectionCap" class="text-3xl font-black text-white">0</div>
+            </div>
+        </div>
+
+        <div class="glass-card overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-white/5 text-[10px] uppercase font-black text-gray-500 border-b border-white/10">
+                    <tr>
+                        <th class="p-6">Speler</th>
+                        <th class="p-6">Start</th>
+                        <th class="p-6">Winter</th>
+                        <th class="p-6">Eind (Nu)</th>
+                        <th class="p-6">Totaal Groei</th>
+                        <th class="p-6">Trend Curve</th>
+                        <th class="p-6 text-right">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="hubBody" class="divide-y divide-white/5">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module">
+        import DataProvider from './js/data_provider.js';
+
+        async function init() {
+            const players = await DataProvider.getAllPlayers();
+            if(!players.length) return;
+
+            const calcIndex = (p) => {
+                if(!p.obj || !p.ratings) return 0;
+                const obj = Math.round((p.obj.attendance * 0.4) + ((p.obj.minutes / 1500) * 100 * 0.6));
+                const coach = Math.round((Object.values(p.ratings).reduce((a,b)=>parseInt(a)+parseInt(b),0)/(Object.keys(p.ratings).length*5))*100);
+                const tech = p.stats?.Techniek || 50;
+                return Math.round((obj * 0.65) + (tech * 0.20) + (coach * 0.15));
+            };
+
+            const hubBody = document.getElementById('hubBody');
+            let totalTeamScore = 0;
+            let grower = { name: '', val: -999 };
+            let stagnator = { name: '', val: 999 };
+            let eliteCount = 0;
+
+            players.forEach((p, idx) => {
+                const s1 = p.history?.["1e seizoenshelft"] ? calcIndex({...p, ...p.history["1e seizoenshelft"], ratings: p.history["1e seizoenshelft"].ratings}) : null;
+                const s2 = p.history?.["2e seizoenshelft"] ? calcIndex({...p, ...p.history["2e seizoenshelft"], ratings: p.history["2e seizoenshelft"].ratings}) : null;
+                const s3 = calcIndex(p);
+
+                const growth = s1 ? (s3 - s1) : 0;
+                totalTeamScore += s3;
+                if(s3 > 75) eliteCount++;
+                if(growth > grower.val) grower = { name: p.bio.name, val: growth };
+                if(growth < stagnator.val) stagnator = { name: p.bio.name, val: growth };
+
+                const trendIcon = growth > 0 ? '▲' : (growth < 0 ? '▼' : '●');
+                const trendClass = growth > 0 ? 'trend-up' : (growth < 0 ? 'trend-down' : 'trend-steady');
+
+                const row = document.createElement('tr');
+                row.className = "hover:bg-white/5 transition cursor-pointer";
+                row.onclick = () => window.location.href = `index.html?id=${p.id}`;
+                row.innerHTML = `
+                    <td class="p-6">
+                        <div class="flex items-center gap-4">
+                            <img src="${p.bio.photo}" class="w-10 h-10 rounded-full border border-white/10 object-cover">
+                            <div><p class="text-sm font-black uppercase italic">${p.bio.name}</p><p class="text-[9px] text-gray-500">${p.bio.role}</p></div>
+                        </div>
+                    </td>
+                    <td class="p-6 font-bold text-gray-500">${s1 || '-'}</td>
+                    <td class="p-6 font-bold text-gray-400">${s2 || '-'}</td>
+                    <td class="p-6 font-black text-white text-lg">${s3}</td>
+                    <td class="p-6 font-black ${trendClass}">${trendIcon} ${growth >= 0 ? '+' : ''}${growth}</td>
+                    <td class="p-6"><canvas id="chart-${p.id}" class="mini-chart"></canvas></td>
+                    <td class="p-6 text-right"><span class="status-badge">${s3 > 65 ? 'Selectie' : 'Recreatie'}</span></td>
+                `;
+                hubBody.appendChild(row);
+
+                // Render mini sparkline
+                setTimeout(() => renderMiniChart(p.id, [s1, s2, s3]), 100);
+            });
+
+            document.getElementById('avgScore').innerText = Math.round(totalTeamScore / players.length) + "%";
+            document.getElementById('topGrower').innerText = grower.name.split(' ')[0] + " (+" + grower.val + ")";
+            document.getElementById('topStagnator').innerText = stagnator.name.split(' ')[0] + " (" + stagnator.val + ")";
+            document.getElementById('selectionCap').innerText = eliteCount;
+        }
+
+        function renderMiniChart(id, data) {
+            const ctx = document.getElementById(`chart-${id}`);
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [1, 2, 3],
+                    datasets: [{
+                        data: data.filter(v => v !== null),
+                        borderColor: '#D4AF37',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: false,
+                        tension: 0.4
+                    }]
+                },
+                options: { 
+                    scales: { x: { display: false }, y: { display: false } },
+                    plugins: { legend: { display: false } },
+                    responsive: false
+                }
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
