@@ -2,78 +2,60 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Elite Pro | Selection Advisor (BETA)</title>
+    <title>Elite Pro | Selection Matrix & Flow</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
-        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
-        .tier-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; padding: 20px; position: relative; }
-        .player-row { border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.2s; }
-        .player-row:hover { background: rgba(212, 175, 55, 0.08); }
-        .gold-tag { background: rgba(212, 175, 55, 0.1); color: #D4AF37; border: 1px solid #D4AF37; padding: 2px 8px; border-radius: 4px; font-size: 8px; font-weight: 900; }
-        .balance-alert { background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 10px; border-radius: 10px; font-size: 10px; font-weight: bold; margin-top: 15px; text-transform: uppercase; text-align: center; }
+        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; transition: all 0.3s ease; }
+        .team-slot { min-height: 400px; border: 2px dashed rgba(255,255,255,0.05); border-radius: 1rem; padding: 10px; }
+        .player-chip { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); cursor: grab; margin-bottom: 8px; border-radius: 12px; transition: transform 0.2s, border-color 0.2s; }
+        .player-chip:active { cursor: grabbing; transform: scale(0.98); }
+        .player-chip:hover { border-color: var(--gold); background: rgba(212,175,55,0.05); }
+        .drop-zone-active { border-color: var(--gold); background: rgba(212,175,55,0.02); }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div class="max-w-7xl mx-auto">
-        <header class="flex flex-col lg:flex-row justify-between items-center mb-10 border-b border-white/5 pb-6 gap-4">
+<body class="p-6">
+    <div class="max-w-[1800px] mx-auto">
+        <header class="flex flex-col lg:flex-row justify-between items-center mb-10 border-b border-white/5 pb-6 gap-6">
             <div>
-                <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter">Selection<span class="text-yellow-500 text-4xl">.</span>Advisor</h1>
-                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-[0.3em]">AI-Driven Team Allocation 2026-2027</p>
+                <h1 class="text-3xl font-black italic gold-gradient uppercase tracking-tighter">Selection<span class="text-white not-italic text-4xl">Matrix</span></h1>
+                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-[0.4em]">Vertical Flow Analysis & Team Allocation</p>
             </div>
-            <div class="flex gap-3">
-                <button id="exportFinal" class="px-6 py-2.5 bg-yellow-600 text-black rounded-full text-[10px] font-black uppercase hover:bg-yellow-400 transition shadow-lg">Export Definitieve Matrix</button>
-                <a href="admin_panel.html" class="px-6 py-2.5 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/5 transition">Admin Panel</a>
-                <a href="index.html" class="px-6 py-2.5 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/5 transition">Dashboard</a>
+            
+            <div class="flex flex-wrap items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <label class="text-[9px] font-black text-gray-500 uppercase">Huidige Lichting:</label>
+                    <select id="sourceAge" class="bg-black border border-white/10 text-white text-[10px] font-bold py-2 px-4 rounded-full uppercase outline-none">
+                        <option value="JO7">JO7</option><option value="JO8" selected>JO8</option><option value="JO9">JO9</option>
+                        <option value="JO10">JO10</option><option value="JO11">JO11</option><option value="JO12">JO12</option>
+                        <option value="JO13">JO13</option><option value="JO14">JO14</option><option value="JO15">JO15</option>
+                    </select>
+                </div>
+                <div class="text-yellow-500 font-black px-4 animate-pulse">➔</div>
+                <div class="flex items-center gap-2">
+                    <label class="text-[9px] font-black text-gray-500 uppercase">Nieuwe Indeling:</label>
+                    <span id="targetAgeDisplay" class="text-white font-black text-xl italic uppercase tracking-tighter">JO9</span>
+                </div>
+                <button id="exportPdf" class="ml-6 px-6 py-2.5 bg-yellow-600 text-black rounded-full text-[10px] font-black uppercase hover:bg-yellow-400 transition">Download Matrix PDF</button>
             </div>
         </header>
 
-        <div id="captureArea" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="space-y-4">
-                <div class="flex justify-between items-end mb-2 px-2">
-                    <h3 class="text-xs font-black text-yellow-500 uppercase tracking-widest italic">Tier 1: Selectie A</h3>
-                    <span id="count-t1" class="text-[10px] text-gray-500 font-bold uppercase">0 Assets</span>
-                </div>
-                <div class="tier-card min-h-[600px]">
-                    <div id="tier1-list" class="space-y-1"></div>
-                    <div id="alert-t1" class="hidden balance-alert">⚠️ Geen Keeper gevonden</div>
-                </div>
+        <div id="matrixContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             </div>
-
-            <div class="space-y-4">
-                <div class="flex justify-between items-end mb-2 px-2">
-                    <h3 class="text-xs font-black text-blue-400 uppercase tracking-widest italic">Tier 2: Opleiding B</h3>
-                    <span id="count-t2" class="text-[10px] text-gray-500 font-bold uppercase">0 Assets</span>
-                </div>
-                <div class="tier-card min-h-[600px]">
-                    <div id="tier2-list" class="space-y-1"></div>
-                    <div id="alert-t2" class="hidden balance-alert">⚠️ Geen Keeper gevonden</div>
-                </div>
-            </div>
-
-            <div class="space-y-4">
-                <div class="flex justify-between items-end mb-2 px-2">
-                    <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest italic">Tier 3: Recreatie</h3>
-                    <span id="count-t3" class="text-[10px] text-gray-500 font-bold uppercase">0 Assets</span>
-                </div>
-                <div class="tier-card min-h-[600px]">
-                    <div id="tier3-list" class="space-y-1"></div>
-                    <div id="alert-t3" class="hidden balance-alert">⚠️ Geen Keeper gevonden</div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script type="module">
         import DataProvider from './js/data_provider.js';
 
-        // 1. AUTH GUARD
         const sessionUser = sessionStorage.getItem('elite_user');
-        if (!sessionUser) window.location.href = 'login.html';
-        const currentUser = JSON.parse(sessionUser);
-        if (currentUser.role !== 'admin') window.location.href = 'index.html';
+        if (!sessionUser || JSON.parse(sessionUser).role !== 'admin') window.location.href = 'login.html';
+
+        let allPlayers = [];
+        let currentSourceAge = "JO8";
 
         const calcIndex = (p) => {
             if(!p.obj || !p.ratings) return 0;
@@ -83,82 +65,104 @@
         };
 
         async function init() {
-            const players = await DataProvider.getAllPlayers();
-            
-            const tiers = {
-                t1: { players: [], keeperCount: 0 },
-                t2: { players: [], keeperCount: 0 },
-                t3: { players: [], keeperCount: 0 }
-            };
-
-            players.forEach(p => {
-                const score = calcIndex(p);
-                const startScore = p.history?.["1e seizoenshelft"] ? calcIndex({...p, ...p.history["1e seizoenshelft"], ratings: p.history["1e seizoenshelft"].ratings}) : score;
-                const growth = score - startScore;
-
-                let target;
-                if (score >= 72 || (score > 65 && growth > 5)) target = 't1';
-                else if (score >= 58 || growth > 8) target = 't2';
-                else target = 't3';
-
-                if (p.bio.role === 'Keeper') tiers[target].keeperCount++;
-
-                tiers[target].players.push({
-                    html: renderPlayerRow(p, score, growth),
-                    score: score
-                });
-            });
-
-            // Sorteren binnen de tiers op score
-            ['t1', 't2', 't3'].forEach(key => {
-                const container = document.getElementById(`tier${key.at(1)}-list`);
-                const alertBox = document.getElementById(`alert-${key}`);
-                
-                tiers[key].players.sort((a,b) => b.score - a.score);
-                container.innerHTML = tiers[key].players.map(p => p.html).join('');
-                
-                document.getElementById(`count-${key}`).innerText = `${tiers[key].players.length} ASSETS`;
-                
-                if (tiers[key].keeperCount === 0 && tiers[key].players.length > 0) {
-                    alertBox.classList.remove('hidden');
-                }
-            });
+            allPlayers = await DataProvider.getAllPlayers();
+            setupListeners();
+            renderMatrix();
         }
 
-        function renderPlayerRow(p, score, growth) {
+        function setupListeners() {
+            document.getElementById('sourceAge').addEventListener('change', (e) => {
+                currentSourceAge = e.target.value;
+                const nextAge = "JO" + (parseInt(currentSourceAge.replace("JO", "")) + 1);
+                document.getElementById('targetAgeDisplay').innerText = nextAge;
+                renderMatrix();
+            });
+
+            document.getElementById('exportPdf').onclick = async () => {
+                const canvas = await html2canvas(document.body, { backgroundColor: '#0a0a0a', scale: 2 });
+                const pdf = new jspdf.jsPDF('l', 'mm', 'a4');
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 297, 210);
+                pdf.save(`Elite_Selection_Matrix_${currentSourceAge}.pdf`);
+            };
+        }
+
+        function renderMatrix() {
+            const nextAge = document.getElementById('targetAgeDisplay').innerText;
+            const candidates = allPlayers.filter(p => p.bio.team.startsWith(currentSourceAge))
+                .map(p => ({...p, score: calcIndex(p)}))
+                .sort((a, b) => b.score - a.score);
+
+            const container = document.getElementById('matrixContainer');
+            container.innerHTML = "";
+
+            // Maak 5 Team Kolommen (Selectie 1 t/m 5)
+            for(let i = 1; i <= 5; i++) {
+                const teamPlayers = candidates.splice(0, 10); // Auto-indeling
+                const teamDiv = document.createElement('div');
+                teamDiv.className = "glass-card p-6 flex flex-col";
+                teamDiv.innerHTML = `
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-sm font-black text-white uppercase italic">${nextAge}-${i}</h3>
+                        <span id="avg-${i}" class="text-[10px] text-yellow-500 font-bold">0% AVG</span>
+                    </div>
+                    <div id="dropzone-${i}" class="team-slot" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        ${teamPlayers.map(p => renderPlayerChip(p)).join('')}
+                    </div>
+                `;
+                container.appendChild(teamDiv);
+                updateTeamAvg(i);
+            }
+        }
+
+        function renderPlayerChip(p) {
             return `
-                <div class="player-row p-4 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <img src="${p.bio.photo}" class="w-10 h-10 rounded-full border border-white/10 object-cover bg-neutral-900">
+                <div id="player-${p.id}" class="player-chip p-3 flex items-center justify-between" draggable="true" ondragstart="drag(event)" data-score="${p.score}">
+                    <div class="flex items-center gap-2 pointer-events-none">
+                        <img src="${p.bio.photo}" class="w-6 h-6 rounded-full object-cover border border-white/10">
                         <div>
-                            <p class="text-[10px] font-black text-white uppercase leading-none">${p.bio.name}</p>
-                            <p class="text-[8px] text-gray-500 mt-1 uppercase font-bold">${p.bio.role} <span class="text-white/20">|</span> ${p.bio.team}</p>
+                            <p class="text-[9px] font-black text-white uppercase leading-none">${p.bio.name.split(' ')[0]}</p>
+                            <p class="text-[7px] text-gray-500 font-bold uppercase">${p.bio.role}</p>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="text-xs font-black text-white italic">${score}%</p>
-                        ${growth > 3 ? '<span class="gold-tag">POTENTIAL ↑</span>' : ''}
-                    </div>
+                    <span class="text-[10px] font-black text-white/40 pointer-events-none">${p.score}%</span>
                 </div>
             `;
         }
 
-        // EXPORT NAAR PDF
-        document.getElementById('exportFinal').onclick = async () => {
-            const element = document.getElementById('captureArea');
-            const canvas = await html2canvas(element, { backgroundColor: '#0a0a0a', scale: 2 });
-            const pdf = new jspdf.jsPDF('l', 'mm', 'a4');
+        // DRAG AND DROP LOGICA
+        window.allowDrop = (ev) => {
+            ev.preventDefault();
+            ev.currentTarget.classList.add('drop-zone-active');
+        }
+
+        window.drag = (ev) => {
+            ev.dataTransfer.setData("text", ev.target.id);
+            ev.dataTransfer.setData("source", ev.target.parentElement.id);
+        }
+
+        window.drop = (ev) => {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            const sourceId = ev.dataTransfer.getData("source").split('-')[1];
+            const target = ev.currentTarget;
+            const targetId = target.id.split('-')[1];
+
+            target.classList.remove('drop-zone-active');
+            target.appendChild(document.getElementById(data));
             
-            pdf.setFillColor(10, 10, 10);
-            pdf.rect(0, 0, 297, 20, 'F');
-            pdf.setTextColor(212, 175, 55);
-            pdf.setFontSize(14);
-            pdf.text("ELITE SELECTION MATRIX - SEASON 2026/2027 PROPOSAL", 10, 13);
-            
-            const imgData = canvas.toDataURL('image/png');
-            pdf.addImage(imgData, 'PNG', 10, 30, 277, 0);
-            pdf.save("Elite_Selection_Matrix_2026.pdf");
-        };
+            updateTeamAvg(sourceId);
+            updateTeamAvg(targetId);
+        }
+
+        function updateTeamAvg(teamNum) {
+            const zone = document.getElementById(`dropzone-${teamNum}`);
+            if(!zone) return;
+            const chips = zone.querySelectorAll('.player-chip');
+            let total = 0;
+            chips.forEach(c => total += parseInt(c.getAttribute('data-score')));
+            const avg = chips.length ? Math.round(total / chips.length) : 0;
+            document.getElementById(`avg-${teamNum}`).innerText = `${avg}% AVG`;
+        }
 
         init();
     </script>
