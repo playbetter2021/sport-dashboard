@@ -1,22 +1,101 @@
-{
-  "users": [
-    {
-      "username": "coach1",
-      "name": "Hoofdcoach JO15",
-      "role": "coach",
-      "teams": ["JO15-1"]
-    },
-    {
-      "username": "assist1",
-      "name": "Assistent JO15",
-      "role": "assistant",
-      "teams": ["JO15-1"]
-    },
-    {
-      "username": "admin",
-      "name": "Technisch Coördinator",
-      "role": "admin",
-      "teams": ["ALL"]
-    }
-  ]
-}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Elite Pro | Secure Access</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
+        body { 
+            background-color: var(--obsidian); 
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
+            color: #e5e5e5; 
+            font-family: 'Inter', sans-serif; 
+        }
+        .gold-border { border: 1px solid rgba(212, 175, 55, 0.2); }
+        .input-field { 
+            background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            color: white; 
+            transition: all 0.3s ease;
+        }
+        .input-field:focus { border-color: var(--gold); background: rgba(212,175,55,0.05); outline: none; }
+        .btn-gold { 
+            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%); 
+            color: black; 
+            font-weight: 900;
+            letter-spacing: 2px;
+            transition: transform 0.2s;
+        }
+        .btn-gold:hover { transform: scale(1.02); background: #F9E272; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="max-w-md w-full p-10 bg-black/40 backdrop-blur-xl rounded-[2.5rem] gold-border shadow-2xl">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-black italic text-white uppercase tracking-tighter">Elite<span class="text-yellow-500">Scout</span></h1>
+            <p class="text-[10px] text-gray-500 uppercase font-black tracking-[0.4em] mt-3">Intelligence Terminal Access</p>
+        </div>
+
+        <form id="loginForm" class="space-y-6">
+            <div class="space-y-2">
+                <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-4">Coach Username</label>
+                <input type="text" id="username" placeholder="Bijv. coach_johan" required 
+                       class="input-field w-full py-4 px-6 rounded-full text-sm">
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-4">Secure Password</label>
+                <input type="password" id="password" placeholder="••••••••" required 
+                       class="input-field w-full py-4 px-6 rounded-full text-sm">
+            </div>
+
+            <button type="submit" class="btn-gold w-full py-5 rounded-full text-[11px] uppercase shadow-xl mt-4">
+                Verify Identity
+            </button>
+        </form>
+
+        <div id="errorMsg" class="mt-6 text-red-500 text-[10px] font-black uppercase text-center hidden bg-red-500/10 p-3 rounded-xl border border-red-500/20">
+            Toegang geweigerd: Onjuiste credentials
+        </div>
+
+        <div class="mt-10 pt-8 border-t border-white/5 text-center">
+            <p class="text-[9px] text-gray-600 uppercase font-bold tracking-widest">© 2026 Elite Performance Systems</p>
+        </div>
+    </div>
+
+    <script type="module">
+        // We importeren geen provider hier om de login licht en snel te houden
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const userIn = document.getElementById('username').value;
+            const passIn = document.getElementById('password').value;
+            const error = document.getElementById('errorMsg');
+
+            try {
+                // We laden de gebruikerslijst
+                const res = await fetch('./data/users.json');
+                const data = await res.json();
+                
+                // Zoek de gebruiker (In een productie-omgeving doe je dit via een veilige API!)
+                const user = data.users.find(u => u.username === userIn && u.password === passIn);
+
+                if (user) {
+                    // BELANGRIJK: Sla de gebruikersgegevens op in de sessie
+                    // Dit wordt gebruikt door index.html en coach.html om te filteren
+                    sessionStorage.setItem('elite_user', JSON.stringify(user));
+                    
+                    // Succesvol ingelogd -> naar het dashboard
+                    window.location.href = 'index.html';
+                } else {
+                    error.classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error("Login Error:", err);
+                alert("Systeemfout: Kan gebruikersdatabase niet laden.");
+            }
+        };
+    </script>
+</body>
+</html>
