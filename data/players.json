@@ -155,7 +155,7 @@
       "role": "Aanvaller",
       "coach": "",
       "date": "2026-01-03",
-      "period": "2e seizoenshelft"
+      "period": "Eindbeoordeling"
     },
     "obj": {
       "attendance": 100,
@@ -164,18 +164,18 @@
     "ratings": {
       "bal": "4",
       "pas": "5",
-      "aan": "4",
+      "aan": "5",
       "drib": "5",
       "schot": "5",
-      "posi": "5",
-      "vrij": "4",
-      "sam": "4",
+      "posi": "4",
+      "vrij": "5",
+      "sam": "5",
       "oms": "5",
-      "sne": "4",
+      "sne": "5",
       "uit": "4",
       "kra": "4",
       "wen": "5",
-      "inz": "4",
+      "inz": "5",
       "mot": "4",
       "coa": "5",
       "tea": "5"
@@ -203,10 +203,10 @@
       "growthPoints": ""
     },
     "stats": {
-      "Techniek": 92,
-      "Tactiek": 90,
-      "Fysiek": 85,
-      "Mentaal": 90
+      "Techniek": 96,
+      "Tactiek": 95,
+      "Fysiek": 90,
+      "Mentaal": 95
     },
     "history": {
       "2e seizoenshelft": {
@@ -232,6 +232,38 @@
           "kra": "4",
           "wen": "5",
           "inz": "4",
+          "mot": "4",
+          "coa": "5",
+          "tea": "5"
+        },
+        "obj": {
+          "attendance": 100,
+          "minutes": 1000
+        }
+      },
+      "Eindbeoordeling": {
+        "date": "2026-01-03",
+        "stats": {
+          "Techniek": 96,
+          "Tactiek": 95,
+          "Fysiek": 90,
+          "Mentaal": 95
+        },
+        "ratings": {
+          "bal": "4",
+          "pas": "5",
+          "aan": "5",
+          "drib": "5",
+          "schot": "5",
+          "posi": "4",
+          "vrij": "5",
+          "sam": "5",
+          "oms": "5",
+          "sne": "5",
+          "uit": "4",
+          "kra": "4",
+          "wen": "5",
+          "inz": "5",
           "mot": "4",
           "coa": "5",
           "tea": "5"
