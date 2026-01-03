@@ -144,5 +144,68 @@
       "Fysiek": 80,
       "Mentaal": 80
     }
+  },
+  {
+    "id": "p_1767438205214",
+    "bio": {
+      "name": "Kenai Vader",
+      "team": "JO14",
+      "role": "Aanvaller",
+      "coach": "",
+      "date": "2026-01-03",
+      "period": "1e seizoenshelft",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=Kenai Vader"
+    },
+    "obj": {
+      "attendance": 100,
+      "minutes": 1000
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "3",
+      "aan": "4",
+      "drib": "3",
+      "schot": "4",
+      "posi": "4",
+      "vrij": "4",
+      "sam": "4",
+      "oms": "3",
+      "sne": "3",
+      "uit": "4",
+      "kra": "3",
+      "wen": "4",
+      "inz": "4",
+      "mot": "3",
+      "coa": "4",
+      "tea": "3"
+    },
+    "comments": {
+      "bal": "",
+      "pas": "",
+      "aan": "",
+      "drib": "",
+      "schot": ""
+    },
+    "pop": {
+      "goal1": "Test",
+      "action1": "",
+      "time1": "",
+      "goal2": "",
+      "action2": "",
+      "time2": "",
+      "goal3": "",
+      "action3": "",
+      "time3": ""
+    },
+    "analysis": {
+      "strengths": "",
+      "growthPoints": ""
+    },
+    "stats": {
+      "Techniek": 80,
+      "Tactiek": 80,
+      "Fysiek": 60,
+      "Mentaal": 80
+    }
   }
 ]
