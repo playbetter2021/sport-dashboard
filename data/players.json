@@ -189,7 +189,7 @@
       "role": "Aanvaller",
       "coach": "",
       "date": "2026-01-03",
-      "period": "Eindbeoordeling"
+      "period": "1e seizoenshelft"
     },
     "obj": {
       "attendance": 100,
@@ -276,6 +276,38 @@
         }
       },
       "Eindbeoordeling": {
+        "date": "2026-01-03",
+        "stats": {
+          "Techniek": 96,
+          "Tactiek": 95,
+          "Fysiek": 90,
+          "Mentaal": 95
+        },
+        "ratings": {
+          "bal": "4",
+          "pas": "5",
+          "aan": "5",
+          "drib": "5",
+          "schot": "5",
+          "posi": "4",
+          "vrij": "5",
+          "sam": "5",
+          "oms": "5",
+          "sne": "5",
+          "uit": "4",
+          "kra": "4",
+          "wen": "5",
+          "inz": "5",
+          "mot": "4",
+          "coa": "5",
+          "tea": "5"
+        },
+        "obj": {
+          "attendance": 100,
+          "minutes": 1000
+        }
+      },
+      "1e seizoenshelft": {
         "date": "2026-01-03",
         "stats": {
           "Techniek": 96,
