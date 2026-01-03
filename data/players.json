@@ -207,5 +207,68 @@
       "Fysiek": 80,
       "Mentaal": 80
     }
+  },
+  {
+    "id": "p_1767438551530",
+    "bio": {
+      "name": "Gydo",
+      "team": "JO14",
+      "role": "Aanvaller",
+      "coach": "",
+      "date": "2026-01-03",
+      "period": "1e seizoenshelft",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=Gydo"
+    },
+    "obj": {
+      "attendance": 100,
+      "minutes": 1000
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "3",
+      "aan": "4",
+      "drib": "3",
+      "schot": "5",
+      "posi": "3",
+      "vrij": "4",
+      "sam": "4",
+      "oms": "5",
+      "sne": "3",
+      "uit": "4",
+      "kra": "4",
+      "wen": "3",
+      "inz": "3",
+      "mot": "4",
+      "coa": "4",
+      "tea": "3"
+    },
+    "comments": {
+      "bal": "",
+      "pas": "",
+      "aan": "",
+      "drib": "",
+      "schot": ""
+    },
+    "pop": {
+      "goal1": "",
+      "action1": "",
+      "time1": "",
+      "goal2": "",
+      "action2": "",
+      "time2": "",
+      "goal3": "",
+      "action3": "",
+      "time3": ""
+    },
+    "analysis": {
+      "strengths": "",
+      "growthPoints": ""
+    },
+    "stats": {
+      "Techniek": 80,
+      "Tactiek": 60,
+      "Fysiek": 60,
+      "Mentaal": 60
+    }
   }
 ]
