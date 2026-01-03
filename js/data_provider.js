@@ -1,18 +1,30 @@
+/**
+ * Elite Pro Data Provider
+ * Verantwoordelijk voor het ophalen van de volledige POP-dossiers.
+ */
 const DataProvider = {
     async getAllPlayers() {
         try {
-            // Timestamp voorkomt dat de browser de oude versie van de JSON laat zien
-            const timestamp = new Date().getTime();
-            const response = await fetch(`data/players.json?t=${timestamp}`);
+            // Voeg een unieke timestamp toe om browser-caching te voorkomen
+            const cacheBuster = new Date().getTime();
+            const response = await fetch(`data/players.json?t=${cacheBuster}`);
             
             if (!response.ok) {
-                console.error("Geen verbinding met players.json");
+                console.error("Fout bij laden van players.json: Status", response.status);
                 return [];
             }
             
-            return await response.json();
+            const players = await response.json();
+            
+            // Controleer of de data een array is
+            if (!Array.isArray(players)) {
+                console.warn("Data formaat is geen array, controleer players.json");
+                return [];
+            }
+
+            return players;
         } catch (error) {
-            console.error("Kritieke fout:", error);
+            console.error("Kritieke fout in DataProvider:", error);
             return [];
         }
     }
