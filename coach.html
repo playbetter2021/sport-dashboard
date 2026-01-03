@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Elite Pro | Volledig POP Dossier</title>
+    <title>Elite Pro | Coach Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
@@ -13,27 +13,39 @@
         h3 { font-size: 11px; color: var(--gold); text-transform: uppercase; border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 10px; margin-bottom: 20px; font-weight: 900; }
         .slider-gold { accent-color: var(--gold); cursor: pointer; width: 100%; }
         /* FIX: Kleur van dropdown opties geforceerd op goud/zwart */
-        #assetSearch { background-color: #1a1a1a !important; color: #D4AF37 !important; }
+        #assetSearch { background-color: #1a1a1a !important; color: #D4AF37 !important; border: 1px solid rgba(212,175,55,0.3); }
         #assetSearch option { background-color: #0a0a0a; color: #D4AF37; }
+        .preview-photo { width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover; background: #111; }
     </style>
 </head>
 <body class="p-6 md:p-10">
     <div class="max-w-6xl mx-auto">
-        <header class="flex justify-between items-center mb-10 border-b border-white/5 pb-6">
-            <h1 class="text-2xl font-black italic text-white uppercase tracking-tighter">COACH<span class="text-yellow-500">TERMINAL</span></h1>
+        <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-white/5 pb-6 gap-4">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase transition border border-white/10">Dashboard</a>
+                <a href="comparison.html" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase transition border border-white/10">Selection Matrix</a>
+                <h1 class="text-2xl font-black italic text-white uppercase tracking-tighter ml-2">COACH<span class="text-yellow-500">TERMINAL</span></h1>
+            </div>
             <div class="flex items-center gap-2 bg-white/5 p-2 rounded-xl border border-white/10">
-                <select id="assetSearch" class="bg-transparent text-white text-xs font-bold outline-none cursor-pointer min-w-[150px]"></select>
+                <select id="assetSearch" class="bg-transparent outline-none cursor-pointer min-w-[150px]"></select>
                 <button id="loadBtn" class="bg-yellow-600 text-black px-4 py-1 rounded text-[10px] font-black uppercase hover:bg-yellow-400 transition">Laden</button>
             </div>
         </header>
 
         <form id="proForm" class="space-y-6">
             <div class="section-card">
-                <h3>1. Algemene Gegevens & Profiel</h3>
+                <div class="flex items-center gap-6 mb-8">
+                    <img id="pPreviewImg" class="preview-photo" src="https://via.placeholder.com/150/0a0a0a/D4AF37?text=?" alt="Preview">
+                    <div>
+                        <h3>1. Algemene Gegevens & Profiel</h3>
+                        <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Selecteer een speler om historie te laden.</p>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="md:col-span-2"><label>Naam Speler</label><input type="text" id="pName" class="input-luxe" required></div>
                     <div><label>Geboortejaar</label><input type="number" id="pBirth" class="input-luxe"></div>
-                    <div><label>Foto URL (Profiel)</label><input type="text" id="pPhotoUrl" class="input-luxe" placeholder="https://link-naar-foto.jpg"></div>
+                    <div><label>Foto URL (Profiel)</label><input type="text" id="pPhotoUrl" class="input-luxe" placeholder="https://link-naar-foto.jpg" oninput="document.getElementById('pPreviewImg').src=this.value"></div>
                     <div>
                         <label>Team</label>
                         <select id="pTeam" class="input-luxe">
@@ -172,12 +184,11 @@
                 allPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
         }
 
-        // LOCK MECHANISME
         function toggleLock(isLocked) {
             const inputs = document.querySelectorAll('.input-luxe, input[type="range"]');
             const saveBtn = document.getElementById('saveBtn');
             inputs.forEach(input => {
-                if(input.id !== "assetSearch" && input.id !== "pPeriod" && input.id !== "ghToken") {
+                if(!["assetSearch", "pPeriod", "ghToken"].includes(input.id)) {
                     input.disabled = isLocked;
                     input.style.opacity = isLocked ? "0.4" : "1";
                 }
@@ -193,30 +204,31 @@
             }
         }
 
+        function checkLock(player) {
+            const period = document.getElementById('pPeriod').value;
+            if (player.history && player.history[period]) {
+                toggleLock(true);
+            } else {
+                toggleLock(false);
+            }
+        }
+
         document.getElementById('pPeriod').addEventListener('change', () => {
             const pId = document.getElementById('assetSearch').value;
             const p = allPlayers.find(x => x.id === pId);
             if(p) checkLock(p);
         });
 
-        function checkLock(player) {
-            const period = document.getElementById('pPeriod').value;
-            if (player.history && player.history[period]) {
-                toggleLock(true);
-                alert("Let op: De data voor '" + period + "' is reeds definitief opgeslagen en kan niet meer worden gewijzigd.");
-            } else {
-                toggleLock(false);
-            }
-        }
-
         document.getElementById('loadBtn').addEventListener('click', (e) => {
             e.preventDefault();
-            const p = allPlayers.find(x => x.id === document.getElementById('assetSearch').value);
+            const pId = document.getElementById('assetSearch').value;
+            const p = allPlayers.find(x => x.id === pId);
             if (!p) return;
 
             document.getElementById('pName').value = p.bio.name || "";
             document.getElementById('pBirth').value = p.bio.birthYear || "";
             document.getElementById('pPhotoUrl').value = p.bio.photo || "";
+            document.getElementById('pPreviewImg').src = p.bio.photo || "https://via.placeholder.com/150/0a0a0a/D4AF37?text=?";
             document.getElementById('pTeam').value = p.bio.team || "JO8";
             document.getElementById('pPos').value = p.bio.role || "Verdediger";
             document.getElementById('pCoach').value = p.bio.coach || "";
@@ -279,7 +291,6 @@
                     players.push(p);
                 }
 
-                // Update huidige data
                 p.bio = { 
                     name: document.getElementById('pName').value.toUpperCase(), 
                     birthYear: document.getElementById('pBirth').value,
@@ -301,7 +312,6 @@
                 };
                 p.analysis = { strengths: document.getElementById('pStrengths').value, growthPoints: document.getElementById('pGrowth').value };
 
-                // ARCHIVEER IN HISTORY (LOCK)
                 if(!p.history) p.history = {};
                 p.history[period] = {
                     date: p.bio.date,
@@ -311,9 +321,9 @@
                 };
 
                 await fetch(url, { method: "PUT", headers: { "Authorization": `token ${token}` }, body: JSON.stringify({ message: "Full POP History Update: " + p.bio.name, content: btoa(unescape(encodeURIComponent(JSON.stringify(players, null, 2)))), sha: file.sha }) });
-                alert("🚀 Dossier en historie succesvol opgeslagen!");
+                alert("🚀 Succesvol gesynchroniseerd!");
                 loadAssets();
-            } catch (err) { alert("Fout bij opslaan: " + err.message); }
+            } catch (err) { alert("Fout: " + err.message); }
         });
         loadAssets();
     </script>
