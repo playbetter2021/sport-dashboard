@@ -30,6 +30,7 @@
                 <a href="planner.html" class="px-5 py-2.5 bg-yellow-600/10 border border-yellow-600/30 rounded-full text-[10px] font-bold uppercase text-yellow-500 hover:bg-yellow-600/20 transition">Squad Planner</a>
                 <a href="comparison.html" class="px-5 py-2.5 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/5 transition">Selection Matrix</a>
                 <a href="coach.html" class="px-5 py-2.5 bg-white/5 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/10 transition">Coach Terminal</a>
+                <button onclick="sessionStorage.clear(); window.location.href='login.html';" class="px-5 py-2.5 bg-red-500/10 border border-red-500/20 rounded-full text-[10px] font-bold uppercase text-red-500 hover:bg-red-500/20 transition">Logout</button>
                 <select id="playerSelector" class="bg-black border border-yellow-700/50 text-yellow-500 py-2.5 px-8 rounded-full text-xs font-bold outline-none cursor-pointer shadow-2xl"></select>
             </div>
         </header>
@@ -138,8 +139,16 @@
 
     <script type="module">
         import DataProvider from './js/data_provider.js';
+
+        // 1. AUTH GUARD: Check of er is ingelogd
+        const sessionUser = sessionStorage.getItem('elite_user');
+        if (!sessionUser) {
+            window.location.href = 'login.html';
+        }
+        const currentUser = JSON.parse(sessionUser);
+
         let chartRadar = null, chartTrend = null;
-        let allPlayers = [];
+        let filteredPlayers = [];
 
         const calcIndex = (p) => {
             if(!p.obj || !p.ratings) return 0;
@@ -150,17 +159,24 @@
         };
 
         async function init() {
-            allPlayers = await DataProvider.getAllPlayers();
+            const allPlayers = await DataProvider.getAllPlayers();
             if(!allPlayers.length) return;
 
-            // Global Stats for Splash
-            document.getElementById('stat-total').innerText = allPlayers.length;
-            const avg = Math.round(allPlayers.reduce((acc, p) => acc + calcIndex(p), 0) / allPlayers.length);
+            // 2. FILTEREN OP ROL: Alleen de teams van deze coach
+            if (currentUser.role === 'admin' || currentUser.teams.includes("ALL")) {
+                filteredPlayers = allPlayers;
+            } else {
+                filteredPlayers = allPlayers.filter(p => currentUser.teams.includes(p.bio.team));
+            }
+
+            // Global Stats for Splash (gebaseerd op gefilterde lijst)
+            document.getElementById('stat-total').innerText = filteredPlayers.length;
+            const avg = filteredPlayers.length > 0 ? Math.round(filteredPlayers.reduce((acc, p) => acc + calcIndex(p), 0) / filteredPlayers.length) : 0;
             document.getElementById('stat-avg').innerText = avg + "%";
 
             // Find Top Grower
             let topGrower = { name: "-", val: 0 };
-            allPlayers.forEach(p => {
+            filteredPlayers.forEach(p => {
                 if(p.history && p.history["1e seizoenshelft"]) {
                     const diff = calcIndex(p) - calcIndex({...p, ...p.history["1e seizoenshelft"], ratings: p.history["1e seizoenshelft"].ratings});
                     if(diff > topGrower.val) topGrower = { name: p.bio.name, val: diff };
@@ -171,7 +187,7 @@
             // Selector
             const selector = document.getElementById('playerSelector');
             selector.innerHTML = '<option value="">-- SELECT PLAYER --</option>' + 
-                allPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
+                filteredPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
 
             selector.addEventListener('change', e => {
                 if(e.target.value) {
@@ -183,7 +199,7 @@
         }
 
         const update = (id) => {
-            const p = allPlayers.find(x => x.id === id);
+            const p = filteredPlayers.find(x => x.id === id);
             if(!p) return;
 
             document.getElementById('pName').innerText = p.bio.name;
@@ -196,21 +212,18 @@
             document.getElementById('minScore').innerText = p.obj?.minutes || 0;
             document.getElementById('pAllocation').innerText = idx > 65 ? "Advies: Selectie" : "Advies: Recreatie";
 
-            // Growth calculation
             if(p.history && p.history["1e seizoenshelft"]) {
                 const start = calcIndex({...p, ...p.history["1e seizoenshelft"], ratings: p.history["1e seizoenshelft"].ratings});
                 const diff = idx - start;
                 document.getElementById('growthVal').innerText = (diff >= 0 ? "+" : "") + diff;
             }
 
-            // Skill bars
             const bar = (l, v) => `<div class="space-y-2"><div class="flex justify-between text-[9px] font-black uppercase"><span class="text-gray-500">${l}</span><span class="text-white">${v}/5</span></div><div class="skill-bar"><div class="skill-fill" style="width:${(v/5)*100}%"></div></div></div>`;
             const r = p.ratings || {};
             document.getElementById('techGrid').innerHTML = bar("Balcontrole", r.bal) + bar("Passing", r.pas) + bar("Aanname", r.aan) + bar("Dribbel", r.drib) + bar("Schieten", r.schot);
             document.getElementById('physGrid').innerHTML = bar("Snelheid", r.sne) + bar("Kracht", r.kra) + bar("Uithouding", r.uit) + bar("Wendbaarheid", r.wen) + bar("Tactiek", r.posi);
             document.getElementById('mentGrid').innerHTML = bar("Inzet", r.inz) + bar("Focus", r.mot) + bar("Coaching", r.coa) + bar("Teamgedrag", r.tea);
 
-            // Roadmap
             const sm = { bal:"Balcontrole", pas:"Passing", aan:"Aanname", schot:"Schieten", sne:"Explosiviteit", uit:"Conditie", posi:"Spelinzicht" };
             let lowK = "bal", lowV = 6;
             ['bal','pas','aan','schot','sne','uit','posi'].forEach(k => { if(r[k] < lowV) { lowV = r[k]; lowK = k; } });
