@@ -5,21 +5,37 @@
       "password": "admin",
       "name": "Hoofdbeheerder",
       "role": "admin",
-      "teams": ["ALL"]
+      "teams": [
+        "ALL"
+      ]
     },
     {
       "username": "coach_johan",
       "password": "johan2026",
       "name": "Johan de Groot",
       "role": "coach",
-      "teams": ["JO15-1", "JO16-1"]
+      "teams": [
+        "JO15-1",
+        "JO16-1"
+      ]
     },
     {
       "username": "mark_assist",
       "password": "markpass123",
       "name": "Mark Peters",
       "role": "assistant",
-      "teams": ["JO15-1"]
+      "teams": [
+        "JO15-1"
+      ]
+    },
+    {
+      "username": "Niels",
+      "password": "admin",
+      "name": "Niels M",
+      "role": "coach",
+      "teams": [
+        "ALL"
+      ]
     }
   ]
 }
