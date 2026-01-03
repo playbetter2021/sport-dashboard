@@ -191,7 +191,7 @@
 
             // Selector
             const selector = document.getElementById('playerSelector');
-            selector.innerHTML = '<option value="">-- SELECT PLAYER --</option>' + 
+            selector.innerHTML = '<option value="">--Players--</option>' + 
                 filteredPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
 
             selector.addEventListener('change', e => {
