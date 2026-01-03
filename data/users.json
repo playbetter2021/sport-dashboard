@@ -36,6 +36,15 @@
       "teams": [
         "ALL"
       ]
+    },
+    {
+      "username": "Dave",
+      "password": "admin",
+      "name": "Dave",
+      "role": "coach",
+      "teams": [
+        "JO14"
+      ]
     }
   ]
 }
