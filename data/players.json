@@ -49,24 +49,28 @@
     "id": "p_hc4wx14qb",
     "bio": {
       "name": "CHABO VADER",
+      "birthYear": "",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=CHABO VADER",
       "team": "JO12",
       "role": "Aanvaller",
       "coach": "Angel",
       "date": "2026-01-02",
-      "period": "Voorseizoen",
-      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=CHABO VADER"
+      "period": "1e seizoenshelft"
     },
     "ratings": {
       "bal": "4",
-      "pas": "4",
+      "pas": "5",
       "aan": "4",
-      "drib": "3",
-      "schot": "4",
+      "drib": "4",
+      "schot": "5",
       "posi": "4",
       "vrij": "4",
-      "sam": "4",
+      "sam": "5",
       "oms": "4",
       "sne": "4",
+      "uit": "3",
+      "kra": "4",
+      "wen": "4",
       "inz": "4",
       "mot": "4",
       "coa": "4",
@@ -77,15 +81,7 @@
       "pas": "",
       "aan": "",
       "drib": "wees sterker aan de bal",
-      "schot": "",
-      "posi": "",
-      "vrij": "",
-      "sam": "",
-      "oms": "",
-      "inz": "",
-      "mot": "",
-      "coa": "",
-      "tea": "laat je niet mee sleuren door anderen"
+      "schot": ""
     },
     "pop": {
       "goal1": "sterker aan de bal",
@@ -103,10 +99,48 @@
       "growthPoints": "sterker aan de bal"
     },
     "stats": {
-      "Techniek": 76,
-      "Tactiek": 80,
-      "Mentaal": 80,
-      "Fysiek": 80
+      "Techniek": 88,
+      "Tactiek": 85,
+      "Fysiek": 75,
+      "Mentaal": 80
+    },
+    "obj": {
+      "attendance": 100,
+      "minutes": 1000
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "date": "2026-01-02",
+        "stats": {
+          "Techniek": 88,
+          "Tactiek": 85,
+          "Fysiek": 75,
+          "Mentaal": 80
+        },
+        "ratings": {
+          "bal": "4",
+          "pas": "5",
+          "aan": "4",
+          "drib": "4",
+          "schot": "5",
+          "posi": "4",
+          "vrij": "4",
+          "sam": "5",
+          "oms": "4",
+          "sne": "4",
+          "uit": "3",
+          "kra": "4",
+          "wen": "4",
+          "inz": "4",
+          "mot": "4",
+          "coa": "4",
+          "tea": "4"
+        },
+        "obj": {
+          "attendance": 100,
+          "minutes": 1000
+        }
+      }
     }
   },
   {
