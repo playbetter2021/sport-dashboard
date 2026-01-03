@@ -1,22 +1,25 @@
 {
   "users": [
     {
-      "username": "coach1",
-      "name": "Hoofdcoach JO15",
-      "role": "coach",
-      "teams": ["JO15-1"]
-    },
-    {
-      "username": "assist1",
-      "name": "Assistent JO15",
-      "role": "assistant",
-      "teams": ["JO15-1"]
-    },
-    {
       "username": "admin",
-      "name": "Technisch Coördinator",
+      "password": "admin",
+      "name": "Hoofdbeheerder",
       "role": "admin",
       "teams": ["ALL"]
+    },
+    {
+      "username": "coach_johan",
+      "password": "johan2026",
+      "name": "Johan de Groot",
+      "role": "coach",
+      "teams": ["JO15-1", "JO16-1"]
+    },
+    {
+      "username": "mark_assist",
+      "password": "markpass123",
+      "name": "Mark Peters",
+      "role": "assistant",
+      "teams": ["JO15-1"]
     }
   ]
 }
