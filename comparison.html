@@ -9,76 +9,84 @@
         :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
         body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
         .gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; }
-        .vs-circle { width: 50px; height: 50px; background: var(--gold); color: black; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; position: absolute; left: 50%; transform: translateX(-50%); z-index: 10; }
-        .winner-border { border: 2px solid #22c55e !important; box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
+        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; transition: all 0.3s ease; }
+        .vs-circle { width: 50px; height: 50px; background: var(--gold); color: black; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; position: absolute; left: 50%; transform: translateX(-50%); z-index: 10; top: 220px; }
+        .winner-border { border: 2px solid #22c55e !important; box-shadow: 0 0 30px rgba(34, 197, 94, 0.2); transform: scale(1.02); }
+        
+        /* FIX: Dropdown leesbaarheid */
+        select { background-color: #111 !important; color: #D4AF37 !important; border: 1px solid rgba(212,175,55,0.3) !important; }
+        option { background-color: #0a0a0a; color: #D4AF37; }
     </style>
 </head>
 <body class="p-6">
     <div class="max-w-7xl mx-auto">
         <header class="flex justify-between items-center mb-8 border-b border-white/5 pb-6">
-            <div>
-                <h1 class="text-2xl font-black italic gold-gradient uppercase">Selection<span class="text-white not-italic">Matrix</span></h1>
-                <p class="text-[10px] uppercase text-gray-500">Objectieve Spelersvergelijking</p>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase transition border border-white/10">← Dashboard</a>
+                <h1 class="text-2xl font-black italic gold-gradient uppercase tracking-tighter">Selection<span class="text-white not-italic">Matrix</span></h1>
             </div>
-            <a href="index.html" class="text-xs border border-white/20 px-4 py-2 rounded-full hover:bg-white/5">← Dashboard</a>
+            <p class="text-[10px] uppercase text-gray-500 font-bold tracking-widest">Vergelijking op basis van 65/20/15 weging</p>
         </header>
 
         <div class="glass-card p-6 mb-8 flex flex-wrap gap-6 justify-center items-center">
             <div class="flex flex-col">
-                <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Selecteer Team</label>
-                <select id="teamFilter" class="bg-black border border-white/20 text-white p-2 rounded text-xs outline-none w-48"></select>
+                <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Team</label>
+                <select id="teamFilter" class="p-2 rounded text-xs outline-none w-48"></select>
             </div>
             <div class="flex flex-col">
-                <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Speler 1 (Reference)</label>
-                <select id="player1Select" class="bg-black border border-white/20 text-white p-2 rounded text-xs outline-none w-48"></select>
+                <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Speler 1</label>
+                <select id="player1Select" class="p-2 rounded text-xs outline-none w-48"></select>
             </div>
             <div class="flex flex-col">
-                <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Speler 2 (Challenger)</label>
-                <select id="player2Select" class="bg-black border border-white/20 text-white p-2 rounded text-xs outline-none w-48"></select>
+                <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Speler 2</label>
+                <select id="player2Select" class="p-2 rounded text-xs outline-none w-48"></select>
             </div>
         </div>
 
         <div class="relative grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-            <div class="vs-circle mt-32 hidden md:flex">VS</div>
+            <div class="vs-circle hidden md:flex">VS</div>
 
-            <div id="card1" class="glass-card p-8">
+            <div id="card1" class="glass-card p-8 min-h-[480px]">
                 <div id="content1" class="opacity-0 transition-opacity duration-500">
-                    <img id="img1" class="w-24 h-24 rounded-full mx-auto mb-4 border-2 border-yellow-600 object-cover" src="">
-                    <h2 id="name1" class="text-center text-xl font-black uppercase italic mb-1"></h2>
-                    <p id="pos1" class="text-center text-[10px] text-yellow-500 font-bold mb-6"></p>
+                    <img id="img1" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-yellow-600 object-cover shadow-2xl" src="">
+                    <h2 id="name1" class="text-center text-2xl font-black uppercase italic mb-1 text-white"></h2>
+                    <p id="pos1" class="text-center text-[11px] text-yellow-500 font-bold mb-8 uppercase tracking-widest"></p>
                     
-                    <div class="space-y-4">
-                        <div class="flex justify-between text-xs"><span>Objectieve Score (65%)</span><span id="obj1" class="font-bold"></span></div>
-                        <div class="flex justify-between text-xs"><span>Ontwikkeling (20%)</span><span id="dev1" class="font-bold"></span></div>
-                        <div class="flex justify-between text-xs border-b border-white/5 pb-2"><span>Coach Beoordeling (15%)</span><span id="coach1" class="font-bold"></span></div>
-                        <div class="flex justify-between text-lg font-black gold-text pt-2"><span>TOTAAL INDEX</span><span id="total1"></span></div>
+                    <div class="space-y-4 border-t border-white/5 pt-6">
+                        <div class="flex justify-between text-[11px] uppercase font-bold text-gray-400"><span>Objectief (65%)</span><span id="obj1" class="text-white"></span></div>
+                        <div class="flex justify-between text-[11px] uppercase font-bold text-gray-400"><span>Groei (20%)</span><span id="dev1" class="text-white"></span></div>
+                        <div class="flex justify-between text-[11px] uppercase font-bold text-gray-400 border-b border-white/5 pb-4"><span>Coach (15%)</span><span id="coach1" class="text-white"></span></div>
+                        <div class="flex justify-between items-end">
+                            <span class="text-[10px] font-black text-gray-500 uppercase">Totaal Index</span>
+                            <span id="total1" class="text-4xl font-black gold-gradient leading-none"></span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div id="card2" class="glass-card p-8">
+            <div id="card2" class="glass-card p-8 min-h-[480px]">
                 <div id="content2" class="opacity-0 transition-opacity duration-500">
-                    <img id="img2" class="w-24 h-24 rounded-full mx-auto mb-4 border-2 border-yellow-600 object-cover" src="">
-                    <h2 id="name2" class="text-center text-xl font-black uppercase italic mb-1"></h2>
-                    <p id="pos2" class="text-center text-[10px] text-yellow-500 font-bold mb-6"></p>
+                    <img id="img2" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-yellow-600 object-cover shadow-2xl" src="">
+                    <h2 id="name2" class="text-center text-2xl font-black uppercase italic mb-1 text-white"></h2>
+                    <p id="pos2" class="text-center text-[11px] text-yellow-500 font-bold mb-8 uppercase tracking-widest"></p>
                     
-                    <div class="space-y-4">
-                        <div class="flex justify-between text-xs"><span>Objectieve Score (65%)</span><span id="obj2" class="font-bold"></span></div>
-                        <div class="flex justify-between text-xs"><span>Ontwikkeling (20%)</span><span id="dev2" class="font-bold"></span></div>
-                        <div class="flex justify-between text-xs border-b border-white/5 pb-2"><span>Coach Beoordeling (15%)</span><span id="coach2" class="font-bold"></span></div>
-                        <div class="flex justify-between text-lg font-black gold-text pt-2"><span>TOTAAL INDEX</span><span id="total2"></span></div>
+                    <div class="space-y-4 border-t border-white/5 pt-6">
+                        <div class="flex justify-between text-[11px] uppercase font-bold text-gray-400"><span>Objectief (65%)</span><span id="obj2" class="text-white"></span></div>
+                        <div class="flex justify-between text-[11px] uppercase font-bold text-gray-400"><span>Groei (20%)</span><span id="dev2" class="text-white"></span></div>
+                        <div class="flex justify-between text-[11px] uppercase font-bold text-gray-400 border-b border-white/5 pb-4"><span>Coach (15%)</span><span id="coach2" class="text-white"></span></div>
+                        <div class="flex justify-between items-end">
+                            <span class="text-[10px] font-black text-gray-500 uppercase">Totaal Index</span>
+                            <span id="total2" class="text-4xl font-black gold-gradient leading-none"></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="mt-12">
-            <div class="glass-card p-8">
-                <h3 class="text-center text-xs font-black uppercase tracking-widest text-gray-500 mb-8">Directe Radar Vergelijking</h3>
-                <div class="max-w-md mx-auto">
-                    <canvas id="compChart"></canvas>
-                </div>
+        <div class="mt-12 glass-card p-10 flex flex-col items-center">
+            <h3 class="text-[10px] font-black uppercase tracking-[0.5em] text-gray-500 mb-10">Skill Overlap Matrix</h3>
+            <div class="w-full max-w-lg">
+                <canvas id="compChart"></canvas>
             </div>
         </div>
     </div>
@@ -90,6 +98,7 @@
 
         async function init() {
             allPlayers = await DataProvider.getAllPlayers();
+            if(!allPlayers.length) return;
             
             const teams = [...new Set(allPlayers.map(p => p.bio.team))];
             const teamFilter = document.getElementById('teamFilter');
@@ -101,6 +110,7 @@
                 const options = filtered.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
                 document.getElementById('player1Select').innerHTML = options;
                 document.getElementById('player2Select').innerHTML = options;
+                if(filtered.length > 1) document.getElementById('player2Select').selectedIndex = 1;
                 compare();
             };
 
@@ -111,16 +121,18 @@
 
                 const calc = (p) => {
                     const obj = Math.round((p.obj?.attendance * 0.4) + ((p.obj?.minutes / 1500) * 100 * 0.6));
-                    const dev = p.stats["Tactiek"] || 50;
-                    const coach = Math.round((Object.values(p.ratings || {}).reduce((a,b)=>parseInt(a)+parseInt(b),0)/(Object.keys(p.ratings || {}).length*5))*100);
+                    const coach = Math.round((Object.values(p.ratings || {}).reduce((a,b)=>parseInt(a)+parseInt(b),0)/(Object.keys(p.ratings || {}).length*5 || 1))*100);
+                    // Groei/Ontwikkeling gebaseerd op gemiddelde van stats
+                    const dev = Math.round(Object.values(p.stats || {}).reduce((a,b)=>a+b,0) / 4);
                     const total = Math.round((obj * 0.65) + (dev * 0.20) + (coach * 0.15));
                     return { obj, dev, coach, total };
                 };
 
-                const s1 = calc(p1); const s2 = calc(p2);
+                const s1 = calc(p1); 
+                const s2 = calc(p2);
 
-                const render = (num, p, s) => {
-                    document.getElementById('img'+num).src = p.bio.photo;
+                const render = (num, p, s, otherTotal) => {
+                    document.getElementById('img'+num).src = p.bio.photo || "https://via.placeholder.com/150/0a0a0a/D4AF37?text=?";
                     document.getElementById('name'+num).innerText = p.bio.name;
                     document.getElementById('pos'+num).innerText = p.bio.role;
                     document.getElementById('obj'+num).innerText = s.obj;
@@ -128,30 +140,59 @@
                     document.getElementById('coach'+num).innerText = s.coach;
                     document.getElementById('total'+num).innerText = s.total;
                     document.getElementById('content'+num).style.opacity = 1;
+                    
+                    const card = document.getElementById('card'+num);
+                    card.classList.toggle('winner-border', s.total > otherTotal);
                 };
 
-                render(1, p1, s1); render(2, p2, s2);
-
-                // Highlight Winnaar
-                document.getElementById('card1').classList.toggle('winner-border', s1.total > s2.total);
-                document.getElementById('card2').classList.toggle('winner-border', s2.total > s1.total);
-
+                render(1, p1, s1, s2.total); 
+                render(2, p2, s2, s1.total);
                 renderChart(p1, p2);
             };
 
             const renderChart = (p1, p2) => {
                 const ctx = document.getElementById('compChart');
                 if (chart) chart.destroy();
+                
+                const labels = Object.keys(p1.stats || { "Techniek":0, "Tactiek":0, "Fysiek":0, "Mentaal":0 });
+
                 chart = new Chart(ctx, {
                     type: 'radar',
                     data: {
-                        labels: Object.keys(p1.stats),
+                        labels: labels,
                         datasets: [
-                            { label: p1.bio.name, data: Object.values(p1.stats), borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.2)' },
-                            { label: p2.bio.name, data: Object.values(p2.stats), borderColor: '#FFF', backgroundColor: 'rgba(255,255,255,0.1)' }
+                            { 
+                                label: p1.bio.name, 
+                                data: Object.values(p1.stats || {}), 
+                                borderColor: '#D4AF37', 
+                                backgroundColor: 'rgba(212,175,55,0.2)',
+                                borderWidth: 3,
+                                pointBackgroundColor: '#FFF'
+                            },
+                            { 
+                                label: p2.bio.name, 
+                                data: Object.values(p2.stats || {}), 
+                                borderColor: '#FFF', 
+                                backgroundColor: 'rgba(255,255,255,0.1)',
+                                borderWidth: 2,
+                                pointBackgroundColor: '#AAA'
+                            }
                         ]
                     },
-                    options: { scales: { r: { suggestedMin: 0, suggestedMax: 100, ticks: {display: false}, grid: {color: '#333'} } }, plugins: { legend: { labels: {color: '#FFF', font: {size: 10}} } } }
+                    options: { 
+                        scales: { 
+                            r: { 
+                                suggestedMin: 0, 
+                                suggestedMax: 100, 
+                                ticks: { display: false }, 
+                                grid: { color: 'rgba(255,255,255,0.05)' },
+                                angleLines: { color: 'rgba(255,255,255,0.1)' }
+                            } 
+                        }, 
+                        plugins: { 
+                            legend: { labels: { color: '#FFF', font: { size: 10, weight: 'bold' } } } 
+                        } 
+                    }
                 });
             };
 
