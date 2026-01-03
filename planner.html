@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Elite Pro | Squad Planner 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --gold: #D4AF37; --obsidian: #0a0a0a; --pitch: #0f1a0f; }
+        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .pitch-bg { 
+            background: radial-gradient(circle at center, #1a331a 0%, #0f1a0f 100%);
+            border: 2px solid rgba(255,255,255,0.1);
+            position: relative;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.05) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 2px, transparent 2px);
+            background-size: 50px 50px;
+        }
+        .player-node { 
+            width: 70px; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .player-node:hover { transform: scale(1.1); }
+        .rating-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 900;
+        }
+        .line-marker { position: absolute; width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-7xl mx-auto">
+        <header class="flex justify-between items-center mb-10 border-b border-white/5 pb-6">
+            <div>
+                <h1 class="text-2xl font-black italic text-white uppercase tracking-tighter">SQUAD<span class="text-yellow-500">PLANNER 2026</span></h1>
+                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Formatie op basis van Elite Index Eindbeoordeling</p>
+            </div>
+            <div class="flex gap-3">
+                <select id="teamSelect" class="bg-black border border-white/20 text-yellow-500 text-xs font-bold p-2 rounded-full outline-none"></select>
+                <a href="index.html" class="bg-white/5 border border-white/20 text-white px-6 py-2 rounded-full text-[10px] font-bold uppercase">← Terug naar Dashboard</a>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div class="lg:col-span-8">
+                <div class="pitch-bg w-full rounded-3xl aspect-[3/4] md:aspect-[4/3] relative p-12 shadow-2xl overflow-hidden">
+                    <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
+                        <div class="w-32 h-32 border-2 border-white rounded-full"></div>
+                        <div class="absolute w-full h-0 border-t-2 border-white top-1/2"></div>
+                    </div>
+
+                    <div id="formationGrid" class="relative w-full h-full flex flex-col justify-between py-10">
+                        <div class="flex justify-around items-center" id="line-FW"></div>
+                        <div class="flex justify-around items-center" id="line-MF"></div>
+                        <div class="flex justify-around items-center" id="line-DF"></div>
+                        <div class="flex justify-center items-center" id="line-GK"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+                    <h3 class="text-xs font-black uppercase text-yellow-500 mb-6">Linie Analyse</h3>
+                    <div id="lineAnalysis" class="space-y-4">
+                        </div>
+                </div>
+
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+                    <h3 class="text-xs font-black uppercase text-yellow-500 mb-4">Wisselspelers / Reserves</h3>
+                    <div id="benchList" class="space-y-2 max-h-[300px] overflow-y-auto pr-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import DataProvider from './js/data_provider.js';
+        
+        async function init() {
+            const allPlayers = await DataProvider.getAllPlayers();
+            const teamSelect = document.getElementById('teamSelect');
+            const teams = [...new Set(allPlayers.map(p => p.bio.team))];
+            teamSelect.innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
+
+            const renderPlanner = () => {
+                const team = teamSelect.value;
+                const players = allPlayers.filter(p => p.bio.team === team);
+                
+                // Bereken Index voor iedereen
+                const data = players.map(p => {
+                    const obj = Math.round((p.obj.attendance * 0.4) + ((p.obj.minutes / 1500) * 100 * 0.6));
+                    const coach = Math.round((Object.values(p.ratings).reduce((a,b)=>parseInt(a)+parseInt(b),0)/(Object.keys(p.ratings).length*5))*100);
+                    const final = Math.round((obj * 0.65) + (60 * 0.20) + (coach * 0.15));
+                    return { ...p, finalIndex: final };
+                }).sort((a,b) => b.finalIndex - a.finalIndex);
+
+                // Reset veld
+                document.querySelectorAll('#formationGrid > div').forEach(el => el.innerHTML = '');
+                const bench = [];
+
+                const positions = {
+                    'Aanvaller': { line: 'FW', max: 3 },
+                    'Middenvelder': { line: 'MF', max: 3 },
+                    'Verdediger': { line: 'DF', max: 4 },
+                    'Keeper': { line: 'GK', max: 1 }
+                };
+
+                const counts = { 'Aanvaller': 0, 'Middenvelder': 0, 'Verdediger': 0, 'Keeper': 0 };
+
+                data.forEach(p => {
+                    const role = p.bio.role;
+                    if (counts[role] < positions[role].max) {
+                        const container = document.getElementById('line-' + positions[role].line);
+                        container.innerHTML += createPlayerNode(p);
+                        counts[role]++;
+                    } else {
+                        bench.push(p);
+                    }
+                });
+
+                renderBench(bench);
+                renderAnalysis(data, counts, positions);
+            };
+
+            const createPlayerNode = (p) => {
+                const color = p.finalIndex > 75 ? 'bg-green-500' : (p.finalIndex > 60 ? 'bg-yellow-500' : 'bg-red-500');
+                return `
+                    <div class="player-node text-center relative">
+                        <div class="rating-badge ${color} text-black">${p.finalIndex}</div>
+                        <img src="${p.bio.photo}" class="w-14 h-14 rounded-full border-2 border-white/20 mx-auto object-cover bg-black shadow-lg">
+                        <p class="text-[9px] font-black uppercase mt-1 truncate w-full">${p.bio.name.split(' ')[0]}</p>
+                    </div>
+                `;
+            };
+
+            const renderBench = (list) => {
+                document.getElementById('benchList').innerHTML = list.map(p => `
+                    <div class="flex items-center justify-between p-2 bg-white/5 rounded-lg border border-white/5">
+                        <div class="flex items-center gap-2">
+                            <img src="${p.bio.photo}" class="w-6 h-6 rounded-full object-cover">
+                            <span class="text-[10px] font-bold uppercase">${p.bio.name}</span>
+                        </div>
+                        <span class="text-[10px] font-black text-yellow-500">${p.finalIndex}%</span>
+                    </div>
+                `).join('');
+            };
+
+            const renderAnalysis = (data, counts, pos) => {
+                const lines = [
+                    { name: 'Aanval', key: 'Aanvaller' },
+                    { name: 'Middenveld', key: 'Middenvelder' },
+                    { name: 'Verdediging', key: 'Verdediger' }
+                ];
+
+                document.getElementById('lineAnalysis').innerHTML = lines.map(line => {
+                    const linePlayers = data.filter(p => p.bio.role === line.key);
+                    const avg = linePlayers.length ? Math.round(linePlayers.reduce((a,b)=>a+b.finalIndex,0)/linePlayers.length) : 0;
+                    const status = avg > 70 ? 'UITSTEKEND' : (avg > 55 ? 'MATIG' : 'ZWAK');
+                    const color = avg > 70 ? 'text-green-500' : (avg > 55 ? 'text-yellow-500' : 'text-red-500');
+
+                    return `
+                        <div>
+                            <div class="flex justify-between text-[10px] font-bold mb-1">
+                                <span class="text-gray-400 uppercase">${line.name}</span>
+                                <span class="${color}">${status} (${avg}%)</span>
+                            </div>
+                            <div class="w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                                <div class="h-full bg-yellow-500" style="width: ${avg}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            };
+
+            teamSelect.addEventListener('change', renderPlanner);
+            renderPlanner();
+        }
+
+        init();
+    </script>
+</body>
+</html>
