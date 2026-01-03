@@ -39,11 +39,11 @@
     },
     {
       "username": "Dave",
-      "password": "admin",
+      "password": "dave",
       "name": "Dave",
       "role": "coach",
       "teams": [
-        "JO14"
+        "JO8"
       ]
     }
   ]
