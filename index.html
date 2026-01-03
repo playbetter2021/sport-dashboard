@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Elite Pro | Intelligence & Growth Dashboard</title>
+    <title>Elite Pro | Intelligence & 360° Growth Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -12,99 +12,124 @@
         body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
         .gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; }
-        .skill-bar { height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; margin-top: 4px; }
-        .skill-fill { height: 100%; background: linear-gradient(90deg, #B8860B, #D4AF37); transition: width 1s ease-in-out; }
+        .skill-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
+        .skill-fill { height: 100%; background: linear-gradient(90deg, #B8860B, #D4AF37); transition: width 1.5s ease-in-out; }
         .status-badge { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); color: var(--gold); padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
     </style>
 </head>
 <body class="p-4 md:p-8">
-    <div class="max-w-7xl mx-auto">
-        <header class="flex justify-between items-center mb-8 border-b border-white/5 pb-6">
-            <h1 class="text-3xl font-black italic gold-gradient uppercase tracking-tighter">Elite<span class="text-white not-italic">Scout</span></h1>
-            <div class="flex gap-3">
-                <a href="planner.html" class="px-4 py-2 bg-yellow-600/10 border border-yellow-600/30 rounded-full text-[10px] font-bold uppercase text-yellow-500 hover:bg-yellow-600/20 transition">Squad Planner 2026</a>
+    <div class="max-w-[1600px] mx-auto">
+        <header class="flex flex-col lg:flex-row justify-between items-center mb-8 border-b border-white/5 pb-6 gap-4">
+            <div>
+                <h1 class="text-4xl font-black italic gold-gradient uppercase tracking-tighter">Elite<span class="text-white not-italic">Intelligence</span></h1>
+                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-[0.3em]">Season Review & Summer Roadmap 2026</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-3">
+                <a href="planner.html" class="px-4 py-2 bg-yellow-600/10 border border-yellow-600/30 rounded-full text-[10px] font-bold uppercase text-yellow-500 hover:bg-yellow-600/20 transition">Squad Planner</a>
                 <a href="comparison.html" class="px-4 py-2 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/5 transition">Selection Matrix</a>
                 <a href="coach.html" class="px-4 py-2 bg-white/5 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/10 transition">Coach Terminal</a>
-                <select id="playerSelector" class="bg-black border border-yellow-700/50 text-yellow-500 py-2 px-6 rounded-full text-xs font-bold outline-none cursor-pointer"></select>
+                <select id="playerSelector" class="bg-black border border-yellow-700/50 text-yellow-500 py-2 px-6 rounded-full text-xs font-bold outline-none cursor-pointer shadow-lg"></select>
             </div>
         </header>
 
-        <div id="captureArea" class="bg-[#0a0a0a] p-8 rounded-[2rem] border border-white/5 shadow-2xl">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div class="lg:col-span-4 space-y-6">
-                    <div class="glass-card overflow-hidden relative">
-                        <img id="pPhoto" class="w-full h-96 object-cover" src="" crossorigin="anonymous">
+        <div id="captureArea" class="bg-[#0a0a0a] p-8 rounded-[2rem] border border-white/10 shadow-2xl">
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                
+                <div class="xl:col-span-3 space-y-6">
+                    <div class="glass-card overflow-hidden relative shadow-2xl">
+                        <img id="pPhoto" class="w-full h-[450px] object-cover bg-neutral-900" src="" crossorigin="anonymous">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
                         <div class="absolute bottom-6 left-6">
-                            <div id="pAllocation" class="status-badge mb-2 inline-block">Berekent...</div>
-                            <h2 id="pName" class="text-3xl font-black uppercase italic text-white leading-none"></h2>
-                            <p id="pMeta" class="text-gray-500 text-[10px] font-bold mt-2 uppercase"></p>
+                            <div id="pAllocation" class="status-badge mb-3 inline-block">Berekent...</div>
+                            <h2 id="pName" class="text-4xl font-black uppercase italic text-white leading-none tracking-tighter"></h2>
+                            <p id="pMeta" class="text-gray-400 text-xs font-bold mt-2 uppercase tracking-widest"></p>
                         </div>
                     </div>
                     
                     <div class="glass-card p-6">
-                        <p class="text-[9px] font-bold text-gray-500 uppercase mb-4 tracking-widest text-center">Groeicurve (Seizoensverloop)</p>
-                        <canvas id="trendChart"></canvas>
+                        <h3 class="text-[10px] font-black text-gray-500 uppercase mb-6 tracking-widest border-b border-white/5 pb-2">Seizoens Groeicurve</h3>
+                        <canvas id="trendChart" height="200"></canvas>
                     </div>
 
-                    <div class="glass-card p-6 flex flex-col items-center justify-center">
-                        <p class="text-[9px] font-bold text-gray-500 uppercase mb-4 tracking-widest text-center">Skill Overlap (Begin vs Nu)</p>
+                    <div class="glass-card p-6">
+                        <h3 class="text-[10px] font-black text-gray-500 uppercase mb-6 tracking-widest border-b border-white/5 pb-2">Vaardigheidsprofiel</h3>
                         <canvas id="radarChart"></canvas>
                     </div>
                 </div>
 
-                <div class="lg:col-span-8 space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="glass-card p-5 text-center border-t-2 border-yellow-600">
-                            <p class="text-[9px] text-gray-500 uppercase font-black">Objectief (65%)</p>
-                            <div id="objScore" class="text-4xl font-black text-white">0</div>
-                            <p id="pObjDetail" class="text-[8px] text-gray-600 mt-1 uppercase"></p>
+                <div class="xl:col-span-9 space-y-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="glass-card p-6 text-center border-b-4 border-yellow-600">
+                            <p class="text-[10px] text-gray-500 uppercase font-black mb-1">Elite Index</p>
+                            <div id="finalScore" class="text-5xl font-black text-white italic">0</div>
                         </div>
-                        <div class="glass-card p-5 text-center border-t-2 border-blue-500">
-                            <p class="text-[9px] text-gray-500 uppercase font-black">Fysiek/Mentaal (20%)</p>
-                            <div id="devScore" class="text-4xl font-black text-white">0</div>
+                        <div class="glass-card p-6 text-center border-b-4 border-blue-500">
+                            <p class="text-[10px] text-gray-500 uppercase font-black mb-1">Opkomst</p>
+                            <div id="attScore" class="text-5xl font-black text-white italic">0</div>
                         </div>
-                        <div class="glass-card p-5 text-center border-t-2 border-green-500">
-                            <p class="text-[9px] text-gray-500 uppercase font-black">Coach Rating (15%)</p>
-                            <div id="coachScore" class="text-4xl font-black text-white">0</div>
+                        <div class="glass-card p-6 text-center border-b-4 border-green-500">
+                            <p class="text-[10px] text-gray-500 uppercase font-black mb-1">Minuten</p>
+                            <div id="minScore" class="text-5xl font-black text-white italic">0</div>
                         </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="glass-card p-5">
-                            <h3 class="text-[10px] font-black text-yellow-600 uppercase mb-4 border-b border-white/5 pb-2">Techniek & Tactiek</h3>
-                            <div id="techGrid" class="space-y-3"></div>
-                        </div>
-                        <div class="glass-card p-5">
-                            <h3 class="text-[10px] font-black text-yellow-600 uppercase mb-4 border-b border-white/5 pb-2">Fysiek & Mentaal</h3>
-                            <div id="physGrid" class="space-y-3"></div>
+                        <div class="glass-card p-6 text-center border-b-4 border-purple-500">
+                            <p class="text-[10px] text-gray-500 uppercase font-black mb-1">Groei %</p>
+                            <div id="growthPct" class="text-5xl font-black text-white italic">+0</div>
                         </div>
                     </div>
 
-                    <div class="glass-card p-6 border-l-4 border-yellow-600">
-                        <h3 class="text-[10px] font-black text-yellow-600 uppercase mb-4">Zomerpaspoort 2026: Roadmap</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs mb-6">
-                            <div class="bg-white/5 p-4 rounded-xl border border-white/5">
-                                <label class="text-yellow-500 font-black uppercase block mb-2 text-[9px]">Grootste Groeipunt</label>
-                                <p id="pGrowth" class="italic text-gray-300"></p>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="glass-card p-6">
+                            <h4 class="text-xs font-black text-yellow-500 uppercase mb-6 border-l-2 border-yellow-500 pl-3">Technisch (65%)</h4>
+                            <div id="techGrid" class="space-y-4"></div>
+                        </div>
+                        <div class="glass-card p-6">
+                            <h4 class="text-xs font-black text-blue-500 uppercase mb-6 border-l-2 border-blue-500 pl-3">Tactisch & Fysiek</h4>
+                            <div id="physGrid" class="space-y-4"></div>
+                        </div>
+                        <div class="glass-card p-6">
+                            <h4 class="text-xs font-black text-purple-500 uppercase mb-6 border-l-2 border-purple-500 pl-3">Mentaal & Coaching</h4>
+                            <div id="mentGrid" class="space-y-4"></div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-8 border-2 border-yellow-600/30 bg-gradient-to-br from-yellow-600/10 to-transparent relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 font-black text-8xl italic uppercase pointer-events-none">ROADMAP</div>
+                        <h3 class="text-xl font-black text-white uppercase mb-8 italic tracking-tighter">Zomer-Roadmap 2026 <span class="text-yellow-500">Focus Plan</span></h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                            <div class="md:col-span-4 bg-black/40 p-6 rounded-2xl border border-white/5">
+                                <label class="text-[10px] font-black text-yellow-500 uppercase tracking-widest mb-2 block">Prioriteit #1</label>
+                                <p id="focusSkill" class="text-3xl font-black text-white uppercase italic tracking-tighter">-</p>
+                                <div class="mt-4 flex items-center gap-2">
+                                    <span class="text-xs text-gray-400">Target Score:</span>
+                                    <span id="targetScore" class="text-xl font-black text-green-500"></span>
+                                </div>
                             </div>
-                            <div class="bg-white/5 p-4 rounded-xl border border-white/5">
-                                <label class="text-green-500 font-black uppercase block mb-2 text-[9px]">Elite Advies</label>
-                                <p id="pSummerAdvice" class="italic text-gray-300">Focus op explosiviteit en passing precisie.</p>
+                            <div class="md:col-span-5">
+                                <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 block">Zomer Opdracht</label>
+                                <p id="summerTask" class="text-sm text-gray-300 italic leading-relaxed"></p>
+                            </div>
+                            <div class="md:col-span-3 space-y-4">
+                                <div class="bg-white/5 p-3 rounded-lg"><p class="text-[9px] text-gray-500 uppercase font-bold">Basis-Index Prognose</p><p id="progScore" class="text-xl font-black text-white">0%</p></div>
+                                <div class="bg-white/5 p-3 rounded-lg"><p class="text-[9px] text-gray-500 uppercase font-bold">Advies</p><p id="summerAdv" class="text-[9px] text-yellow-500 font-black uppercase"></p></div>
                             </div>
                         </div>
-                        <div id="popGoals" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="mt-8 flex justify-center"><button id="downloadBtn" class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-black px-12 py-4 rounded-full text-xs uppercase tracking-widest transition hover:scale-105 shadow-2xl">Genereer Zomerpaspoort PDF</button></div>
+        <div class="mt-10 flex flex-col md:flex-row justify-center items-center gap-6">
+            <button id="downloadBtn" class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-black px-16 py-5 rounded-full text-xs uppercase tracking-[0.2em] shadow-2xl transform transition hover:scale-105 active:scale-95">Download Full Dossier 2026</button>
+            <p class="text-[10px] text-gray-500 uppercase font-bold">Gegenereerd door Elite Scout Intelligence System</p>
+        </div>
     </div>
 
     <script type="module">
         import DataProvider from './js/data_provider.js';
-        let chart = null;
-        let trendChart = null;
+        let chartRadar = null, chartTrend = null;
 
         async function init() {
             const players = await DataProvider.getAllPlayers();
@@ -113,77 +138,90 @@
             const selector = document.getElementById('playerSelector');
             selector.innerHTML = players.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
 
-            const calculateIndex = (p) => {
-                const obj = Math.round((p.obj.attendance * 0.4) + ((p.obj.minutes / 1500) * 100 * 0.6));
-                const coach = Math.round((Object.values(p.ratings).reduce((a,b)=>parseInt(a)+parseInt(b),0)/(Object.keys(p.ratings).length*5))*100);
-                const physMentaal = Math.round((p.stats["Fysiek"] + p.stats["Mentaal"]) / 2);
-                return Math.round((obj * 0.65) + (physMentaal * 0.20) + (coach * 0.15));
-            };
-
             const update = (id) => {
                 const p = players.find(x => x.id === id);
+                if(!p) return;
+
+                // BIO
                 document.getElementById('pName').innerText = p.bio.name;
                 document.getElementById('pPhoto').src = p.bio.photo;
-                document.getElementById('pMeta').innerText = `${p.bio.team} | ${p.bio.role} | Periote: ${p.bio.period}`;
-                document.getElementById('pStrengths').innerText = p.analysis.strengths;
-                document.getElementById('pGrowth').innerText = p.analysis.growthPoints;
+                document.getElementById('pMeta').innerText = `${p.bio.team} | ${p.bio.role} | 2025-2026`;
+                
+                // KPI's
+                const latestIndex = calcIndex(p);
+                document.getElementById('finalScore').innerText = latestIndex;
+                document.getElementById('attScore').innerText = (p.obj?.attendance || 0) + "%";
+                document.getElementById('minScore').innerText = p.obj?.minutes || 0;
 
-                const final = calculateIndex(p);
-                document.getElementById('objScore').innerText = Math.round((p.obj.attendance * 0.4) + ((p.obj.minutes / 1500) * 100 * 0.6));
-                document.getElementById('devScore').innerText = Math.round((p.stats["Fysiek"] + p.stats["Mentaal"]) / 2);
-                document.getElementById('coachScore').innerText = Math.round((Object.values(p.ratings).reduce((a,b)=>parseInt(a)+parseInt(b),0)/(Object.keys(p.ratings).length*5))*100);
-                document.getElementById('pAllocation').innerText = final > 65 ? "Advies: Selectie" : "Advies: Recreatie";
+                // GROEI % (Eind vs Start)
+                if(p.history && p.history["1e seizoenshelft"]) {
+                    const startIdx = calcIndex({ ...p, ...p.history["1e seizoenshelft"], ratings: p.history["1e seizoenshelft"].ratings });
+                    const diff = latestIndex - startIdx;
+                    document.getElementById('growthPct').innerText = (diff >= 0 ? "+" : "") + diff;
+                }
 
-                // SKILL BARS
-                const renderBar = (label, val) => `<div class="mb-2"><div class="flex justify-between text-[9px] uppercase font-bold"><span class="text-gray-500">${label}</span><span class="text-yellow-500">${val}/5</span></div><div class="skill-bar"><div class="skill-fill" style="width:${(val/5)*100}%"></div></div></div>`;
-                document.getElementById('techGrid').innerHTML = renderBar("Balcontrole", p.ratings.bal) + renderBar("Passen", p.ratings.pas) + renderBar("Aannemen", p.ratings.aan) + renderBar("Dribbelen", p.ratings.drib) + renderBar("Schieten", p.ratings.schot);
-                document.getElementById('physGrid').innerHTML = renderBar("Snelheid", p.ratings.sne) + renderBar("Kracht", p.ratings.kra) + renderBar("Inzet", p.ratings.inz) + renderBar("Motivatie", p.ratings.mot) + renderBar("Teamgedrag", p.ratings.tea);
+                // 17 SKILLS RENDERING
+                const r = p.ratings || {};
+                const bar = (l, v) => `<div class="space-y-1"><div class="flex justify-between text-[9px] font-bold uppercase"><span class="text-gray-400">${l}</span><span class="text-white">${v}/5</span></div><div class="skill-bar"><div class="skill-fill" style="width:${(v/5)*100}%"></div></div></div>`;
+                
+                document.getElementById('techGrid').innerHTML = bar("Balcontrole", r.bal) + bar("Passen", r.pas) + bar("Aanname", r.aan) + bar("Dribbelen", r.drib) + bar("Schieten", r.schot) + bar("Techniek", (p.stats.Techniek/20));
+                document.getElementById('physGrid').innerHTML = bar("Snelheid", r.sne) + bar("Uithouding", r.uit) + bar("Kracht", r.kra) + bar("Wendbaarheid", r.wen) + bar("Positiespel", r.posi) + bar("Vrijlopen", r.vrij);
+                document.getElementById('mentGrid').innerHTML = bar("Inzet", r.inz) + bar("Motivatie", r.mot) + bar("Coachbaarheid", r.coa) + bar("Teamgedrag", r.tea) + bar("Samenwerken", r.sam);
 
-                const goals = [1,2,3].map(i => ({g:p.pop['goal'+i], a:p.pop['action'+i], t:p.pop['time'+i]})).filter(x => x.g);
-                document.getElementById('popGoals').innerHTML = goals.map(g => `<div class="bg-white/5 p-3 rounded-lg border-l-2 border-yellow-600"><p class="text-[9px] font-black uppercase text-yellow-600 mb-1">${g.g}</p><p class="text-[10px] text-gray-400 leading-tight">${g.a}</p></div>`).join('');
+                // ROADMAP LOGICA
+                const skillMap = { bal:"Balcontrole", pas:"Passing", aan:"Aanname", drib:"Dribbelen", schot:"Schieten", sne:"Snelheid", uit:"Uithouding", kra:"Kracht", wen:"Wendbaarheid", posi:"Positiespel", coa:"Coachbaarheid", inz:"Inzet" };
+                let lowVal = 6, lowKey = "";
+                ['bal','pas','aan','drib','schot','sne','uit','kra','wen','posi','inz'].forEach(k => { if(r[k] < lowVal) { lowVal = r[k]; lowKey = k; } });
+                
+                document.getElementById('focusSkill').innerText = skillMap[lowKey];
+                document.getElementById('targetScore').innerText = "5.0";
+                document.getElementById('summerTask').innerText = `Op basis van je huidige score (${lowVal}) op ${skillMap[lowKey]}, is dit je primaire focuspunt. Werk deze zomer aan je ${skillMap[lowKey].toLowerCase()} door middel van intervaltraining en techniekoefeningen om volgend seizoen op 80%+ Elite Index te starten.`;
+                document.getElementById('progScore').innerText = (latestIndex + 5) + "%";
+                document.getElementById('summerAdv').innerText = latestIndex > 70 ? "BASIS SELECTIE" : "UITDAGER";
 
                 renderRadar(p);
                 renderTrend(p);
             };
 
-            const renderTrend = (p) => {
-                const ctx = document.getElementById('trendChart');
-                if (trendChart) trendChart.destroy();
-                const periods = ["1e seizoenshelft", "2e seizoenshelft", "Eindbeoordeling"];
-                const dataPoints = periods.map(per => p.history?.[per] ? calculateIndex({ ...p, ...p.history[per], ratings: p.history[per].ratings || p.ratings }) : null);
+            const calcIndex = (p) => {
+                const obj = Math.round((p.obj.attendance * 0.4) + ((p.obj.minutes / 1500) * 100 * 0.6));
+                const coach = Math.round((Object.values(p.ratings).reduce((a,b)=>parseInt(a)+parseInt(b),0)/(Object.keys(p.ratings).length*5))*100);
+                const tech = p.stats?.Techniek || 50;
+                return Math.round((obj * 0.65) + (tech * 0.20) + (coach * 0.15));
+            };
 
-                trendChart = new Chart(ctx, {
-                    type: 'line',
+            const renderRadar = (p) => {
+                const ctx = document.getElementById('radarChart');
+                if(chartRadar) chartRadar.destroy();
+                chartRadar = new Chart(ctx, {
+                    type: 'radar',
                     data: {
-                        labels: ["Start", "Winter", "Eind"],
-                        datasets: [{
-                            data: dataPoints,
-                            borderColor: '#D4AF37',
-                            backgroundColor: 'rgba(212,175,55,0.1)',
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 4,
-                            pointBackgroundColor: '#FFF'
-                        }]
+                        labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'],
+                        datasets: [{ data: Object.values(p.stats), borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.2)', borderWidth: 2 }]
                     },
-                    options: { scales: { y: { suggestedMin: 40, suggestedMax: 100, grid: { color: '#222' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } }
+                    options: { scales: { r: { suggestedMin: 0, suggestedMax: 100, ticks: {display:false}, grid: {color:'rgba(255,255,255,0.05)'}, angleLines: {color:'rgba(255,255,255,0.1)'} } }, plugins: { legend: { display: false } } }
                 });
             };
 
-            const renderRadar = (player) => {
-                const ctx = document.getElementById('radarChart');
-                if (chart) chart.destroy();
-                const histData = player.history?.["1e seizoenshelft"]?.stats || player.stats;
-                chart = new Chart(ctx, {
-                    type: 'radar',
+            const renderTrend = (p) => {
+                const ctx = document.getElementById('trendChart');
+                if(chartTrend) chartTrend.destroy();
+                const labels = ["Start", "Winter", "Eind"];
+                const data = ["1e seizoenshelft", "2e seizoenshelft", "Eindbeoordeling"].map(l => p.history?.[l] ? calcIndex({ ...p, ...p.history[l], ratings: p.history[l].ratings }) : null);
+                
+                chartTrend = new Chart(ctx, {
+                    type: 'line',
                     data: {
-                        labels: Object.keys(player.stats),
-                        datasets: [
-                            { label: 'Start', data: Object.values(histData), borderColor: 'rgba(255,255,255,0.2)', backgroundColor: 'transparent', borderDash: [5,5] },
-                            { label: 'Nu', data: Object.values(player.stats), borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.2)' }
-                        ]
+                        labels: labels,
+                        datasets: [{ data: data, borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.1)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#FFF' }]
                     },
-                    options: { scales: { r: { suggestedMin: 0, suggestedMax: 100, ticks: {display:false}, grid:{color:'#222'} } }, plugins: { legend: { display: false } } }
+                    options: { 
+                        scales: { 
+                            y: { suggestedMin: 40, suggestedMax: 100, grid: {color:'#111'}, ticks: {color: '#555', font: {size: 8}} },
+                            x: { grid: {display: false}, ticks: {color: '#888', font: {size: 8, weight: 'bold'}} }
+                        }, 
+                        plugins: { legend: { display: false } } 
+                    }
                 });
             };
 
@@ -196,7 +234,7 @@
             const canvas = await html2canvas(area, { backgroundColor: '#0a0a0a', scale: 2, useCORS: true });
             const pdf = new jspdf.jsPDF('l', 'mm', 'a4');
             pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 297, 210);
-            pdf.save(`Zomerpaspoort_2026_${document.getElementById('pName').innerText}.pdf`);
+            pdf.save(`Elite_Full_Dossier_2026_${document.getElementById('pName').innerText}.pdf`);
         });
 
         init();
