@@ -28,6 +28,17 @@
             transition: transform 0.2s;
         }
         .btn-gold:hover { transform: scale(1.02); background: #F9E272; }
+        .toggle-pw {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #555;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -45,16 +56,25 @@
                        class="input-field w-full py-4 px-6 rounded-full text-sm">
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-2 relative">
                 <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-4">Secure Password</label>
-                <input type="password" id="password" placeholder="••••••••" required 
-                       class="input-field w-full py-4 px-6 rounded-full text-sm">
+                <div class="relative">
+                    <input type="password" id="password" placeholder="••••••••" required 
+                           class="input-field w-full py-4 px-6 rounded-full text-sm">
+                    <span id="togglePassword" class="toggle-pw hover:text-yellow-500">Toon</span>
+                </div>
             </div>
 
             <button type="submit" class="btn-gold w-full py-5 rounded-full text-[11px] uppercase shadow-xl mt-4">
                 Verify Identity
             </button>
         </form>
+
+        <div class="text-center mt-6">
+            <button type="button" id="forgotBtn" class="text-[9px] text-gray-500 uppercase font-bold hover:text-yellow-500 transition tracking-widest">
+                Wachtwoord vergeten? <span class="underline">Stuur verzoek naar TC</span>
+            </button>
+        </div>
 
         <div id="errorMsg" class="mt-6 text-red-500 text-[10px] font-black uppercase text-center hidden bg-red-500/10 p-3 rounded-xl border border-red-500/20">
             Toegang geweigerd: Onjuiste credentials
@@ -66,7 +86,17 @@
     </div>
 
     <script type="module">
-        // We importeren geen provider hier om de login licht en snel te houden
+        // Wachtwoord zichtbaarheid wisselen
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.innerText = type === 'password' ? 'Toon' : 'Verberg';
+        });
+
+        // Login Logica
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
             const userIn = document.getElementById('username').value;
@@ -74,19 +104,13 @@
             const error = document.getElementById('errorMsg');
 
             try {
-                // We laden de gebruikerslijst
                 const res = await fetch('./data/users.json');
                 const data = await res.json();
                 
-                // Zoek de gebruiker (In een productie-omgeving doe je dit via een veilige API!)
                 const user = data.users.find(u => u.username === userIn && u.password === passIn);
 
                 if (user) {
-                    // BELANGRIJK: Sla de gebruikersgegevens op in de sessie
-                    // Dit wordt gebruikt door index.html en coach.html om te filteren
                     sessionStorage.setItem('elite_user', JSON.stringify(user));
-                    
-                    // Succesvol ingelogd -> naar het dashboard
                     window.location.href = 'index.html';
                 } else {
                     error.classList.remove('hidden');
@@ -95,6 +119,16 @@
                 console.error("Login Error:", err);
                 alert("Systeemfout: Kan gebruikersdatabase niet laden.");
             }
+        };
+
+        // Wachtwoord Vergeten Logica
+        document.getElementById('forgotBtn').onclick = () => {
+            const username = document.getElementById('username').value;
+            if(!username) {
+                alert("Vul eerst je gebruikersnaam in bij 'Coach Username'.");
+                return;
+            }
+            alert("Verzoek voor " + username + " verzonden naar de Technisch Coördinator. Neem contact op met de beheerder voor je nieuwe wachtwoord.");
         };
     </script>
 </body>
