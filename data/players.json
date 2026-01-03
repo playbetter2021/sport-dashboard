@@ -148,13 +148,14 @@
   {
     "id": "p_1767438205214",
     "bio": {
-      "name": "Kenai Vader",
+      "name": "KENAI VADER",
+      "birthYear": "",
+      "photo": "https://www.shutterstock.com/image-photo/girona-spain-10th-dec-2024-600nw-2561740585.jpg",
       "team": "JO14",
       "role": "Aanvaller",
       "coach": "",
       "date": "2026-01-03",
-      "period": "2e seizoenshelft",
-      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=Kenai Vader"
+      "period": "2e seizoenshelft"
     },
     "obj": {
       "attendance": 100,
@@ -202,10 +203,44 @@
       "growthPoints": ""
     },
     "stats": {
-      "Techniek": 80,
-      "Tactiek": 100,
-      "Fysiek": 80,
-      "Mentaal": 80
+      "Techniek": 92,
+      "Tactiek": 90,
+      "Fysiek": 85,
+      "Mentaal": 90
+    },
+    "history": {
+      "2e seizoenshelft": {
+        "date": "2026-01-03",
+        "stats": {
+          "Techniek": 92,
+          "Tactiek": 90,
+          "Fysiek": 85,
+          "Mentaal": 90
+        },
+        "ratings": {
+          "bal": "4",
+          "pas": "5",
+          "aan": "4",
+          "drib": "5",
+          "schot": "5",
+          "posi": "5",
+          "vrij": "4",
+          "sam": "4",
+          "oms": "5",
+          "sne": "4",
+          "uit": "4",
+          "kra": "4",
+          "wen": "5",
+          "inz": "4",
+          "mot": "4",
+          "coa": "5",
+          "tea": "5"
+        },
+        "obj": {
+          "attendance": 100,
+          "minutes": 1000
+        }
+      }
     }
   },
   {
