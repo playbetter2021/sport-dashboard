@@ -17,16 +17,21 @@
 </head>
 <body class="p-6 md:p-10">
     <div class="max-w-[1600px] mx-auto">
-        <header class="flex justify-between items-center mb-10 border-b border-white/5 pb-6">
-            <div>
-                <h1 class="text-3xl font-black italic gold-gradient uppercase tracking-tighter">Elite<span class="text-white not-italic">Hub</span></h1>
-                <p id="adminStatus" class="text-[10px] text-gray-500 uppercase font-bold tracking-[0.3em]"></p>
-            </div>
-            <div class="flex gap-3">
-                <a href="admin_panel.html" class="px-5 py-2 border border-purple-500/30 text-purple-400 rounded-full text-[10px] font-bold uppercase hover:bg-purple-500/10 transition">Admin Panel</a>
-                <a href="index.html" class="px-5 py-2 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/5 transition">Dashboard</a>
-            </div>
-        </header>
+     <header class="flex flex-col lg:flex-row justify-between items-center mb-10 border-b border-white/5 pb-6 gap-4">
+    <div>
+        <h1 class="text-3xl font-black italic gold-gradient uppercase tracking-tighter">Elite<span class="text-white not-italic">Hub</span></h1>
+        <p id="adminStatus" class="text-[10px] text-gray-500 uppercase font-bold tracking-[0.3em]"></p>
+    </div>
+    <div class="flex flex-wrap justify-center gap-3">
+        <a href="index.html" class="px-5 py-2 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/5 transition">Player Dossiers</a>
+        <a href="planner.html" class="px-5 py-2 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/5 transition">Squad Planner</a>
+        <a href="coach.html" class="px-5 py-2 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/5 transition">Coach Terminal</a>
+        <div id="adminLink" class="hidden">
+            <a href="admin_panel.html" class="px-5 py-2 border border-purple-500/30 text-purple-400 rounded-full text-[10px] font-bold uppercase hover:bg-purple-500/10 transition">Admin Panel</a>
+        </div>
+        <button onclick="sessionStorage.clear(); window.location.href='login.html';" class="px-5 py-2 bg-red-500/10 border border-red-500/20 rounded-full text-[10px] font-bold uppercase text-red-500 hover:bg-red-500/20 transition">Logout</button>
+    </div>
+</header>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
             <div class="glass-card p-6">
