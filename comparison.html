@@ -5,6 +5,9 @@
     <title>Elite Pro | Selection Matrix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <style>
         :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
         body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
@@ -13,79 +16,150 @@
         .vs-circle { width: 50px; height: 50px; background: var(--gold); color: black; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; position: absolute; left: 50%; transform: translateX(-50%); z-index: 10; top: 220px; }
         .winner-border { border: 2px solid #22c55e !important; box-shadow: 0 0 30px rgba(34, 197, 94, 0.2); transform: scale(1.02); }
         
-        /* FIX: Dropdown leesbaarheid */
-        select { background-color: #111 !important; color: #D4AF37 !important; border: 1px solid rgba(212,175,55,0.3) !important; }
+        select, input { background-color: #111 !important; color: #D4AF37 !important; border: 1px solid rgba(212,175,55,0.3) !important; outline: none; }
         option { background-color: #0a0a0a; color: #D4AF37; }
+
+        .action-btn { 
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4); }
+        
+        .share-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        .share-btn:hover { background: rgba(255, 255, 255, 0.15); border-color: var(--gold); }
+
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+
+        @keyframes pulse-gold {
+            0%, 100% { border-color: rgba(212, 175, 55, 0.3); }
+            50% { border-color: rgba(212, 175, 55, 1); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+        }
+        .promotion-alert { animation: pulse-gold 2s infinite; background: rgba(212, 175, 55, 0.1); }
     </style>
 </head>
 <body class="p-6">
-    <div class="max-w-7xl mx-auto">
+    <div id="exportArea" class="max-w-7xl mx-auto text-left">
         <header class="flex justify-between items-center mb-8 border-b border-white/5 pb-6">
             <div class="flex items-center gap-4">
                 <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase transition border border-white/10">← Dashboard</a>
                 <h1 class="text-2xl font-black italic gold-gradient uppercase tracking-tighter">Selection<span class="text-white not-italic">Matrix</span></h1>
             </div>
-            <p class="text-[10px] uppercase text-gray-500 font-bold tracking-widest">Vergelijking op basis van 65/20/15 weging</p>
+            <div class="flex items-center gap-4">
+                <p class="text-[10px] uppercase text-gray-500 font-bold tracking-widest text-right">Vergelijking op basis van<br>65% Obj | 20% Groei | 15% Coach</p>
+                <button id="exportPdf" class="px-5 py-2.5 bg-yellow-600 text-black rounded-full text-[10px] font-black uppercase hover:bg-yellow-400 transition shadow-lg">
+                    Download PDF
+                </button>
+            </div>
         </header>
 
-        <div class="glass-card p-6 mb-8 flex flex-wrap gap-6 justify-center items-center">
-            <div class="flex flex-col">
-                <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Team</label>
-                <select id="teamFilter" class="p-2 rounded text-xs outline-none w-48"></select>
-            </div>
-            <div class="flex flex-col">
-                <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Speler 1</label>
-                <select id="player1Select" class="p-2 rounded text-xs outline-none w-48"></select>
-            </div>
-            <div class="flex flex-col">
-                <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Speler 2</label>
-                <select id="player2Select" class="p-2 rounded text-xs outline-none w-48"></select>
-            </div>
-        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-3">
+                <div class="glass-card p-6 mb-8 flex flex-wrap gap-6 justify-center items-center">
+                    <div class="flex flex-col">
+                        <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Team</label>
+                        <select id="teamFilter" class="p-2 rounded text-xs w-48"></select>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Speler 1</label>
+                        <select id="player1Select" class="p-2 rounded text-xs w-48"></select>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Speler 2</label>
+                        <select id="player2Select" class="p-2 rounded text-xs w-48"></select>
+                    </div>
+                </div>
 
-        <div class="relative grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-            <div class="vs-circle hidden md:flex">VS</div>
-
-            <div id="card1" class="glass-card p-8 min-h-[480px]">
-                <div id="content1" class="opacity-0 transition-opacity duration-500">
-                    <img id="img1" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-yellow-600 object-cover shadow-2xl" src="">
-                    <h2 id="name1" class="text-center text-2xl font-black uppercase italic mb-1 text-white"></h2>
-                    <p id="pos1" class="text-center text-[11px] text-yellow-500 font-bold mb-8 uppercase tracking-widest"></p>
-                    
-                    <div class="space-y-4 border-t border-white/5 pt-6">
-                        <div class="flex justify-between text-[11px] uppercase font-bold text-gray-400"><span>Objectief (65%)</span><span id="obj1" class="text-white"></span></div>
-                        <div class="flex justify-between text-[11px] uppercase font-bold text-gray-400"><span>Groei (20%)</span><span id="dev1" class="text-white"></span></div>
-                        <div class="flex justify-between text-[11px] uppercase font-bold text-gray-400 border-b border-white/5 pb-4"><span>Coach (15%)</span><span id="coach1" class="text-white"></span></div>
-                        <div class="flex justify-between items-end">
-                            <span class="text-[10px] font-black text-gray-500 uppercase">Totaal Index</span>
-                            <span id="total1" class="text-4xl font-black gold-gradient leading-none"></span>
+                <div class="relative grid grid-cols-1 md:grid-cols-2 gap-12 items-start mb-8">
+                    <div class="vs-circle hidden md:flex shadow-2xl text-xs">VS</div>
+                    <div id="card1" class="glass-card p-8 min-h-[480px]">
+                        <div id="content1" class="opacity-0 transition-opacity duration-500">
+                            <img id="img1" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-yellow-600 object-cover shadow-2xl" src="">
+                            <h2 id="name1" class="text-center text-2xl font-black uppercase italic mb-1 text-white"></h2>
+                            <p id="pos1" class="text-center text-[11px] text-yellow-500 font-bold mb-8 uppercase tracking-widest"></p>
+                            <div class="space-y-4 border-t border-white/5 pt-6 text-xs text-left">
+                                <div class="flex justify-between"><span>Objectief</span><span id="obj1" class="text-white"></span></div>
+                                <div class="flex justify-between"><span>Groei</span><span id="dev1" class="text-white"></span></div>
+                                <div class="flex justify-between border-b border-white/5 pb-4"><span>Coach</span><span id="coach1" class="text-white"></span></div>
+                                <div class="flex justify-between items-end"><span class="font-black uppercase text-gray-500">Totaal Index</span><span id="total1" class="text-5xl font-black gold-gradient"></span></div>
+                            </div>
                         </div>
+                    </div>
+                    <div id="card2" class="glass-card p-8 min-h-[480px]">
+                        <div id="content2" class="opacity-0 transition-opacity duration-500">
+                            <img id="img2" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-yellow-600 object-cover shadow-2xl" src="">
+                            <h2 id="name2" class="text-center text-2xl font-black uppercase italic mb-1 text-white"></h2>
+                            <p id="pos2" class="text-center text-[11px] text-yellow-500 font-bold mb-8 uppercase tracking-widest"></p>
+                            <div class="space-y-4 border-t border-white/5 pt-6 text-xs text-left">
+                                <div class="flex justify-between"><span>Objectief</span><span id="obj2" class="text-white"></span></div>
+                                <div class="flex justify-between"><span>Groei</span><span id="dev2" class="text-white"></span></div>
+                                <div class="flex justify-between border-b border-white/5 pb-4"><span>Coach</span><span id="coach2" class="text-white"></span></div>
+                                <div class="flex justify-between items-end"><span class="font-black uppercase text-gray-500">Totaal Index</span><span id="total2" class="text-5xl font-black gold-gradient"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="insightCard" class="glass-card p-8 mb-8 border-l-4 border-yellow-500 flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div class="flex-1">
+                        <div id="promoBadge" class="hidden inline-block px-3 py-1 rounded-full bg-yellow-500 text-black text-[9px] font-black uppercase mb-3 tracking-tighter">🔥 Ready for Promotion</div>
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-500 mb-3 italic">Intelligence Insight</h3>
+                        <p id="scoutingReport" class="text-sm text-gray-300 italic">Selecteer assets voor analyse...</p>
+                    </div>
+                    <div id="actionContainer" class="hidden flex flex-col sm:flex-row items-center gap-6">
+                        <button id="shareToCoach" class="share-btn p-3 rounded-xl flex items-center gap-2 group">
+                            <span class="text-lg group-hover:scale-110 transition">📤</span>
+                            <span class="text-[9px] font-black uppercase text-gray-400 group-hover:text-white">Share to Coach</span>
+                        </button>
+                        <div class="flex flex-col">
+                            <label class="text-[8px] font-black text-gray-500 uppercase mb-1 ml-1">Doel Team</label>
+                            <select id="targetTeamSelect" class="!bg-black !text-[10px] !py-1 !px-3 rounded-lg"></select>
+                        </div>
+                        <button id="applyActionBtn" class="action-btn px-6 py-3 rounded-xl text-[10px] font-black uppercase text-white shadow-lg whitespace-nowrap">Bevestig Actie</button>
                     </div>
                 </div>
             </div>
 
-            <div id="card2" class="glass-card p-8 min-h-[480px]">
-                <div id="content2" class="opacity-0 transition-opacity duration-500">
-                    <img id="img2" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-yellow-600 object-cover shadow-2xl" src="">
-                    <h2 id="name2" class="text-center text-2xl font-black uppercase italic mb-1 text-white"></h2>
-                    <p id="pos2" class="text-center text-[11px] text-yellow-500 font-bold mb-8 uppercase tracking-widest"></p>
+            <div class="lg:col-span-1 space-y-6">
+                <div class="glass-card p-5 border-t-2 border-yellow-600/50 text-left">
+                    <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-yellow-500 mb-4 flex items-center gap-2">
+                        <span class="text-lg">📈</span> Trend Analysis
+                    </h3>
+                    <div id="trendContainer" class="space-y-3 mb-6">
+                        <p class="text-[10px] text-gray-600 italic">Data verzamelen...</p>
+                    </div>
                     
-                    <div class="space-y-4 border-t border-white/5 pt-6">
-                        <div class="flex justify-between text-[11px] uppercase font-bold text-gray-400"><span>Objectief (65%)</span><span id="obj2" class="text-white"></span></div>
-                        <div class="flex justify-between text-[11px] uppercase font-bold text-gray-400"><span>Groei (20%)</span><span id="dev2" class="text-white"></span></div>
-                        <div class="flex justify-between text-[11px] uppercase font-bold text-gray-400 border-b border-white/5 pb-4"><span>Coach (15%)</span><span id="coach2" class="text-white"></span></div>
-                        <div class="flex justify-between items-end">
-                            <span class="text-[10px] font-black text-gray-500 uppercase">Totaal Index</span>
-                            <span id="total2" class="text-4xl font-black gold-gradient leading-none"></span>
-                        </div>
+                    <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-4 border-t border-white/5 pt-4">
+                        Player Progression
+                    </h3>
+                    <div class="h-32 w-full">
+                        <canvas id="progressionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 flex flex-col max-h-[500px] text-left">
+                    <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-4 border-b border-white/5 pb-2 italic text-center">History Log</h3>
+                    <div class="mb-4">
+                        <input type="text" id="globalSearch" placeholder="Filter historie..." class="w-full text-[10px] py-2 px-4 rounded-full placeholder:text-gray-700 bg-black/40 border border-white/10">
+                    </div>
+                    <div id="historyList" class="flex-1 overflow-y-auto custom-scroll space-y-3 pr-2"></div>
+                    
+                    <div class="mt-4 border-t border-white/5 pt-4 flex flex-col gap-2 text-center">
+                        <button id="downloadCsv" class="text-[9px] uppercase font-bold text-yellow-500 hover:text-yellow-300 transition">Download CSV</button>
+                        <button id="clearHistory" class="text-[9px] uppercase font-bold text-gray-600 hover:text-red-500 transition">Log Wissen</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="mt-12 glass-card p-10 flex flex-col items-center">
-            <h3 class="text-[10px] font-black uppercase tracking-[0.5em] text-gray-500 mb-10">Skill Overlap Matrix</h3>
-            <div class="w-full max-w-lg">
+            <h3 class="text-[10px] font-black uppercase tracking-[0.5em] text-gray-500 mb-10 text-center">Skill Overlap Matrix</h3>
+            <div class="w-full max-w-lg radar-container">
                 <canvas id="compChart"></canvas>
             </div>
         </div>
@@ -93,19 +167,18 @@
 
     <script type="module">
         import DataProvider from './js/data_provider.js';
-        let allPlayers = [];
-        let chart = null;
+        let allPlayers = [], chart = null, progChart = null, currentWinner = null;
 
         async function init() {
             allPlayers = await DataProvider.getAllPlayers();
             if(!allPlayers.length) return;
             
-            const teams = [...new Set(allPlayers.map(p => p.bio.team))];
-            const teamFilter = document.getElementById('teamFilter');
-            teamFilter.innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
+            const teams = [...new Set(allPlayers.map(p => p.bio.team))].sort();
+            document.getElementById('teamFilter').innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
+            document.getElementById('targetTeamSelect').innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
 
             const updateLists = () => {
-                const team = teamFilter.value;
+                const team = document.getElementById('teamFilter').value;
                 const filtered = allPlayers.filter(p => p.bio.team === team);
                 const options = filtered.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
                 document.getElementById('player1Select').innerHTML = options;
@@ -121,85 +194,213 @@
 
                 const calc = (p) => {
                     const obj = Math.round((p.obj?.attendance * 0.4) + ((p.obj?.minutes / 1500) * 100 * 0.6));
-                    const coach = Math.round((Object.values(p.ratings || {}).reduce((a,b)=>parseInt(a)+parseInt(b),0)/(Object.keys(p.ratings || {}).length*5 || 1))*100);
-                    // Groei/Ontwikkeling gebaseerd op gemiddelde van stats
                     const dev = Math.round(Object.values(p.stats || {}).reduce((a,b)=>a+b,0) / 4);
+                    const coach = Math.round((Object.values(p.ratings || {}).reduce((a,b)=>parseInt(a)+parseInt(b),0)/(Object.keys(p.ratings || {}).length*5 || 1))*100);
                     const total = Math.round((obj * 0.65) + (dev * 0.20) + (coach * 0.15));
-                    return { obj, dev, coach, total };
+                    return { obj, dev, coach, total, original: p };
                 };
 
-                const s1 = calc(p1); 
-                const s2 = calc(p2);
+                const s1 = calc(p1), s2 = calc(p2);
+                currentWinner = s1.total >= s2.total ? s1 : s2;
 
-                const render = (num, p, s, otherTotal) => {
-                    document.getElementById('img'+num).src = p.bio.photo || "https://via.placeholder.com/150/0a0a0a/D4AF37?text=?";
+                const renderCard = (num, p, s, otherTotal) => {
+                    document.getElementById('img'+num).src = p.bio.photo;
                     document.getElementById('name'+num).innerText = p.bio.name;
                     document.getElementById('pos'+num).innerText = p.bio.role;
-                    document.getElementById('obj'+num).innerText = s.obj;
-                    document.getElementById('dev'+num).innerText = s.dev;
-                    document.getElementById('coach'+num).innerText = s.coach;
+                    document.getElementById('obj'+num).innerText = s.obj + "%";
+                    document.getElementById('dev'+num).innerText = s.dev + "%";
+                    document.getElementById('coach'+num).innerText = s.coach + "%";
                     document.getElementById('total'+num).innerText = s.total;
                     document.getElementById('content'+num).style.opacity = 1;
-                    
-                    const card = document.getElementById('card'+num);
-                    card.classList.toggle('winner-border', s.total > otherTotal);
+                    document.getElementById('card'+num).classList.toggle('winner-border', s.total > otherTotal);
                 };
 
-                render(1, p1, s1, s2.total); 
-                render(2, p2, s2, s1.total);
+                renderCard(1, p1, s1, s2.total); 
+                renderCard(2, p2, s2, s1.total);
+                checkSmartNotifications();
                 renderChart(p1, p2);
+                renderProgressionChart(currentWinner.original.bio.name);
+            };
+
+            function checkSmartNotifications() {
+                const history = JSON.parse(localStorage.getItem('elite_compare_history') || '[]');
+                const wins = {};
+                history.forEach(h => { wins[h.winner] = (wins[h.winner] || 0) + 1; });
+                
+                const winCount = wins[currentWinner.original.bio.name] || 0;
+                const promoBadge = document.getElementById('promoBadge');
+                const insightCard = document.getElementById('insightCard');
+
+                if (winCount >= 3) {
+                    promoBadge.classList.remove('hidden');
+                    insightCard.classList.add('promotion-alert');
+                    document.getElementById('scoutingReport').innerHTML = `<strong>Kritieke waarneming:</strong> ${currentWinner.original.bio.name} heeft ${winCount} opeenvolgende vergelijkingen gewonnen. Het systeem adviseert directe promotie.`;
+                } else {
+                    promoBadge.classList.add('hidden');
+                    insightCard.classList.remove('promotion-alert');
+                    document.getElementById('scoutingReport').innerHTML = `Analyse voltooid: <strong>${currentWinner.original.bio.name}</strong> toont de hoogste operationele waarde (${currentWinner.total}%).`;
+                }
+                document.getElementById('actionContainer').classList.remove('hidden');
+            }
+
+            // SHARE TO COACH LOGICA
+            document.getElementById('shareToCoach').onclick = () => {
+                const p1 = allPlayers.find(p => p.id === document.getElementById('player1Select').value);
+                const p2 = allPlayers.find(p => p.id === document.getElementById('player2Select').value);
+                const history = JSON.parse(localStorage.getItem('elite_compare_history') || '[]');
+                const pWins = history.filter(h => h.winner === currentWinner.original.bio.name).length;
+
+                const shareText = `⚽ ELITE PRO SCOUTING REPORT\n` +
+                                 `----------------------------\n` +
+                                 `Vergelijking: ${p1.bio.name} vs ${p2.bio.name}\n` +
+                                 `Status: ${currentWinner.original.bio.name} geselecteerd.\n\n` +
+                                 `📈 Index Score: ${currentWinner.total}%\n` +
+                                 `🏆 Winning Streak: ${pWins} vergelijkingen gewonnen\n` +
+                                 `💡 Advies: ${document.getElementById('scoutingReport').innerText}\n\n` +
+                                 `Gegenereerd door Elite Pro Selection Matrix.`;
+
+                navigator.clipboard.writeText(shareText).then(() => {
+                    alert("Scouting rapport gekopieerd naar klembord! Je kunt het nu plakken in WhatsApp of e-mail.");
+                });
+            };
+
+            function updateHistoryUI(searchTerm = "") {
+                const history = JSON.parse(localStorage.getItem('elite_compare_history') || '[]');
+                const list = document.getElementById('historyList');
+                const trendContainer = document.getElementById('trendContainer');
+
+                const filtered = history.filter(item => 
+                    item.p1.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                    item.p2.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+
+                list.innerHTML = filtered.reverse().map(item => `
+                    <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-[10px] space-y-1">
+                        <div class="flex justify-between text-gray-500 font-bold uppercase text-[7px]"><span>${item.date}</span><span>${item.team}</span></div>
+                        <div class="text-white font-black truncate">${item.p1} VS ${item.p2}</div>
+                        <div class="text-[9px] ${item.action ? 'text-green-500' : 'text-gray-400'}">${item.action ? '● ' + item.action : 'Winner: ' + item.winner}</div>
+                    </div>
+                `).join('');
+
+                const wins = {};
+                history.forEach(h => { wins[h.winner] = (wins[h.winner] || 0) + 1; });
+                const sortedTrends = Object.entries(wins).sort((a,b) => b[1] - a[1]).slice(0,3);
+
+                if(sortedTrends.length > 0) {
+                    trendContainer.innerHTML = sortedTrends.map(([name, count]) => `
+                        <div class="flex justify-between items-center bg-yellow-600/10 p-2 rounded-lg border border-yellow-600/20">
+                            <span class="text-[10px] font-bold text-white">${name}</span>
+                            <span class="text-[10px] font-black text-yellow-500">${count}x Win</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            function renderProgressionChart(playerName) {
+                const history = JSON.parse(localStorage.getItem('elite_compare_history') || '[]');
+                const pData = history.filter(h => h.p1 === playerName || h.p2 === playerName).slice(-5);
+                const scores = pData.map(h => h.winner === playerName ? h.winnerScore : 70);
+                
+                const ctx = document.getElementById('progressionChart');
+                if (progChart) progChart.destroy();
+                
+                progChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: pData.map((_, i) => i + 1),
+                        datasets: [{
+                            data: scores.length > 0 ? scores : [0],
+                            borderColor: '#D4AF37',
+                            backgroundColor: 'rgba(212,175,55,0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 2
+                        }]
+                    },
+                    options: {
+                        plugins: { legend: { display: false } },
+                        scales: { y: { display: false, min: 0, max: 100 }, x: { display: false } },
+                        maintainAspectRatio: false
+                    }
+                });
+            }
+
+            document.getElementById('downloadCsv').onclick = () => {
+                const history = JSON.parse(localStorage.getItem('elite_compare_history') || '[]');
+                if(!history.length) return alert("Geen data.");
+                let csv = "Datum,Team,P1,P2,Winner,WinnerScore,Action\n" + history.map(i => `${i.date},${i.team},${i.p1},${i.p2},${i.winner},${i.winnerScore},${i.action}`).join('\n');
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+                link.download = "Elite_Selection_Matrix_Data.csv";
+                link.click();
+            };
+
+            document.getElementById('globalSearch').addEventListener('input', (e) => updateHistoryUI(e.target.value));
+
+            document.getElementById('applyActionBtn').onclick = () => {
+                const p1 = allPlayers.find(p => p.id === document.getElementById('player1Select').value);
+                const p2 = allPlayers.find(p => p.id === document.getElementById('player2Select').value);
+                
+                const logEntry = {
+                    date: new Date().toLocaleDateString('nl-NL', {day:'2-digit', month:'short'}),
+                    team: document.getElementById('teamFilter').value,
+                    p1: p1.bio.name,
+                    p2: p2.bio.name,
+                    winner: currentWinner.original.bio.name,
+                    winnerScore: currentWinner.total,
+                    action: document.getElementById('targetTeamSelect').value
+                };
+                
+                const history = JSON.parse(localStorage.getItem('elite_compare_history') || '[]');
+                history.push(logEntry);
+                localStorage.setItem('elite_compare_history', JSON.stringify(history));
+                
+                updateHistoryUI();
+                checkSmartNotifications();
+                renderProgressionChart(currentWinner.original.bio.name);
+                alert(`Besluit vastgelegd voor ${currentWinner.original.bio.name}.`);
+            };
+
+            document.getElementById('clearHistory').onclick = () => {
+                if(confirm("Historie wissen?")) { 
+                    localStorage.removeItem('elite_compare_history'); 
+                    updateHistoryUI(); 
+                    checkSmartNotifications();
+                    if(progChart) progChart.destroy();
+                }
             };
 
             const renderChart = (p1, p2) => {
                 const ctx = document.getElementById('compChart');
                 if (chart) chart.destroy();
-                
-                const labels = Object.keys(p1.stats || { "Techniek":0, "Tactiek":0, "Fysiek":0, "Mentaal":0 });
-
+                const labels = ["Techniek", "Tactiek", "Fysiek", "Mentaal"];
                 chart = new Chart(ctx, {
                     type: 'radar',
                     data: {
                         labels: labels,
                         datasets: [
-                            { 
-                                label: p1.bio.name, 
-                                data: Object.values(p1.stats || {}), 
-                                borderColor: '#D4AF37', 
-                                backgroundColor: 'rgba(212,175,55,0.2)',
-                                borderWidth: 3,
-                                pointBackgroundColor: '#FFF'
-                            },
-                            { 
-                                label: p2.bio.name, 
-                                data: Object.values(p2.stats || {}), 
-                                borderColor: '#FFF', 
-                                backgroundColor: 'rgba(255,255,255,0.1)',
-                                borderWidth: 2,
-                                pointBackgroundColor: '#AAA'
-                            }
+                            { label: p1.bio.name, data: labels.map(l => p1.stats[l]), borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.2)', borderWidth: 3 },
+                            { label: p2.bio.name, data: labels.map(l => p2.stats[l]), borderColor: '#FFF', backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 2 }
                         ]
                     },
                     options: { 
-                        scales: { 
-                            r: { 
-                                suggestedMin: 0, 
-                                suggestedMax: 100, 
-                                ticks: { display: false }, 
-                                grid: { color: 'rgba(255,255,255,0.05)' },
-                                angleLines: { color: 'rgba(255,255,255,0.1)' }
-                            } 
-                        }, 
-                        plugins: { 
-                            legend: { labels: { color: '#FFF', font: { size: 10, weight: 'bold' } } } 
-                        } 
+                        scales: { r: { suggestedMin: 0, suggestedMax: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' }, pointLabels: { color: '#888', font: { weight: 'bold' } } } },
+                        plugins: { legend: { labels: { color: '#FFF' } } }
                     }
                 });
             };
 
-            teamFilter.addEventListener('change', updateLists);
-            document.getElementById('player1Select').addEventListener('change', compare);
-            document.getElementById('player2Select').addEventListener('change', compare);
-            updateLists();
+            document.getElementById('exportPdf').onclick = async () => {
+                const canvas = await html2canvas(document.getElementById('exportArea'), { backgroundColor: '#0a0a0a', scale: 2 });
+                const pdf = new jspdf.jsPDF('l', 'mm', 'a4');
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 297, (canvas.height * 297) / canvas.width);
+                pdf.save("Elite_Selection_Matrix.pdf");
+            };
+
+            document.getElementById('teamFilter').onchange = updateLists;
+            document.getElementById('player1Select').onchange = compare;
+            document.getElementById('player2Select').onchange = compare;
+            updateLists(); updateHistoryUI();
         }
         init();
     </script>
