@@ -7,20 +7,56 @@
     <style>
         :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
         body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
-        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; }
+        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; transition: all 0.3s ease; }
         .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: white; padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; }
         select[multiple] { height: 100px; }
+        
+        .nav-item:hover { border-color: rgba(212, 175, 55, 0.5); transform: translateY(-2px); background: rgba(255, 255, 255, 0.05); }
     </style>
 </head>
-<body class="p-8">
+<body class="p-8 text-left">
     <div class="max-w-6xl mx-auto">
         <header class="flex justify-between items-center mb-10 border-b border-white/5 pb-6">
             <div>
                 <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter underline decoration-yellow-500">Admin<span class="text-yellow-500">Control</span></h1>
                 <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">User & Team Management System</p>
             </div>
-            <a href="index.html" class="bg-white/5 border border-white/20 px-6 py-2 rounded-full text-[10px] font-bold uppercase">← Dashboard</a>
+            <a href="index.html" class="bg-white/5 border border-white/20 px-6 py-2 rounded-full text-[10px] font-bold uppercase hover:bg-white/10 transition">← Dashboard</a>
         </header>
+
+        <section class="mb-12">
+            <h3 class="text-gray-500 font-black uppercase text-[10px] mb-6 tracking-[0.2em]">Systeem Navigatie</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <a href="index.html" class="glass-card p-4 nav-item flex items-center gap-4 group">
+                    <span class="text-xl group-hover:scale-110 transition">🏠</span>
+                    <div class="text-[10px] font-black uppercase leading-tight">Dashboard</div>
+                </a>
+                <a href="overview.html" class="glass-card p-4 nav-item flex items-center gap-4 group">
+                    <span class="text-xl group-hover:scale-110 transition">📋</span>
+                    <div class="text-[10px] font-black uppercase leading-tight">Overview</div>
+                </a>
+                <a href="comparison.html" class="glass-card p-4 nav-item flex items-center gap-4 group">
+                    <span class="text-xl group-hover:scale-110 transition">⚖️</span>
+                    <div class="text-[10px] font-black uppercase leading-tight">Selection Matrix</div>
+                </a>
+                <a href="coach.html" class="glass-card p-4 nav-item flex items-center gap-4 group">
+                    <span class="text-xl group-hover:scale-110 transition">🧠</span>
+                    <div class="text-[10px] font-black uppercase leading-tight">Coach Portal</div>
+                </a>
+                <a href="planner.html" class="glass-card p-4 nav-item flex items-center gap-4 group">
+                    <span class="text-xl group-hover:scale-110 transition">📅</span>
+                    <div class="text-[10px] font-black uppercase leading-tight">Planner</div>
+                </a>
+                <a href="seasonal_analysis.html" class="glass-card p-4 nav-item flex items-center gap-4 group">
+                    <span class="text-xl group-hover:scale-110 transition">📊</span>
+                    <div class="text-[10px] font-black uppercase leading-tight">Seasonal Analysis</div>
+                </a>
+                <a href="login.html" class="glass-card p-4 nav-item flex items-center gap-4 group border-dashed">
+                    <span class="text-xl group-hover:scale-110 transition">🔒</span>
+                    <div class="text-[10px] font-black uppercase leading-tight">Login Page</div>
+                </a>
+            </div>
+        </section>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div class="lg:col-span-5">
@@ -41,27 +77,30 @@
                         </div>
 
                         <div>
-                            <label class="text-[10px] uppercase font-bold text-gray-500">Koppel Teams (Houd CTRL ingedrukt voor meerdere)</label>
+                            <label class="text-[10px] uppercase font-bold text-gray-500">Koppel Teams</label>
                             <select id="uTeams" class="input-luxe" multiple>
                                 <option value="JO8">JO8</option><option value="JO9">JO9</option><option value="JO10">JO10</option>
                                 <option value="JO11">JO11</option><option value="JO12">JO12</option><option value="JO13">JO13</option>
                                 <option value="JO14">JO14</option><option value="JO15">JO15</option><option value="JO16">JO16</option>
                                 <option value="JO17">JO17</option><option value="JO19">JO19</option><option value="Senioren">Senioren</option>
-                                <option value="ALL">ALLE TEAMS (Admin)</option>
+                                <option value="ALL">ALLE TEAMS</option>
                             </select>
                         </div>
 
                         <div class="pt-4 space-y-3">
-                            <input type="password" id="ghToken" placeholder="GitHub Token voor opslaan" class="input-luxe">
+                            <input type="password" id="ghToken" placeholder="GitHub Token" class="input-luxe">
                             <button type="submit" class="w-full bg-yellow-600 text-black font-black py-4 rounded-xl uppercase text-[10px] tracking-widest hover:bg-yellow-400 transition">Sla Gebruiker Op</button>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <div class="lg:col-span-7">
+            <div class="lg:col-span-7 space-y-6">
                 <div class="glass-card p-8">
-                    <h3 class="text-yellow-500 font-black uppercase text-xs mb-6 italic">Huidige Staff Bezetting</h3>
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-yellow-500 font-black uppercase text-xs italic">Huidige Staff Bezetting</h3>
+                        <button id="exportUsers" class="text-[9px] font-black uppercase text-gray-500 hover:text-white transition">📥 Export CSV</button>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs">
                             <thead class="text-gray-500 border-b border-white/5 uppercase font-black text-[9px]">
@@ -76,7 +115,6 @@
     </div>
 
     <script type="module">
-        // LOGICA VOOR GITHUB SYNC EN FILTEREN
         const sessionUser = JSON.parse(sessionStorage.getItem('elite_user'));
         if (!sessionUser || sessionUser.role !== 'admin') {
             window.location.href = 'login.html';
@@ -94,24 +132,30 @@
         function renderTable() {
             const tbody = document.getElementById('userTableBody');
             tbody.innerHTML = allUsers.map((u, index) => `
-                <tr class="border-b border-white/5 hover:bg-white/5">
+                <tr class="border-b border-white/5 hover:bg-white/5 transition">
                     <td class="py-4 font-bold text-white">${u.name} <br> <span class="text-[9px] text-gray-500">${u.username}</span></td>
                     <td class="py-4"><span class="px-2 py-1 rounded bg-white/5 text-[9px] uppercase font-black">${u.role}</span></td>
                     <td class="py-4 text-yellow-500 font-bold text-[10px]">${u.teams.join(', ')}</td>
                     <td class="py-4 text-right">
-                        <button onclick="editUser(${index})" class="text-blue-400 hover:underline mr-2">Edit</button>
+                        <button onclick="window.editUser(${index})" class="text-blue-400 hover:text-blue-300 transition font-bold">Edit</button>
                     </td>
                 </tr>
             `).join('');
         }
 
+        document.getElementById('exportUsers').onclick = () => {
+            let csv = "Naam,Username,Rol,Teams\n" + allUsers.map(u => `${u.name},${u.username},${u.role},"${u.teams.join('|')}"`).join('\n');
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+            link.download = "Staff_Database.csv";
+            link.click();
+        };
+
         document.getElementById('userForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const token = document.getElementById('ghToken').value;
-            if(!token) return alert("GitHub Token is vereist om wijzigingen op te slaan.");
-
+            if(!token) return alert("GitHub Token vereist.");
             const selectedTeams = Array.from(document.getElementById('uTeams').selectedOptions).map(o => o.value);
-            
             const newUser = {
                 username: document.getElementById('uUsername').value,
                 password: document.getElementById('uPassword').value,
@@ -119,39 +163,33 @@
                 role: document.getElementById('uRole').value,
                 teams: selectedTeams
             };
-
-            // Zoek of de gebruiker al bestaat, zo ja: update. Zo nee: push.
             const idx = allUsers.findIndex(u => u.username === newUser.username);
             if(idx !== -1) allUsers[idx] = newUser; else allUsers.push(newUser);
 
-            // OPSLAAN NAAR GITHUB
             try {
                 const url = `https://api.github.com/repos/playbetter2021/sport-dashboard/contents/data/users.json`;
                 const res = await fetch(url, { headers: { "Authorization": `token ${token}` } });
                 const file = await res.json();
-                
                 await fetch(url, { 
                     method: "PUT", 
                     headers: { "Authorization": `token ${token}` }, 
                     body: JSON.stringify({ 
-                        message: "User Update: " + newUser.name, 
+                        message: "Update: " + newUser.name, 
                         content: btoa(JSON.stringify({ users: allUsers }, null, 2)), 
                         sha: file.sha 
                     }) 
                 });
-                alert("Gebruikersdatabase succesvol bijgewerkt!");
+                alert("Opgeslagen!");
                 loadUsers();
-            } catch (err) { alert("Fout bij opslaan: " + err.message); }
+            } catch (err) { alert("Fout: " + err.message); }
         });
 
-        // Edit functie toegankelijk maken
         window.editUser = (idx) => {
             const u = allUsers[idx];
             document.getElementById('uName').value = u.name;
             document.getElementById('uUsername').value = u.username;
             document.getElementById('uPassword').value = u.password;
             document.getElementById('uRole').value = u.role;
-            // Teams selecteren (multiple)
             const teamSelect = document.getElementById('uTeams');
             Array.from(teamSelect.options).forEach(opt => opt.selected = u.teams.includes(opt.value));
         };
