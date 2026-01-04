@@ -1355,5 +1355,19 @@
         }
       }
     }
+  },
+  {
+    "id": "p_1767568153334",
+    "bio": {
+      "name": "PIETJE KLAP",
+      "team": "JO16-1",
+      "number": "2",
+      "role": "Verdediger",
+      "photo": "https://st5.depositphotos.com/43708092/69991/i/450/depositphotos_699918166-stock-photo-kevin-bruyne-manchester-city-premier.jpg",
+      "email": "d.vader@hetnet.nl"
+    },
+    "ratings": {},
+    "comments": {},
+    "history": {}
   }
 ]
