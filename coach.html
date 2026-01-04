@@ -196,13 +196,31 @@
             search.innerHTML = '<option value="">-- ZOEK SPELER --</option>' + 
                 filteredPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
 
-            // Vul Team selector alleen met toegestane teams voor de coach
-            const teamSelect = document.getElementById('pTeam');
-            const availableTeams = (currentUser.role === 'admin') 
-                ? ["JO8","JO9","JO10","JO11","JO12","JO13","JO14","JO15","JO16","JO17","JO19","Senioren"]
-                : currentUser.teams;
-            
-            teamSelect.innerHTML = availableTeams.map(t => `<option>${t}</option>`).join('');
+         // Vul Team selector alleen met toegestane teams voor de coach
+const teamSelect = document.getElementById('pTeam');
+
+// Uitgebreide lijst met 4 teams per leeftijdscategorie
+const adminTeams = [
+    "JO8-1", "JO8-2", "JO8-3", "JO8-4",
+    "JO9-1", "JO9-2", "JO9-3", "JO9-4",
+    "JO10-1", "JO10-2", "JO10-3", "JO10-4",
+    "JO11-1", "JO11-2", "JO11-3", "JO11-4",
+    "JO12-1", "JO12-2", "JO12-3", "JO12-4",
+    "JO13-1", "JO13-2", "JO13-3", "JO13-4",
+    "JO14-1", "JO14-2", "JO14-3", "JO14-4",
+    "JO15-1", "JO15-2", "JO15-3", "JO15-4",
+    "JO16-1", "JO16-2", "JO16-3", "JO16-4",
+    "JO17-1", "JO17-2", "JO17-3", "JO17-4",
+    "JO19-1", "JO19-2", "JO19-3", "JO19-4",
+    "Senioren 1", "Senioren 2", "Senioren 3", "Senioren 4"
+];
+
+const availableTeams = (currentUser.role === 'admin') 
+    ? adminTeams 
+    : currentUser.teams;
+
+// Render de opties in de selectie
+teamSelect.innerHTML = availableTeams.map(t => `<option value="${t}">${t}</option>`).join('');
         }
 
         // 3. LOCK LOGICA
