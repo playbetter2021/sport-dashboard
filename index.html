@@ -20,173 +20,196 @@
     </style>
 </head>
 <body class="p-4 md:p-8">
-    <div class="max-w-[1600px] mx-auto">
-        <header class="flex flex-col lg:flex-row justify-between items-center mb-10 border-b border-white/5 pb-6 gap-4">
+    <div class="max-w-[1600px] mx-auto space-y-8">
+        
+        <header class="flex flex-col lg:flex-row justify-between items-center gap-6 border-b border-white/5 pb-8">
             <div>
-                <h1 class="text-4xl font-black italic gold-gradient uppercase tracking-tighter">Elite<span class="text-white not-italic">Intelligence</span></h1>
-                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-[0.3em]">Season 2025-2026 | Mission Control</p>
+                <h1 class="text-4xl font-black italic gold-gradient uppercase tracking-tighter leading-none">Elite<span class="text-white not-italic">Intelligence</span></h1>
+                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-[0.4em] mt-2">Season 2025-2026 • Intelligence Division</p>
             </div>
-            <div class="flex flex-wrap justify-center gap-3">
-                <select id="playerSelector" class="bg-black border border-yellow-700/50 text-yellow-500 py-2.5 px-8 rounded-full text-xs font-bold outline-none cursor-pointer shadow-2xl"></select>
+            
+            <div class="flex items-center gap-4 w-full lg:w-auto">
+                <div class="relative w-full lg:w-96 group">
+                    <span class="absolute left-5 top-1/2 -translate-y-1/2 text-yellow-500 opacity-50 group-focus-within:opacity-100 transition">🔍</span>
+                    <select id="playerSelector" class="w-full bg-white/5 border border-yellow-700/30 text-white py-4 px-12 rounded-2xl text-xs font-black outline-none appearance-none cursor-pointer focus:border-yellow-500 transition shadow-2xl">
+                        </select>
+                </div>
             </div>
         </header>
 
-        <div class="max-w-7xl mx-auto px-4 py-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
-                <div class="glass-card p-4 border-l-4 border-yellow-500 bg-white/[0.02]">
-                    <p class="text-[9px] uppercase font-black text-gray-500 tracking-widest">Actieve Selectie</p>
-                    <p class="text-xl font-black text-white" id="stat-team-display">Laden...</p>
-                </div>
-                <div class="glass-card p-4 border-l-4 border-blue-500 bg-white/[0.02]">
-                    <p class="text-[9px] uppercase font-black text-gray-500 tracking-widest">Totaal Spelers</p>
-                    <p class="text-xl font-black text-white" id="stat-total-display">--</p>
-                </div>
-                <div class="glass-card p-4 border-l-4 border-green-500 bg-white/[0.02]">
-                    <p class="text-[9px] uppercase font-black text-gray-500 tracking-widest">Team Gemiddelde</p>
-                    <p class="text-xl font-black text-white" id="stat-avg-display">-- <span class="text-[10px] text-green-400">↑</span></p>
-                </div>
-                <div class="glass-card p-4 border-l-4 border-purple-500 bg-white/[0.02]">
-                    <p class="text-[9px] uppercase font-black text-gray-500 tracking-widest">Systeem Status</p>
-                    <p class="text-xl font-black text-white text-green-500 flex items-center gap-2">Online <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span></p>
-                </div>
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-card p-6 relative overflow-hidden group hover:bg-white/[0.04]">
+                <div class="absolute top-0 left-0 w-1 h-full bg-yellow-500"></div>
+                <p class="text-[9px] uppercase font-black text-gray-500 tracking-widest mb-1">Active Assignment</p>
+                <p class="text-2xl font-black text-white italic" id="stat-team-display">Laden...</p>
+                <span class="absolute right-6 top-1/2 -translate-y-1/2 text-3xl opacity-10">🛡️</span>
+            </div>
+            
+            <div class="glass-card p-6 relative overflow-hidden group hover:bg-white/[0.04]">
+                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                <p class="text-[9px] uppercase font-black text-gray-500 tracking-widest mb-1">Total Assets</p>
+                <p class="text-2xl font-black text-white italic" id="stat-total-display">--</p>
+                <span class="absolute right-6 top-1/2 -translate-y-1/2 text-3xl opacity-10">👥</span>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-                <div class="lg:col-span-8 space-y-6">
-                    <h3 class="text-[10px] font-black uppercase text-gray-500 tracking-[0.3em]">Operational Core</h3>
+            <div class="glass-card p-6 relative overflow-hidden group hover:bg-white/[0.04]">
+                <div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
+                <p class="text-[9px] uppercase font-black text-gray-500 tracking-widest mb-1">Elite Team Index</p>
+                <p class="text-2xl font-black text-white italic" id="stat-avg-display">--</p>
+                <span class="absolute right-6 top-1/2 -translate-y-1/2 text-3xl opacity-10">📈</span>
+            </div>
+
+            <div class="glass-card p-6 relative overflow-hidden group hover:bg-white/[0.04]">
+                <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
+                <p class="text-[9px] uppercase font-black text-gray-500 tracking-widest mb-1">Network Status</p>
+                <div class="flex items-center gap-3">
+                    <p class="text-2xl font-black text-green-500 italic uppercase">Secure</p>
+                    <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <main class="lg:col-span-8 space-y-8">
+                
+                <div id="navigationCore" class="space-y-4">
+                    <h3 class="text-[10px] font-black uppercase text-gray-500 tracking-[0.4em] ml-2 italic">Primary Operations</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <a href="planner.html" class="glass-card p-8 group hover:bg-blue-600/10 transition border-b-4 border-blue-600">
-                            <div class="text-4xl mb-4 group-hover:scale-110 transition duration-300">📅</div>
-                            <h4 class="text-lg font-black text-white uppercase italic">Trainings Planner</h4>
-                            <p class="text-xs text-gray-500 mt-2">Bereid je sessies voor en beheer de teamagenda.</p>
+                        <a href="planner.html" class="glass-card p-8 group border-b-4 border-blue-600 hover:translate-y-[-4px]">
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="text-5xl group-hover:scale-110 transition duration-500">📅</span>
+                                <span class="text-[10px] font-black bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full uppercase">Tactical</span>
+                            </div>
+                            <h4 class="text-xl font-black text-white uppercase italic tracking-tighter">Trainings Planner</h4>
+                            <p class="text-xs text-gray-500 mt-2">Stel sessies samen en beheer de seizoensagenda.</p>
                         </a>
-                        <a href="coach.html" class="glass-card p-8 group hover:bg-purple-600/10 transition border-b-4 border-purple-600">
-                            <div class="text-4xl mb-4 group-hover:scale-110 transition duration-300">🧠</div>
-                            <h4 class="text-lg font-black text-white uppercase italic">Coach Ratings</h4>
-                            <p class="text-xs text-gray-500 mt-2">Directe spelerbeoordelingen na training of wedstrijd.</p>
+
+                        <a href="coach.html" class="glass-card p-8 group border-b-4 border-purple-600 hover:translate-y-[-4px]">
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="text-5xl group-hover:scale-110 transition duration-500">🧠</span>
+                                <span class="text-[10px] font-black bg-purple-600/20 text-purple-400 px-3 py-1 rounded-full uppercase">Intelligence</span>
+                            </div>
+                            <h4 class="text-xl font-black text-white uppercase italic tracking-tighter">Coach Ratings</h4>
+                            <p class="text-xs text-gray-500 mt-2">Verwerk spelerbeoordelingen direct na de actie.</p>
                         </a>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                        <a href="overview.html" class="glass-card p-6 flex flex-col items-center text-center hover:bg-white/5 transition">
-                            <span class="text-2xl mb-2">📋</span>
-                            <span class="text-[10px] font-black uppercase text-white">Squad List</span>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+                        <a href="overview.html" class="glass-card p-6 flex flex-col items-center text-center hover:bg-white/5 group">
+                            <span class="text-3xl mb-3 group-hover:rotate-12 transition">📋</span>
+                            <span class="text-[10px] font-black uppercase text-white tracking-widest">Squad Archive</span>
                         </a>
-                        <a href="comparison.html" class="glass-card p-6 flex flex-col items-center text-center hover:bg-white/5 transition">
-                            <span class="text-2xl mb-2">⚖️</span>
-                            <span class="text-[10px] font-black uppercase text-white">Selection Matrix</span>
+                        <a href="comparison.html" class="glass-card p-6 flex flex-col items-center text-center hover:bg-white/5 group">
+                            <span class="text-3xl mb-3 group-hover:rotate-12 transition">⚖️</span>
+                            <span class="text-[10px] font-black uppercase text-white tracking-widest">Selection Matrix</span>
                         </a>
-                        <a href="seasonal_analysis.html" class="glass-card p-6 flex flex-col items-center text-center hover:bg-white/5 transition">
-                            <span class="text-2xl mb-2">📊</span>
-                            <span class="text-[10px] font-black uppercase text-white">Analytics</span>
+                        <a href="seasonal_analysis.html" class="glass-card p-6 flex flex-col items-center text-center hover:bg-white/5 group">
+                            <span class="text-3xl mb-3 group-hover:rotate-12 transition">📊</span>
+                            <span class="text-[10px] font-black uppercase text-white tracking-widest">Analysis</span>
                         </a>
                     </div>
                 </div>
 
-                <div class="lg:col-span-4 space-y-6">
-                    <h3 class="text-[10px] font-black uppercase text-gray-500 tracking-[0.3em]">Management</h3>
-                    <div class="glass-card p-6 space-y-4">
-                        <div class="flex items-center gap-4 p-3 bg-white/5 rounded-xl border border-white/10">
-                            <div id="user-initials" class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-500 font-bold">??</div>
-                            <div>
-                                <p class="text-[10px] font-black text-white uppercase leading-tight" id="user-name">Laden...</p>
-                                <p class="text-[8px] text-gray-500 font-bold uppercase tracking-widest" id="user-role-display">Rol</p>
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <div id="adminLink" class="hidden">
-                                <a href="admin_panel.html" class="flex items-center justify-between p-3 rounded-lg hover:bg-purple-500/10 text-gray-400 hover:text-purple-400 transition border border-transparent hover:border-purple-500/20">
-                                    <span class="text-[10px] font-black uppercase">Admin Panel</span>
-                                    <span>🛠️</span>
-                                </a>
-                            </div>
-                            <button onclick="sessionStorage.clear(); window.location.href='login.html';" class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-500 transition border border-transparent">
-                                <span class="text-[10px] font-black uppercase">Systeem Uitloggen</span>
-                                <span>🔒</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="playerDossier" class="hidden welcome-animate">
-            <div id="captureArea" class="bg-[#0a0a0a] p-8 rounded-[3rem] border border-white/10 shadow-2xl">
-                <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
-                    <div class="xl:col-span-3 space-y-6">
-                        <div class="glass-card overflow-hidden relative group">
-                            <img id="pPhoto" class="w-full h-[500px] object-cover bg-neutral-900 transition duration-700 group-hover:scale-110" src="" crossorigin="anonymous">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-                            <div class="absolute bottom-8 left-8">
-                                <div id="pAllocation" class="status-badge mb-4 inline-block">Berekent...</div>
-                                <h2 id="pName" class="text-5xl font-black uppercase italic text-white leading-none tracking-tighter"></h2>
-                                <p id="pMeta" class="text-gray-400 text-[10px] font-bold mt-3 uppercase tracking-[0.3em]"></p>
-                            </div>
-                        </div>
-                        <div class="glass-card p-6">
-                            <h3 class="text-[10px] font-black text-gray-500 uppercase mb-6 tracking-widest text-center">Groeicurve</h3>
-                            <canvas id="trendChart" height="200"></canvas>
-                        </div>
-                        <div class="glass-card p-8 flex flex-col items-center">
-                            <canvas id="radarChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="xl:col-span-9 space-y-6">
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div class="glass-card p-8 text-center border-b-4 border-yellow-600">
-                                <p class="text-[10px] text-gray-500 uppercase font-black mb-2">Elite Index</p>
-                                <div id="finalScore" class="text-6xl font-black text-white italic">0</div>
-                            </div>
-                            <div class="glass-card p-8 text-center border-b-4 border-blue-500">
-                                <p class="text-[10px] text-gray-500 uppercase font-black mb-2">Opkomst</p>
-                                <div id="attScore" class="text-6xl font-black text-white italic">0%</div>
-                            </div>
-                            <div class="glass-card p-8 text-center border-b-4 border-green-500">
-                                <p class="text-[10px] text-gray-500 uppercase font-black mb-2">Minuten</p>
-                                <div id="minScore" class="text-6xl font-black text-white italic">0</div>
-                            </div>
-                            <div class="glass-card p-8 text-center border-b-4 border-purple-500">
-                                <p class="text-[10px] text-gray-500 uppercase font-black mb-2">Progressie</p>
-                                <div id="growthVal" class="text-6xl font-black text-white italic">0</div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <div class="glass-card p-8"><h4 class="text-xs font-black text-yellow-500 uppercase mb-8 border-l-4 border-yellow-500 pl-4">Technical (65%)</h4><div id="techGrid" class="space-y-5"></div></div>
-                            <div class="glass-card p-8"><h4 class="text-xs font-black text-blue-500 uppercase mb-8 border-l-4 border-blue-500 pl-4">Tactical / Physical</h4><div id="physGrid" class="space-y-5"></div></div>
-                            <div class="glass-card p-8"><h4 class="text-xs font-black text-purple-500 uppercase mb-8 border-l-4 border-purple-500 pl-4">Mental / Team</h4><div id="mentGrid" class="space-y-5"></div></div>
-                        </div>
-                        <div class="glass-card p-10 border-2 border-yellow-600/30 bg-gradient-to-br from-yellow-600/10 via-transparent to-transparent">
-                            <h3 class="text-2xl font-black text-white uppercase mb-8 italic tracking-tighter">Zomer-Roadmap 2026</h3>
-                            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                                <div class="lg:col-span-4 bg-black/60 p-8 rounded-3xl border border-white/10">
-                                    <label class="text-[10px] font-black text-yellow-500 uppercase mb-4 block">Primary Skill Target</label>
-                                    <p id="focusSkill" class="text-4xl font-black text-white uppercase italic tracking-tighter">-</p>
+                <div id="playerDossier" class="hidden welcome-animate">
+                    <div id="captureArea" class="bg-[#0a0a0a] p-8 rounded-[3rem] border border-white/10 shadow-2xl">
+                        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                            <div class="xl:col-span-4 space-y-6">
+                                <div class="glass-card overflow-hidden relative group">
+                                    <img id="pPhoto" class="w-full h-[450px] object-cover bg-neutral-900 transition duration-700 group-hover:scale-110" src="" crossorigin="anonymous">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                                    <div class="absolute bottom-8 left-8">
+                                        <div id="pAllocation" class="status-badge mb-4 inline-block">Berekent...</div>
+                                        <h2 id="pName" class="text-4xl font-black uppercase italic text-white leading-none tracking-tighter"></h2>
+                                        <p id="pMeta" class="text-gray-400 text-[10px] font-bold mt-3 uppercase tracking-[0.3em]"></p>
+                                    </div>
                                 </div>
-                                <div class="lg:col-span-8">
-                                    <p id="summerText" class="text-base text-gray-300 italic leading-relaxed font-light"></p>
+                                <div class="glass-card p-6">
+                                    <canvas id="trendChart" height="150"></canvas>
+                                </div>
+                                <div class="glass-card p-8 flex flex-col items-center">
+                                    <canvas id="radarChart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="xl:col-span-8 space-y-6">
+                                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <div class="glass-card p-6 text-center border-b-4 border-yellow-600">
+                                        <p class="text-[10px] text-gray-500 uppercase font-black mb-1">Index</p>
+                                        <div id="finalScore" class="text-4xl font-black text-white italic">0</div>
+                                    </div>
+                                    <div class="glass-card p-6 text-center border-b-4 border-blue-500">
+                                        <p class="text-[10px] text-gray-500 uppercase font-black mb-1">Opkomst</p>
+                                        <div id="attScore" class="text-4xl font-black text-white italic">0%</div>
+                                    </div>
+                                    <div class="glass-card p-6 text-center border-b-4 border-green-500">
+                                        <p class="text-[10px] text-gray-500 uppercase font-black mb-1">Minuten</p>
+                                        <div id="minScore" class="text-4xl font-black text-white italic">0</div>
+                                    </div>
+                                    <div class="glass-card p-6 text-center border-b-4 border-purple-500">
+                                        <p class="text-[10px] text-gray-500 uppercase font-black mb-1">Growth</p>
+                                        <div id="growthVal" class="text-4xl font-black text-white italic">0</div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                                    <div class="glass-card p-6"><h4 class="text-[10px] font-black text-yellow-500 uppercase mb-4">Technical</h4><div id="techGrid" class="space-y-4"></div></div>
+                                    <div class="glass-card p-6"><h4 class="text-[10px] font-black text-blue-500 uppercase mb-4">Tactical</h4><div id="physGrid" class="space-y-4"></div></div>
+                                    <div class="glass-card p-6"><h4 class="text-[10px] font-black text-purple-500 uppercase mb-4">Mental</h4><div id="mentGrid" class="space-y-4"></div></div>
+                                </div>
+                                <div class="glass-card p-8 border-2 border-yellow-600/30 bg-gradient-to-br from-yellow-600/5 to-transparent">
+                                    <h3 class="text-xl font-black text-white uppercase mb-4 italic tracking-tighter">Summer Roadmap 2026</h3>
+                                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                                        <div class="lg:col-span-4 bg-black/40 p-6 rounded-2xl border border-white/10 text-center">
+                                            <label class="text-[9px] font-black text-yellow-500 uppercase mb-2 block">Target Skill</label>
+                                            <p id="focusSkill" class="text-2xl font-black text-white uppercase italic tracking-tighter">-</p>
+                                        </div>
+                                        <div class="lg:col-span-8">
+                                            <p id="summerText" class="text-xs text-gray-400 italic leading-relaxed"></p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="mt-8 flex justify-center pb-10">
+                        <button id="downloadBtn" class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-black px-12 py-4 rounded-full text-[10px] uppercase tracking-[0.2em] hover:scale-105 transition shadow-2xl">Export Performance Report</button>
+                    </div>
                 </div>
-            </div>
-            <div class="mt-12 flex justify-center pb-12">
-                <button id="downloadBtn" class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-black px-20 py-6 rounded-full text-[11px] uppercase tracking-[0.3em] hover:scale-105 transition shadow-2xl">Download Report</button>
-            </div>
-        </div>
 
-        <div id="welcomeScreen" class="welcome-animate flex flex-col items-center justify-center min-h-[40vh] text-center">
-            <div class="glass-card p-16 max-w-4xl border-2 border-yellow-600/20">
-                <h2 class="text-6xl font-black italic text-white uppercase mb-6 tracking-tighter">Ready for <span class="text-yellow-500">Analysis?</span></h2>
-                <p class="text-gray-400 text-lg mb-12 max-w-2xl mx-auto">Selecteer een speler in de terminal om de volledige dataset te laden.</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-white/10 pt-10">
-                    <div><p class="text-4xl font-black text-white" id="stat-total">0</p><p class="text-[10px] text-gray-500 uppercase font-bold">Geregistreerd</p></div>
-                    <div class="border-x border-white/10"><p class="text-4xl font-black text-yellow-500" id="stat-avg">0%</p><p class="text-[10px] text-gray-500 uppercase font-bold">Elite Index</p></div>
-                    <div><p class="text-4xl font-black text-green-500" id="stat-growth">0</p><p class="text-[10px] text-gray-500 uppercase font-bold">Top Grower</p></div>
+                <div id="welcomeScreen" class="welcome-animate pt-10">
+                    <div class="glass-card p-12 border-2 border-yellow-600/10 text-center">
+                        <h2 class="text-4xl font-black italic text-white uppercase mb-4 tracking-tighter">Status: <span class="text-yellow-500">Standby</span></h2>
+                        <p class="text-gray-500 text-sm max-w-md mx-auto italic">Selecteer een asset in de terminal om de volledige dataset te laden.</p>
+                    </div>
                 </div>
-            </div>
+            </main>
+
+            <aside class="lg:col-span-4 space-y-6">
+                <h3 class="text-[10px] font-black uppercase text-gray-500 tracking-[0.4em] ml-2 italic">Identity & Security</h3>
+                <div class="glass-card p-8 sticky top-8">
+                    <div class="flex flex-col items-center text-center pb-8 border-b border-white/5">
+                        <div id="user-initials" class="w-20 h-20 rounded-3xl bg-gradient-to-br from-yellow-500 to-yellow-700 flex items-center justify-center text-2xl font-black text-black shadow-lg mb-4 uppercase">??</div>
+                        <h4 id="user-name" class="text-xl font-black text-white uppercase italic tracking-tight">Laden...</h4>
+                        <p id="user-role-display" class="text-[10px] text-yellow-500 font-bold uppercase tracking-widest mt-1">Verification...</p>
+                    </div>
+                    <div class="pt-8 space-y-3">
+                        <div id="adminLink" class="hidden">
+                            <a href="admin_panel.html" class="flex items-center justify-between p-4 rounded-2xl bg-purple-500/5 border border-purple-500/20 text-purple-400 hover:bg-purple-500/10 transition group">
+                                <span class="text-[10px] font-black uppercase tracking-widest">Admin Control</span>
+                                <span>🛠️</span>
+                            </a>
+                        </div>
+                        <button onclick="sessionStorage.clear(); window.location.href='login.html';" class="w-full flex items-center justify-between p-4 rounded-2xl bg-red-500/5 border border-red-500/20 text-red-500 hover:bg-red-500/10 transition">
+                            <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+                            <span>🔒</span>
+                        </button>
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
+
+    
 
     <script type="module">
         import DataProvider from './js/data_provider.js';
@@ -209,7 +232,6 @@
             const allPlayers = await DataProvider.getAllPlayers();
             if(!allPlayers.length) return;
 
-            // User Info Inladen
             document.getElementById('user-name').innerText = currentUser.name;
             document.getElementById('user-role-display').innerText = currentUser.role;
             document.getElementById('user-initials').innerText = currentUser.name.split(' ').map(n => n[0]).join('');
@@ -223,18 +245,13 @@
                 document.getElementById('stat-team-display').innerText = currentUser.teams[0] || "GEEN TEAM";
             }
 
-            // Stats Vullen
             const totalCount = filteredPlayers.length;
-            document.getElementById('stat-total').innerText = totalCount;
             document.getElementById('stat-total-display').innerText = totalCount;
-            
             const avgVal = totalCount > 0 ? Math.round(filteredPlayers.reduce((acc, p) => acc + calcIndex(p), 0) / totalCount) : 0;
-            document.getElementById('stat-avg').innerText = avgVal + "%";
             document.getElementById('stat-avg-display').innerText = avgVal + "%";
 
-            // Selector
             const selector = document.getElementById('playerSelector');
-            selector.innerHTML = '<option value="">SELECTEER SPELER...</option>' + 
+            selector.innerHTML = '<option value="">SELECTEER ASSET...</option>' + 
                 filteredPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
 
             selector.addEventListener('change', e => {
@@ -252,16 +269,26 @@
             document.getElementById('pName').innerText = p.bio.name;
             document.getElementById('pPhoto').src = p.bio.photo;
             document.getElementById('pMeta').innerText = `${p.bio.team} | ${p.bio.role}`;
+            
             const idx = calcIndex(p);
             document.getElementById('finalScore').innerText = idx;
             document.getElementById('attScore').innerText = (p.obj?.attendance || 0) + "%";
-            document.getElementById('minScore').innerText = p.obj?.minutes || 0;
-            
+            document.getElementById('minScore').innerText = (p.obj?.minutes || 0);
+
             const r = p.ratings || {};
-            const bar = (l, v) => `<div class="space-y-2"><div class="flex justify-between text-[9px] font-black uppercase"><span class="text-gray-500">${l}</span><span class="text-white">${v}/5</span></div><div class="skill-bar"><div class="skill-fill" style="width:${(v/5)*100}%"></div></div></div>`;
-            document.getElementById('techGrid').innerHTML = bar("Balcontrole", r.bal) + bar("Passing", r.pas) + bar("Aanname", r.aan) + bar("Dribbel", r.drib);
-            // ... overige grids ...
+            const bar = (l, v) => `<div class="space-y-1"><div class="flex justify-between text-[8px] font-black uppercase"><span class="text-gray-500">${l}</span><span class="text-white">${v}/5</span></div><div class="skill-bar"><div class="skill-fill" style="width:${(v/5)*100}%"></div></div></div>`;
             
+            document.getElementById('techGrid').innerHTML = bar("Balcontrole", r.bal) + bar("Passing", r.pas) + bar("Aanname", r.aan) + bar("Dribbel", r.drib);
+            document.getElementById('physGrid').innerHTML = bar("Snelheid", r.sne) + bar("Kracht", r.kra) + bar("Uithouding", r.uit) + bar("Inzicht", r.posi);
+            document.getElementById('mentGrid').innerHTML = bar("Inzet", r.inz) + bar("Focus", r.mot) + bar("Coaching", r.coa) + bar("Team", r.tea);
+
+            const sm = { bal:"Balcontrole", pas:"Passing", aan:"Aanname", drib:"Dribbel", sne:"Snelheid", uit:"Conditie", posi:"Inzicht" };
+            let lowK = "bal", lowV = 6;
+            ['bal','pas','aan','drib','sne','uit','posi'].forEach(k => { if(r[k] < lowV) { lowV = r[k]; lowK = k; } });
+            
+            document.getElementById('focusSkill').innerText = sm[lowK];
+            document.getElementById('summerText').innerText = `Analyse wijst uit dat ${sm[lowK]} momenteel de limiterende factor is. Door hier in de zomerstop specifiek op te trainen, kan de Elite Index significant stijgen naar een geprojecteerde ${idx + 6}%.`;
+
             renderRadar(p);
             renderTrend(p);
         };
@@ -273,9 +300,9 @@
                 type: 'radar',
                 data: {
                     labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'],
-                    datasets: [{ data: Object.values(p.stats), borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.2)', borderWidth: 3 }]
+                    datasets: [{ data: Object.values(p.stats), borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.2)', borderWidth: 2, pointRadius: 0 }]
                 },
-                options: { scales: { r: { suggestedMin: 0, suggestedMax: 100, ticks: {display:false} } }, plugins: { legend: { display: false } } }
+                options: { scales: { r: { suggestedMin: 0, suggestedMax: 100, ticks: {display:false}, grid: {color:'rgba(255,255,255,0.05)'} } }, plugins: { legend: { display: false } } }
             });
         };
 
@@ -286,10 +313,19 @@
                 type: 'line',
                 data: {
                     labels: ["Start", "Winter", "Eind"],
-                    datasets: [{ data: [65, 72, 80], borderColor: '#D4AF37', fill: true }]
+                    datasets: [{ data: [62, 70, calcIndex(p)], borderColor: '#D4AF37', tension: 0.4, fill: true, backgroundColor: 'rgba(212,175,55,0.05)' }]
                 },
-                options: { plugins: { legend: { display: false } } }
+                options: { scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#444', font: { size: 8 } } } }, plugins: { legend: { display: false } } }
             });
+        };
+
+        document.getElementById('downloadBtn').onclick = async () => {
+            const area = document.getElementById('captureArea');
+            const canvas = await html2canvas(area, { backgroundColor: '#0a0a0a', scale: 2 });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jspdf.jsPDF('l', 'mm', 'a4');
+            pdf.addImage(imgData, 'PNG', 10, 10, 277, 190);
+            pdf.save(`Elite_Dossier_${document.getElementById('pName').innerText}.pdf`);
         };
 
         init();
