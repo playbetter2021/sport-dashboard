@@ -7,35 +7,38 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #D4AF37; --obsidian: #0a0a0a; --accent: #22c55e; }
-        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; padding-bottom: 140px; }
-        .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; outline: none; transition: 0.2s; }
+        :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
+        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; padding-bottom: 150px; }
+        .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; outline: none; }
         .input-luxe:focus { border-color: var(--gold); background: rgba(212,175,55,0.1); }
-        .section-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 25px; border-radius: 1.5rem; margin-bottom: 2rem; position: relative; }
+        .section-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 25px; border-radius: 1.5rem; margin-bottom: 2rem; }
         label { font-size: 10px; text-transform: uppercase; color: #888; font-weight: bold; margin-bottom: 5px; display: block; }
         h3 { font-size: 11px; color: var(--gold); text-transform: uppercase; border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 10px; margin-bottom: 20px; font-weight: 900; }
         .slider-gold { accent-color: var(--gold); cursor: pointer; width: 100%; }
         .preview-photo { width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover; background: #111; }
-        .btn-action { transition: all 0.2s; font-weight: 900; text-transform: uppercase; font-size: 10px; letter-spacing: 1px; }
-        .btn-action:hover { transform: translateY(-2px); }
-        .ai-glow { box-shadow: 0 0 15px rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); }
-        .diff-pos { color: #22c55e; }
-        .diff-neg { color: #ef4444; }
+        .nav-link { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; padding: 10px 20px; border-radius: 50px; transition: 0.3s; }
+        .nav-blue { background: rgba(37, 99, 235, 0.1); color: #60a5fa; border: 1px solid rgba(37, 99, 235, 0.3); }
+        .nav-purple { background: rgba(147, 51, 234, 0.1); color: #c084fc; border: 1px solid rgba(147, 51, 234, 0.3); }
+        .diff-pos { color: #22c55e; font-weight: bold; }
+        .diff-neg { color: #ef4444; font-weight: bold; }
+        @media print { .no-print { display: none; } }
     </style>
 </head>
 <body class="p-6 md:p-10">
-    <div id="capture-area" class="max-w-6xl mx-auto">
+    <div id="capture-area" class="max-w-7xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-white/5 pb-6 gap-4 no-print">
             <div class="flex items-center gap-4">
                 <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase transition border border-white/10">Dashboard</a>
+                <a href="planner.html" class="nav-link nav-blue">Tactical Planner</a>
+                <a href="comparison.html" class="nav-link nav-purple">Selection Matrix</a>
                 <h1 class="text-2xl font-black italic text-white uppercase tracking-tighter ml-2">COACH<span class="text-yellow-500">TERMINAL</span></h1>
             </div>
             <div class="flex items-center gap-2 bg-white/5 p-2 rounded-xl border border-white/10">
                 <select id="assetSearch" class="bg-transparent outline-none cursor-pointer min-w-[150px] p-2 text-yellow-500 text-xs font-bold"></select>
-                <button id="loadBtn" class="bg-yellow-600 text-black px-4 py-2 rounded text-[10px] btn-action">Laden</button>
-                <button type="button" onclick="generatePDF()" class="bg-white/10 text-white px-4 py-2 rounded text-[10px] btn-action border border-white/20">Rapport Export</button>
+                <button id="loadBtn" class="bg-yellow-600 text-black px-4 py-2 rounded text-[10px] font-black uppercase hover:bg-yellow-400 transition">Laden</button>
+                <button type="button" onclick="generatePDF()" class="bg-white/10 text-white px-4 py-2 rounded text-[10px] font-black border border-white/20">PDF Rapport</button>
             </div>
         </header>
 
@@ -44,70 +47,73 @@
                 <div class="flex items-center gap-6 mb-8">
                     <img id="pPreviewImg" class="preview-photo" src="https://via.placeholder.com/150/0a0a0a/D4AF37?text=?" alt="Preview">
                     <div>
-                        <h3>1. Evaluatie Context</h3>
+                        <h3>1. Profiel & Gesprekscyclus</h3>
                         <p id="coachIdent" class="text-[9px] text-gray-500 uppercase font-bold tracking-widest italic"></p>
-                        <div id="statusBadge" class="mt-2 text-[10px] font-bold text-green-500 uppercase">Status: Live Bewerking</div>
+                        <div id="statusBadge" class="mt-2 text-[10px] font-bold text-green-500 uppercase">Status: Open voor invoer</div>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="md:col-span-2"><label>Naam Speler</label><input type="text" id="pName" class="input-luxe font-bold"></div>
+                    <div class="md:col-span-2"><label>Naam Speler</label><input type="text" id="pName" class="input-luxe font-bold" required></div>
                     <div><label>Team</label><select id="pTeam" class="input-luxe"></select></div>
                     <div>
-                        <label>Evaluatie Moment</label>
-                        <select id="pPeriod" class="input-luxe border border-yellow-500/30" onchange="window.handlePeriodChange()">
+                        <label>Moment (Lock Cyclus)</label>
+                        <select id="pPeriod" class="input-luxe border-2 border-yellow-500/30" onchange="checkLockStatus()">
                             <option value="1e seizoenshelft">1e seizoenshelft</option>
                             <option value="2e seizoenshelft">2e seizoenshelft</option>
-                            <option value="Eindbeoordeling">Eindbeoordeling</option>
+                            <option value="Eindgesprek">Eindbeoordeling / Eindgesprek</option>
                         </select>
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 section-card ai-glow">
+                <div class="lg:col-span-2 section-card">
                     <div class="flex justify-between items-center mb-4">
-                        <h3>2. Vaardigheden & AI Feedback</h3>
-                        <button type="button" onclick="generateAIFeedback()" class="text-[9px] bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded border border-yellow-500/20 italic no-print">✨ Genereer AI Feedback</button>
+                        <h3>2. Beoordeling & Feedback</h3>
+                        <button type="button" onclick="generateAIFeedback()" class="text-[9px] bg-yellow-500/10 text-yellow-500 px-3 py-1 rounded border border-yellow-500/20 italic no-print">✨ Genereer AI Feedback</button>
                     </div>
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center border-b border-white/5 pb-4">
-                            <div class="flex justify-between"><label>Balcontrole</label><span id="v_bal" class="text-yellow-500 font-bold">3</span></div>
-                            <input type="range" id="s_bal" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_bal.innerText=this.value">
-                            <input type="text" id="o_bal" placeholder="AI Feedback..." class="input-luxe text-[11px] ai-field">
+                    <div class="space-y-4" id="skillContainer">
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center border-b border-white/5 pb-4">
-                            <div class="flex justify-between"><label>Passen</label><span id="v_pas" class="text-yellow-500 font-bold">3</span></div>
-                            <input type="range" id="s_pas" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_pas.innerText=this.value">
-                            <input type="text" id="o_pas" placeholder="AI Feedback..." class="input-luxe text-[11px] ai-field">
-                        </div>
-                    </div>
                 </div>
-                <div class="section-card flex flex-col items-center">
-                    <h3>Benchmark vs Team</h3>
+                <div class="section-card flex flex-col items-center justify-center benchmark-card">
+                    <h3 class="w-full">Performance vs Team</h3>
                     <canvas id="radarChart"></canvas>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="section-card">
-                    <h3>3. Progressie Monitor</h3>
-                    <table class="w-full text-[10px]">
-                        <thead><tr class="text-gray-500 border-b border-white/10"><th class="text-left py-2">Metric</th><th>Vorige</th><th>Nu</th><th>Groei</th></tr></thead>
-                        <tbody id="comparisonTableBody"></tbody>
-                    </table>
-                </div>
-                <div class="section-card">
-                    <h3>4. POP Doelen</h3>
-                    <div class="space-y-3">
-                        <input type="text" id="g1" placeholder="Hoofddoel deze periode" class="input-luxe">
-                        <textarea id="pGrowth" class="input-luxe h-20 text-xs" placeholder="Coach analyse..."></textarea>
+            <div class="section-card">
+                <h3>3. Progressie Monitor (t.o.v. Vorige Meting)</h3>
+                <div id="progressContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    </div>
+            </div>
+
+            <div class="section-card">
+                <h3>5. Persoonlijke Ontwikkeldoelen (POP)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="space-y-2 p-4 bg-white/5 rounded-xl border border-white/5">
+                        <label class="text-yellow-500">Doel 1</label>
+                        <input type="text" id="g1" placeholder="Doel" class="input-luxe mb-2">
+                        <textarea id="a1" placeholder="Acties / Training" class="input-luxe h-16 text-xs mb-2"></textarea>
+                        <input type="text" id="t1" placeholder="Tijdspad" class="input-luxe text-xs">
+                    </div>
+                    <div class="space-y-2 p-4 bg-white/5 rounded-xl border border-white/5">
+                        <label class="text-yellow-500">Doel 2</label>
+                        <input type="text" id="g2" placeholder="Doel" class="input-luxe mb-2">
+                        <textarea id="a2" placeholder="Acties / Training" class="input-luxe h-16 text-xs mb-2"></textarea>
+                        <input type="text" id="t2" placeholder="Tijdspad" class="input-luxe text-xs">
+                    </div>
+                    <div class="space-y-2 p-4 bg-white/5 rounded-xl border border-white/5">
+                        <label class="text-yellow-500">Doel 3</label>
+                        <input type="text" id="g3" placeholder="Doel" class="input-luxe mb-2">
+                        <textarea id="a3" placeholder="Acties / Training" class="input-luxe h-16 text-xs mb-2"></textarea>
+                        <input type="text" id="t3" placeholder="Tijdspad" class="input-luxe text-xs">
                     </div>
                 </div>
             </div>
 
             <div class="save-bar flex gap-4 sticky bottom-6 z-50 no-print">
-                <input type="password" id="ghToken" placeholder="GitHub Token" class="input-luxe md:w-64 text-center">
-                <button type="submit" id="saveBtn" class="bg-yellow-600 text-black font-black px-12 py-4 rounded uppercase text-xs btn-action flex-1 shadow-2xl hover:bg-yellow-400">Synchroniseer Dossier</button>
+                <input type="password" id="ghToken" placeholder="GitHub Access Token" class="input-luxe md:w-64 text-center border-yellow-500/50">
+                <button type="submit" id="saveBtn" class="bg-yellow-600 text-black font-black px-12 py-4 rounded uppercase text-xs flex-1 shadow-2xl hover:bg-yellow-400">Sync & Lock Dossier</button>
             </div>
         </form>
     </div>
@@ -118,89 +124,98 @@
         const currentUser = JSON.parse(sessionStorage.getItem('elite_user'));
         let radarChart, allPlayers = [], currentPlayer = null;
 
-        // 1. AI FEEDBACK ENGINE
-        window.generateAIFeedback = function() {
-            const metrics = [
-                { id: 'bal', label: 'balcontrole', pos: 'Heel balvast, goed gevoel voor de bal.', neg: 'Focus op eerste aanname en controle onder druk.' },
-                { id: 'pas', label: 'passing', pos: 'Strakke passing, ziet de vrije man goed.', neg: 'Werk aan balsnelheid en passing met links.' }
-            ];
-
-            metrics.forEach(m => {
-                const val = parseInt(document.getElementById('s_' + m.id).value);
-                const feedbackField = document.getElementById('o_' + m.id);
-                if (val >= 4) feedbackField.value = m.pos;
-                else if (val <= 2) feedbackField.value = m.neg;
-                else feedbackField.value = "Stabiel niveau, werk aan details voor de volgende stap.";
-            });
-            alert("✨ AI Feedback gegenereerd op basis van scores.");
+        const skillKeys = {
+            'Techniek': ['bal', 'pas', 'aan', 'drib', 'schot'],
+            'Tactiek': ['posi', 'vrij', 'sam', 'oms'],
+            'Fysiek': ['sne', 'uit', 'kra', 'wen'],
+            'Mentaal': ['inz', 'mot', 'coa', 'tea']
         };
 
-        // 2. RADAR & BENCHMARK
-        function initRadar() {
-            const ctx = document.getElementById('radarChart');
-            radarChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'],
-                    datasets: [
-                        { label: 'Speler', data: [3, 3, 3, 3], backgroundColor: 'rgba(212, 175, 55, 0.2)', borderColor: '#D4AF37', borderWidth: 2 },
-                        { label: 'Team', data: [3.2, 3.4, 3.1, 3.5], backgroundColor: 'transparent', borderColor: 'rgba(255,255,255,0.2)', borderDash: [5, 5] }
-                    ]
-                },
-                options: { scales: { r: { min: 0, max: 5, grid: { color: 'rgba(255,255,255,0.05)' }, pointLabels: { color: '#666' }, ticks: { display: false } } }, plugins: { legend: { display: false } } }
+        const skillLabels = {
+            bal: 'Balcontrole', pas: 'Passen', aan: 'Aannemen', drib: 'Dribbelen', schot: 'Schieten',
+            posi: 'Positiespel', vrij: 'Vrijlopen', sam: 'Samenwerken', oms: 'Omschakeling',
+            sne: 'Snelheid', uit: 'Uithouding', kra: 'Kracht', wen: 'Wendbaarheid',
+            inz: 'Inzet', mot: 'Motivatie', coa: 'Coachbaarheid', tea: 'Teamgedrag'
+        };
+
+        function generateFields() {
+            const container = document.getElementById('skillContainer');
+            Object.keys(skillKeys).forEach(cat => {
+                const catTitle = document.createElement('h4');
+                catTitle.className = "text-[9px] text-gray-500 uppercase font-bold mt-4 mb-2";
+                catTitle.innerText = cat;
+                container.appendChild(catTitle);
+                
+                skillKeys[cat].forEach(key => {
+                    const row = document.createElement('div');
+                    row.className = "grid grid-cols-1 md:grid-cols-12 gap-4 items-center border-b border-white/5 pb-2 mb-2";
+                    row.innerHTML = `
+                        <div class="md:col-span-3 flex justify-between"><label class="mb-0">${skillLabels[key]}</label><span id="v_${key}" class="text-yellow-500 font-bold">3</span></div>
+                        <div class="md:col-span-3"><input type="range" id="s_${key}" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_${key}.innerText=this.value"></div>
+                        <div class="md:col-span-6"><input type="text" id="o_${key}" placeholder="Observatie" class="input-luxe py-1 text-[11px]"></div>
+                    `;
+                    container.appendChild(row);
+                });
             });
         }
 
-        // 3. PROGRESSIE & LIVE UPDATES
-        function syncData() {
-            const tbody = document.getElementById('comparisonTableBody');
-            tbody.innerHTML = '';
-            ['bal', 'pas'].forEach(m => {
-                const cur = parseInt(document.getElementById('s_' + m).value);
-                const prev = currentPlayer?.ratings?.[m] || 3;
-                const diff = cur - prev;
-                tbody.innerHTML += `<tr><td class="py-2 text-gray-400 uppercase font-bold">${m}</td><td>${prev}</td><td class="text-yellow-500 font-black">${cur}</td><td class="${diff >= 0 ? 'text-green-500' : 'text-red-500'}">${diff > 0 ? '+' : ''}${diff}</td></tr>`;
+        window.generateAIFeedback = function() {
+            Object.keys(skillLabels).forEach(key => {
+                const val = parseInt(document.getElementById('s_'+key).value);
+                const field = document.getElementById('o_'+key);
+                if (val >= 4) field.value = "Uitmuntend niveau, behoud deze intensiteit.";
+                else if (val <= 2) field.value = "Aandachtspunt: Focus op basistechniek en herhaling.";
+                else field.value = "Voldoende basis, werk aan details voor de volgende stap.";
             });
-            radarChart.data.datasets[0].data = [ (parseInt(document.getElementById('s_bal').value)+parseInt(document.getElementById('s_pas').value))/2, 3, 3, 3 ];
-            radarChart.update();
-        }
+            alert("✨ AI Feedback gegenereerd op basis van huidige scores.");
+        };
 
-        // 4. PDF RAPPORT
+        window.checkLockStatus = function() {
+            if (!currentPlayer) return;
+            const period = document.getElementById('pPeriod').value;
+            const isLocked = (currentUser.role !== 'admin' && currentPlayer.history && currentPlayer.history[period]);
+            const badge = document.getElementById('statusBadge');
+            
+            document.querySelectorAll('input, textarea, select').forEach(el => {
+                if(!['assetSearch', 'pPeriod', 'ghToken', 'loadBtn'].includes(el.id)) el.disabled = isLocked;
+            });
+
+            badge.innerText = isLocked ? `STATUS: GELOCKED (${period})` : "STATUS: OPEN VOOR INVOER";
+            badge.className = isLocked ? "mt-2 text-[10px] font-bold text-red-500 uppercase" : "mt-2 text-[10px] font-bold text-green-500 uppercase";
+        };
+
         window.generatePDF = async function() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
             const capture = document.getElementById('capture-area');
-            const noPrint = document.querySelectorAll('.no-print');
-            noPrint.forEach(el => el.style.display = 'none');
-
             html2canvas(capture, { backgroundColor: '#0a0a0a', scale: 2 }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 doc.addImage(imgData, 'PNG', 0, 0, 210, (canvas.height * 210) / canvas.width);
                 doc.save(`ElitePro_Rapport_${document.getElementById('pName').value}.pdf`);
-                noPrint.forEach(el => el.style.display = '');
             });
         };
 
-        // INITIALISATIE
         async function init() {
+            generateFields();
             allPlayers = await DataProvider.getAllPlayers();
-            initRadar();
-            const search = document.getElementById('assetSearch');
-            search.innerHTML = '<option value="">-- KIES SPELER --</option>' + allPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
+            document.getElementById('assetSearch').innerHTML = '<option value="">-- SELECT ASSET --</option>' + 
+                allPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
             
-            document.getElementById('loadBtn').onclick = (e) => {
-                e.preventDefault();
-                currentPlayer = allPlayers.find(x => x.id === search.value);
-                if (currentPlayer) {
-                    document.getElementById('pName').value = currentPlayer.bio.name;
-                    document.getElementById('pPreviewImg').src = currentPlayer.bio.photo;
-                    document.getElementById('pTeam').innerHTML = `<option>${currentPlayer.bio.team}</option>`;
-                    syncData();
-                }
-            };
+            const teamList = ["JO8-1", "JO10-1", "JO15-1", "Senioren 1"];
+            document.getElementById('pTeam').innerHTML = teamList.map(t => `<option value="${t}">${t}</option>`).join('');
         }
 
-        document.body.addEventListener('input', (e) => { if(e.target.classList.contains('rating-input')) syncData(); });
+        document.getElementById('loadBtn').onclick = (e) => {
+            e.preventDefault();
+            currentPlayer = allPlayers.find(x => x.id === document.getElementById('assetSearch').value);
+            if (currentPlayer) {
+                document.getElementById('pName').value = currentPlayer.bio.name;
+                document.getElementById('pPreviewImg').src = currentPlayer.bio.photo;
+                window.checkLockStatus();
+                alert("✅ Speler geladen.");
+            }
+        };
+
         init();
     </script>
 </body>
