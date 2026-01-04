@@ -11,15 +11,67 @@
       "date": "2026-01-02",
       "period": "1e seizoenshelft"
     },
-    "ratings": { "bal": "4", "pas": "5", "aan": "4", "drib": "4", "schot": "5", "posi": "4", "vrij": "4", "sam": "5", "oms": "4", "sne": "4", "uit": "3", "kra": "4", "wen": "4", "inz": "4", "mot": "4", "coa": "4", "tea": "4" },
-    "stats": { "Techniek": 88, "Tactiek": 85, "Fysiek": 75, "Mentaal": 80 },
-    "obj": { "attendance": 100, "minutes": 1000 },
+    "ratings": {
+      "bal": "4",
+      "pas": "5",
+      "aan": "4",
+      "drib": "4",
+      "schot": "5",
+      "posi": "4",
+      "vrij": "4",
+      "sam": "5",
+      "oms": "4",
+      "sne": "4",
+      "uit": "3",
+      "kra": "4",
+      "wen": "4",
+      "inz": "4",
+      "mot": "4",
+      "coa": "4",
+      "tea": "4"
+    },
+    "stats": {
+      "Techniek": 88,
+      "Tactiek": 85,
+      "Fysiek": 75,
+      "Mentaal": 80
+    },
+    "obj": {
+      "attendance": 100,
+      "minutes": 1000
+    },
     "history": {
       "1e seizoenshelft": {
         "date": "2026-01-02",
-        "stats": { "Techniek": 88, "Tactiek": 85, "Fysiek": 75, "Mentaal": 80 },
-        "ratings": { "bal": "4", "pas": "5", "aan": "4", "drib": "4", "schot": "5", "posi": "4", "vrij": "4", "sam": "5", "oms": "4", "sne": "4", "uit": "3", "kra": "4", "wen": "4", "inz": "4", "mot": "4", "coa": "4", "tea": "4" },
-        "obj": { "attendance": 100, "minutes": 1000 }
+        "stats": {
+          "Techniek": 88,
+          "Tactiek": 85,
+          "Fysiek": 75,
+          "Mentaal": 80
+        },
+        "ratings": {
+          "bal": "4",
+          "pas": "5",
+          "aan": "4",
+          "drib": "4",
+          "schot": "5",
+          "posi": "4",
+          "vrij": "4",
+          "sam": "5",
+          "oms": "4",
+          "sne": "4",
+          "uit": "3",
+          "kra": "4",
+          "wen": "4",
+          "inz": "4",
+          "mot": "4",
+          "coa": "4",
+          "tea": "4"
+        },
+        "obj": {
+          "attendance": 100,
+          "minutes": 1000
+        }
       }
     }
   },
@@ -33,176 +85,1078 @@
       "date": "2026-01-03",
       "period": "Eindbeoordeling"
     },
-    "ratings": { "bal": "4", "pas": "5", "aan": "5", "drib": "5", "schot": "5", "posi": "4", "vrij": "5", "sam": "5", "oms": "5", "sne": "5", "uit": "4", "kra": "4", "wen": "5", "inz": "5", "mot": "4", "coa": "5", "tea": "5" },
-    "stats": { "Techniek": 96, "Tactiek": 95, "Fysiek": 90, "Mentaal": 95 },
-    "obj": { "attendance": 100, "minutes": 1000 },
+    "ratings": {
+      "bal": "4",
+      "pas": "5",
+      "aan": "5",
+      "drib": "5",
+      "schot": "5",
+      "posi": "4",
+      "vrij": "5",
+      "sam": "5",
+      "oms": "5",
+      "sne": "5",
+      "uit": "4",
+      "kra": "4",
+      "wen": "5",
+      "inz": "5",
+      "mot": "4",
+      "coa": "5",
+      "tea": "5"
+    },
+    "stats": {
+      "Techniek": 96,
+      "Tactiek": 95,
+      "Fysiek": 90,
+      "Mentaal": 95
+    },
+    "obj": {
+      "attendance": 100,
+      "minutes": 1000
+    },
     "history": {
       "1e seizoenshelft": {
         "date": "2025-09-01",
-        "stats": { "Techniek": 90, "Tactiek": 90, "Fysiek": 85, "Mentaal": 90 },
-        "ratings": { "bal": "4", "pas": "4", "aan": "4", "drib": "4", "schot": "4", "posi": "4", "vrij": "4", "sam": "4", "oms": "4", "sne": "4", "uit": "4", "kra": "4", "wen": "4", "inz": "4", "mot": "4", "coa": "4", "tea": "4" },
-        "obj": { "attendance": 100, "minutes": 500 }
+        "stats": {
+          "Techniek": 90,
+          "Tactiek": 90,
+          "Fysiek": 85,
+          "Mentaal": 90
+        },
+        "ratings": {
+          "bal": "4",
+          "pas": "4",
+          "aan": "4",
+          "drib": "4",
+          "schot": "4",
+          "posi": "4",
+          "vrij": "4",
+          "sam": "4",
+          "oms": "4",
+          "sne": "4",
+          "uit": "4",
+          "kra": "4",
+          "wen": "4",
+          "inz": "4",
+          "mot": "4",
+          "coa": "4",
+          "tea": "4"
+        },
+        "obj": {
+          "attendance": 100,
+          "minutes": 500
+        }
       }
     }
   },
   {
     "id": "f_001",
-    "bio": { "name": "LUUK DE JONG", "team": "JO8-1", "role": "Aanvaller", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=LUUK", "period": "Eindbeoordeling" },
-    "obj": { "attendance": 95, "minutes": 1200 },
-    "ratings": { "bal": "5", "pas": "4", "aan": "5", "drib": "5", "schot": "5", "posi": "4", "vrij": "5", "sam": "4", "oms": "4", "sne": "5", "uit": "4", "kra": "3", "wen": "5", "inz": "5", "mot": "5", "coa": "5", "tea": "4" },
-    "stats": { "Techniek": 96, "Tactiek": 85, "Fysiek": 80, "Mentaal": 95 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 90, "Tactiek": 80 }, "ratings": { "bal": "4", "pas": "4" } } }
+    "bio": {
+      "name": "LUUK DE JONG",
+      "team": "JO8-1",
+      "role": "Aanvaller",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=LUUK",
+      "period": "Eindbeoordeling"
+    },
+    "obj": {
+      "attendance": 95,
+      "minutes": 1200
+    },
+    "ratings": {
+      "bal": "5",
+      "pas": "4",
+      "aan": "5",
+      "drib": "5",
+      "schot": "5",
+      "posi": "4",
+      "vrij": "5",
+      "sam": "4",
+      "oms": "4",
+      "sne": "5",
+      "uit": "4",
+      "kra": "3",
+      "wen": "5",
+      "inz": "5",
+      "mot": "5",
+      "coa": "5",
+      "tea": "4"
+    },
+    "stats": {
+      "Techniek": 96,
+      "Tactiek": 85,
+      "Fysiek": 80,
+      "Mentaal": 95
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 90,
+          "Tactiek": 80
+        },
+        "ratings": {
+          "bal": "4",
+          "pas": "4"
+        }
+      }
+    }
   },
   {
     "id": "f_002",
-    "bio": { "name": "BRAM BAKKER", "team": "JO8-1", "role": "Keeper", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=BRAM", "period": "Eindbeoordeling" },
-    "obj": { "attendance": 100, "minutes": 1400 },
-    "ratings": { "bal": "3", "pas": "4", "aan": "3", "drib": "2", "schot": "2", "posi": "5", "vrij": "3", "sam": "5", "oms": "4", "sne": "4", "uit": "4", "kra": "5", "wen": "5", "inz": "5", "mot": "5", "coa": "5", "tea": "5" },
-    "stats": { "Techniek": 50, "Tactiek": 90, "Fysiek": 85, "Mentaal": 100 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 45 }, "ratings": { "bal": "2" } } }
+    "bio": {
+      "name": "BRAM BAKKER",
+      "team": "JO8-1",
+      "role": "Keeper",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=BRAM",
+      "period": "Eindbeoordeling"
+    },
+    "obj": {
+      "attendance": 100,
+      "minutes": 1400
+    },
+    "ratings": {
+      "bal": "3",
+      "pas": "4",
+      "aan": "3",
+      "drib": "2",
+      "schot": "2",
+      "posi": "5",
+      "vrij": "3",
+      "sam": "5",
+      "oms": "4",
+      "sne": "4",
+      "uit": "4",
+      "kra": "5",
+      "wen": "5",
+      "inz": "5",
+      "mot": "5",
+      "coa": "5",
+      "tea": "5"
+    },
+    "stats": {
+      "Techniek": 50,
+      "Tactiek": 90,
+      "Fysiek": 85,
+      "Mentaal": 100
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 45
+        },
+        "ratings": {
+          "bal": "2"
+        }
+      }
+    }
   },
   {
     "id": "f_003",
-    "bio": { "name": "SEM VAN DIJK", "team": "JO8-2", "role": "Verdediger", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=SEM", "period": "Eindbeoordeling" },
-    "obj": { "attendance": 80, "minutes": 900 },
-    "ratings": { "bal": "3", "pas": "3", "aan": "3", "drib": "3", "schot": "2", "posi": "3", "vrij": "2", "sam": "3", "oms": "3", "sne": "4", "uit": "3", "kra": "4", "wen": "3", "inz": "3", "mot": "3", "coa": "4", "tea": "4" },
-    "stats": { "Techniek": 55, "Tactiek": 55, "Fysiek": 70, "Mentaal": 70 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 60 }, "ratings": { "bal": "4" } } }
+    "bio": {
+      "name": "SEM VAN DIJK",
+      "birthYear": "",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=SEM",
+      "team": "JO8-2",
+      "role": "Verdediger",
+      "coach": "",
+      "date": "",
+      "period": "Eindbeoordeling"
+    },
+    "obj": {
+      "attendance": 80,
+      "minutes": 900
+    },
+    "ratings": {
+      "bal": "5",
+      "pas": "4",
+      "aan": "5",
+      "drib": "5",
+      "schot": "5",
+      "posi": "5",
+      "vrij": "5",
+      "sam": "5",
+      "oms": "5",
+      "sne": "5",
+      "uit": "5",
+      "kra": "5",
+      "wen": "4",
+      "inz": "5",
+      "mot": "5",
+      "coa": "5",
+      "tea": "5"
+    },
+    "stats": {
+      "Techniek": 96,
+      "Tactiek": 100,
+      "Fysiek": 95,
+      "Mentaal": 100
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 60
+        },
+        "ratings": {
+          "bal": "4"
+        }
+      },
+      "Eindbeoordeling": {
+        "date": "",
+        "stats": {
+          "Techniek": 96,
+          "Tactiek": 100,
+          "Fysiek": 95,
+          "Mentaal": 100
+        },
+        "ratings": {
+          "bal": "5",
+          "pas": "4",
+          "aan": "5",
+          "drib": "5",
+          "schot": "5",
+          "posi": "5",
+          "vrij": "5",
+          "sam": "5",
+          "oms": "5",
+          "sne": "5",
+          "uit": "5",
+          "kra": "5",
+          "wen": "4",
+          "inz": "5",
+          "mot": "5",
+          "coa": "5",
+          "tea": "5"
+        },
+        "obj": {
+          "attendance": 80,
+          "minutes": 900
+        }
+      }
+    },
+    "comments": {
+      "bal": "",
+      "pas": "",
+      "aan": "",
+      "drib": "",
+      "schot": ""
+    },
+    "pop": {
+      "goal1": "",
+      "action1": "",
+      "time1": "",
+      "goal2": "",
+      "action2": "",
+      "time2": "",
+      "goal3": "",
+      "action3": "",
+      "time3": ""
+    },
+    "analysis": {
+      "strengths": "",
+      "growthPoints": ""
+    },
+    "meta": {
+      "lastModifiedBy": "Hoofdbeheerder",
+      "lastModifiedDate": "2026-01-04T18:56:08.585Z"
+    }
   },
   {
     "id": "f_004",
-    "bio": { "name": "THIJS MULDER", "team": "JO8-3", "role": "Middenvelder", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=THIJS", "period": "Eindbeoordeling" },
-    "obj": { "attendance": 90, "minutes": 1100 },
-    "ratings": { "bal": "4", "pas": "5", "aan": "4", "drib": "4", "schot": "3", "posi": "4", "vrij": "4", "sam": "5", "oms": "4", "sne": "3", "uit": "5", "kra": "3", "wen": "4", "inz": "4", "mot": "5", "coa": "5", "tea": "5" },
-    "stats": { "Techniek": 82, "Tactiek": 85, "Fysiek": 75, "Mentaal": 95 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 65 }, "ratings": { "bal": "3" } } }
+    "bio": {
+      "name": "THIJS MULDER",
+      "team": "JO8-3",
+      "role": "Middenvelder",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=THIJS",
+      "period": "Eindbeoordeling"
+    },
+    "obj": {
+      "attendance": 90,
+      "minutes": 1100
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "5",
+      "aan": "4",
+      "drib": "4",
+      "schot": "3",
+      "posi": "4",
+      "vrij": "4",
+      "sam": "5",
+      "oms": "4",
+      "sne": "3",
+      "uit": "5",
+      "kra": "3",
+      "wen": "4",
+      "inz": "4",
+      "mot": "5",
+      "coa": "5",
+      "tea": "5"
+    },
+    "stats": {
+      "Techniek": 82,
+      "Tactiek": 85,
+      "Fysiek": 75,
+      "Mentaal": 95
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 65
+        },
+        "ratings": {
+          "bal": "3"
+        }
+      }
+    }
   },
   {
     "id": "f_005",
-    "bio": { "name": "SOPHIE STERK", "team": "JO8-1", "role": "Middenvelder", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=SOPHIE", "period": "Eindbeoordeling" },
-    "obj": { "attendance": 98, "minutes": 1300 },
-    "ratings": { "bal": "5", "pas": "5", "aan": "4", "drib": "4", "schot": "4", "posi": "4", "vrij": "4", "sam": "5", "oms": "4", "sne": "4", "uit": "4", "kra": "4", "wen": "4", "inz": "5", "mot": "5", "coa": "5", "tea": "5" },
-    "stats": { "Techniek": 90, "Tactiek": 88, "Fysiek": 80, "Mentaal": 98 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 85 }, "ratings": { "bal": "4" } } }
+    "bio": {
+      "name": "SOPHIE STERK",
+      "team": "JO8-1",
+      "role": "Middenvelder",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=SOPHIE",
+      "period": "Eindbeoordeling"
+    },
+    "obj": {
+      "attendance": 98,
+      "minutes": 1300
+    },
+    "ratings": {
+      "bal": "5",
+      "pas": "5",
+      "aan": "4",
+      "drib": "4",
+      "schot": "4",
+      "posi": "4",
+      "vrij": "4",
+      "sam": "5",
+      "oms": "4",
+      "sne": "4",
+      "uit": "4",
+      "kra": "4",
+      "wen": "4",
+      "inz": "5",
+      "mot": "5",
+      "coa": "5",
+      "tea": "5"
+    },
+    "stats": {
+      "Techniek": 90,
+      "Tactiek": 88,
+      "Fysiek": 80,
+      "Mentaal": 98
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 85
+        },
+        "ratings": {
+          "bal": "4"
+        }
+      }
+    }
   },
   {
     "id": "f_006",
-    "bio": { "name": "LARS LOPER", "team": "JO8-1", "role": "Verdediger", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=LARS" },
-    "obj": { "attendance": 90, "minutes": 1000 },
-    "ratings": { "bal": "4", "pas": "4", "aan": "4", "drib": "4", "schot": "3", "posi": "5", "vrij": "3", "sam": "4", "oms": "4", "sne": "4", "uit": "5", "kra": "5", "wen": "4", "inz": "5", "mot": "4", "coa": "4", "tea": "4" },
-    "stats": { "Techniek": 75, "Tactiek": 85, "Fysiek": 90, "Mentaal": 85 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 70 }, "ratings": { "bal": "3" } } }
+    "bio": {
+      "name": "LARS LOPER",
+      "team": "JO8-1",
+      "role": "Verdediger",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=LARS"
+    },
+    "obj": {
+      "attendance": 90,
+      "minutes": 1000
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "4",
+      "aan": "4",
+      "drib": "4",
+      "schot": "3",
+      "posi": "5",
+      "vrij": "3",
+      "sam": "4",
+      "oms": "4",
+      "sne": "4",
+      "uit": "5",
+      "kra": "5",
+      "wen": "4",
+      "inz": "5",
+      "mot": "4",
+      "coa": "4",
+      "tea": "4"
+    },
+    "stats": {
+      "Techniek": 75,
+      "Tactiek": 85,
+      "Fysiek": 90,
+      "Mentaal": 85
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 70
+        },
+        "ratings": {
+          "bal": "3"
+        }
+      }
+    }
   },
   {
     "id": "f_007",
-    "id": "f_007", "bio": { "name": "FINN FLITS", "team": "JO8-2", "role": "Aanvaller", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=FINN" },
-    "obj": { "attendance": 85, "minutes": 950 },
-    "ratings": { "bal": "4", "pas": "3", "aan": "4", "drib": "5", "schot": "4", "posi": "3", "vrij": "5", "sam": "3", "oms": "5", "sne": "5", "uit": "3", "kra": "3", "wen": "5", "inz": "4", "mot": "4", "coa": "3", "tea": "3" },
-    "stats": { "Techniek": 82, "Tactiek": 65, "Fysiek": 75, "Mentaal": 70 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 75 }, "ratings": { "bal": "3" } } }
+    "bio": {
+      "name": "FINN FLITS",
+      "team": "JO8-2",
+      "role": "Aanvaller",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=FINN"
+    },
+    "obj": {
+      "attendance": 85,
+      "minutes": 950
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "3",
+      "aan": "4",
+      "drib": "5",
+      "schot": "4",
+      "posi": "3",
+      "vrij": "5",
+      "sam": "3",
+      "oms": "5",
+      "sne": "5",
+      "uit": "3",
+      "kra": "3",
+      "wen": "5",
+      "inz": "4",
+      "mot": "4",
+      "coa": "3",
+      "tea": "3"
+    },
+    "stats": {
+      "Techniek": 82,
+      "Tactiek": 65,
+      "Fysiek": 75,
+      "Mentaal": 70
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 75
+        },
+        "ratings": {
+          "bal": "3"
+        }
+      }
+    }
   },
   {
     "id": "f_008",
-    "bio": { "name": "MATS MUUR", "team": "JO8-1", "role": "Verdediger", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=MATS" },
-    "obj": { "attendance": 100, "minutes": 1500 },
-    "ratings": { "bal": "4", "pas": "4", "aan": "4", "drib": "3", "schot": "3", "posi": "5", "vrij": "4", "sam": "5", "oms": "5", "sne": "4", "uit": "5", "kra": "5", "wen": "4", "inz": "5", "mot": "5", "coa": "5", "tea": "5" },
-    "stats": { "Techniek": 80, "Tactiek": 90, "Fysiek": 95, "Mentaal": 100 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 75 }, "ratings": { "bal": "4" } } }
+    "bio": {
+      "name": "MATS MUUR",
+      "team": "JO8-1",
+      "role": "Verdediger",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=MATS"
+    },
+    "obj": {
+      "attendance": 100,
+      "minutes": 1500
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "4",
+      "aan": "4",
+      "drib": "3",
+      "schot": "3",
+      "posi": "5",
+      "vrij": "4",
+      "sam": "5",
+      "oms": "5",
+      "sne": "4",
+      "uit": "5",
+      "kra": "5",
+      "wen": "4",
+      "inz": "5",
+      "mot": "5",
+      "coa": "5",
+      "tea": "5"
+    },
+    "stats": {
+      "Techniek": 80,
+      "Tactiek": 90,
+      "Fysiek": 95,
+      "Mentaal": 100
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 75
+        },
+        "ratings": {
+          "bal": "4"
+        }
+      }
+    }
   },
   {
     "id": "f_009",
-    "bio": { "name": "KAI KNAL", "team": "JO8-1", "role": "Aanvaller", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=KAI" },
-    "obj": { "attendance": 90, "minutes": 1100 },
-    "ratings": { "bal": "4", "pas": "3", "aan": "4", "drib": "4", "schot": "5", "posi": "3", "vrij": "4", "sam": "4", "oms": "4", "sne": "5", "uit": "4", "kra": "4", "wen": "4", "inz": "5", "mot": "4", "coa": "4", "tea": "4" },
-    "stats": { "Techniek": 88, "Tactiek": 70, "Fysiek": 80, "Mentaal": 85 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 85 }, "ratings": { "bal": "4" } } }
+    "bio": {
+      "name": "KAI KNAL",
+      "team": "JO8-1",
+      "role": "Aanvaller",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=KAI"
+    },
+    "obj": {
+      "attendance": 90,
+      "minutes": 1100
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "3",
+      "aan": "4",
+      "drib": "4",
+      "schot": "5",
+      "posi": "3",
+      "vrij": "4",
+      "sam": "4",
+      "oms": "4",
+      "sne": "5",
+      "uit": "4",
+      "kra": "4",
+      "wen": "4",
+      "inz": "5",
+      "mot": "4",
+      "coa": "4",
+      "tea": "4"
+    },
+    "stats": {
+      "Techniek": 88,
+      "Tactiek": 70,
+      "Fysiek": 80,
+      "Mentaal": 85
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 85
+        },
+        "ratings": {
+          "bal": "4"
+        }
+      }
+    }
   },
   {
     "id": "f_010",
-    "bio": { "name": "LIEKE LINKS", "team": "JO8-2", "role": "Middenvelder", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=LIEKE" },
-    "obj": { "attendance": 95, "minutes": 1200 },
-    "ratings": { "bal": "4", "pas": "5", "aan": "4", "drib": "4", "schot": "3", "posi": "4", "vrij": "4", "sam": "5", "oms": "4", "sne": "4", "uit": "4", "kra": "3", "wen": "4", "inz": "4", "mot": "4", "coa": "5", "tea": "5" },
-    "stats": { "Techniek": 82, "Tactiek": 80, "Fysiek": 70, "Mentaal": 85 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 78 }, "ratings": { "bal": "3" } } }
+    "bio": {
+      "name": "LIEKE LINKS",
+      "team": "JO8-2",
+      "role": "Middenvelder",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=LIEKE"
+    },
+    "obj": {
+      "attendance": 95,
+      "minutes": 1200
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "5",
+      "aan": "4",
+      "drib": "4",
+      "schot": "3",
+      "posi": "4",
+      "vrij": "4",
+      "sam": "5",
+      "oms": "4",
+      "sne": "4",
+      "uit": "4",
+      "kra": "3",
+      "wen": "4",
+      "inz": "4",
+      "mot": "4",
+      "coa": "5",
+      "tea": "5"
+    },
+    "stats": {
+      "Techniek": 82,
+      "Tactiek": 80,
+      "Fysiek": 70,
+      "Mentaal": 85
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 78
+        },
+        "ratings": {
+          "bal": "3"
+        }
+      }
+    }
   },
   {
     "id": "f_011",
-    "bio": { "name": "DAAN DOEL", "team": "JO8-2", "role": "Keeper", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=DAAN" },
-    "obj": { "attendance": 85, "minutes": 1000 },
-    "ratings": { "bal": "3", "pas": "4", "aan": "3", "drib": "2", "schot": "2", "posi": "4", "vrij": "3", "sam": "4", "oms": "4", "sne": "3", "uit": "4", "kra": "4", "wen": "4", "inz": "4", "mot": "4", "coa": "4", "tea": "4" },
-    "stats": { "Techniek": 45, "Tactiek": 75, "Fysiek": 75, "Mentaal": 80 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 40 }, "ratings": { "bal": "2" } } }
+    "bio": {
+      "name": "DAAN DOEL",
+      "team": "JO8-2",
+      "role": "Keeper",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=DAAN"
+    },
+    "obj": {
+      "attendance": 85,
+      "minutes": 1000
+    },
+    "ratings": {
+      "bal": "3",
+      "pas": "4",
+      "aan": "3",
+      "drib": "2",
+      "schot": "2",
+      "posi": "4",
+      "vrij": "3",
+      "sam": "4",
+      "oms": "4",
+      "sne": "3",
+      "uit": "4",
+      "kra": "4",
+      "wen": "4",
+      "inz": "4",
+      "mot": "4",
+      "coa": "4",
+      "tea": "4"
+    },
+    "stats": {
+      "Techniek": 45,
+      "Tactiek": 75,
+      "Fysiek": 75,
+      "Mentaal": 80
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 40
+        },
+        "ratings": {
+          "bal": "2"
+        }
+      }
+    }
   },
   {
     "id": "f_012",
-    "bio": { "name": "PIM PAS", "team": "JO8-3", "role": "Middenvelder", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=PIM" },
-    "obj": { "attendance": 90, "minutes": 1000 },
-    "ratings": { "bal": "3", "pas": "4", "aan": "3", "drib": "3", "schot": "2", "posi": "3", "vrij": "3", "sam": "4", "oms": "3", "sne": "3", "uit": "4", "kra": "3", "wen": "3", "inz": "3", "mot": "4", "coa": "4", "tea": "4" },
-    "stats": { "Techniek": 60, "Tactiek": 65, "Fysiek": 60, "Mentaal": 70 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 55 }, "ratings": { "bal": "3" } } }
+    "bio": {
+      "name": "PIM PAS",
+      "team": "JO8-3",
+      "role": "Middenvelder",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=PIM"
+    },
+    "obj": {
+      "attendance": 90,
+      "minutes": 1000
+    },
+    "ratings": {
+      "bal": "3",
+      "pas": "4",
+      "aan": "3",
+      "drib": "3",
+      "schot": "2",
+      "posi": "3",
+      "vrij": "3",
+      "sam": "4",
+      "oms": "3",
+      "sne": "3",
+      "uit": "4",
+      "kra": "3",
+      "wen": "3",
+      "inz": "3",
+      "mot": "4",
+      "coa": "4",
+      "tea": "4"
+    },
+    "stats": {
+      "Techniek": 60,
+      "Tactiek": 65,
+      "Fysiek": 60,
+      "Mentaal": 70
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 55
+        },
+        "ratings": {
+          "bal": "3"
+        }
+      }
+    }
   },
   {
     "id": "f_013",
-    "bio": { "name": "TEUN TAKKEL", "team": "JO8-3", "role": "Verdediger", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=TEUN" },
-    "obj": { "attendance": 75, "minutes": 800 },
-    "ratings": { "bal": "3", "pas": "3", "aan": "3", "drib": "2", "schot": "2", "posi": "3", "vrij": "2", "sam": "3", "oms": "4", "sne": "3", "uit": "3", "kra": "4", "wen": "3", "inz": "4", "mot": "3", "coa": "3", "tea": "3" },
-    "stats": { "Techniek": 50, "Tactiek": 55, "Fysiek": 65, "Mentaal": 60 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 50 } } }
+    "bio": {
+      "name": "TEUN TAKKEL",
+      "team": "JO8-3",
+      "role": "Verdediger",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=TEUN"
+    },
+    "obj": {
+      "attendance": 75,
+      "minutes": 800
+    },
+    "ratings": {
+      "bal": "3",
+      "pas": "3",
+      "aan": "3",
+      "drib": "2",
+      "schot": "2",
+      "posi": "3",
+      "vrij": "2",
+      "sam": "3",
+      "oms": "4",
+      "sne": "3",
+      "uit": "3",
+      "kra": "4",
+      "wen": "3",
+      "inz": "4",
+      "mot": "3",
+      "coa": "3",
+      "tea": "3"
+    },
+    "stats": {
+      "Techniek": 50,
+      "Tactiek": 55,
+      "Fysiek": 65,
+      "Mentaal": 60
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 50
+        }
+      }
+    }
   },
   {
     "id": "f_014",
-    "bio": { "name": "SARAH SNEL", "team": "JO8-1", "role": "Aanvaller", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=SARAH" },
-    "obj": { "attendance": 95, "minutes": 1200 },
-    "ratings": { "bal": "4", "pas": "4", "aan": "4", "drib": "5", "schot": "5", "posi": "4", "vrij": "5", "sam": "4", "oms": "4", "sne": "5", "uit": "4", "kra": "4", "wen": "5", "inz": "5", "mot": "5", "coa": "5", "tea": "5" },
-    "stats": { "Techniek": 92, "Tactiek": 80, "Fysiek": 85, "Mentaal": 95 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 82 }, "ratings": { "bal": "3" } } }
+    "bio": {
+      "name": "SARAH SNEL",
+      "team": "JO8-1",
+      "role": "Aanvaller",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=SARAH"
+    },
+    "obj": {
+      "attendance": 95,
+      "minutes": 1200
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "4",
+      "aan": "4",
+      "drib": "5",
+      "schot": "5",
+      "posi": "4",
+      "vrij": "5",
+      "sam": "4",
+      "oms": "4",
+      "sne": "5",
+      "uit": "4",
+      "kra": "4",
+      "wen": "5",
+      "inz": "5",
+      "mot": "5",
+      "coa": "5",
+      "tea": "5"
+    },
+    "stats": {
+      "Techniek": 92,
+      "Tactiek": 80,
+      "Fysiek": 85,
+      "Mentaal": 95
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 82
+        },
+        "ratings": {
+          "bal": "3"
+        }
+      }
+    }
   },
   {
     "id": "f_015",
-    "bio": { "name": "BENTHE BAL", "team": "JO8-2", "role": "Middenvelder", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=BENTHE" },
-    "obj": { "attendance": 90, "minutes": 1100 },
-    "ratings": { "bal": "4", "pas": "4", "aan": "4", "drib": "4", "schot": "3", "posi": "4", "vrij": "4", "sam": "4", "oms": "4", "sne": "4", "uit": "4", "kra": "3", "wen": "4", "inz": "4", "mot": "4", "coa": "4", "tea": "4" },
-    "stats": { "Techniek": 78, "Tactiek": 75, "Fysiek": 70, "Mentaal": 80 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 75 } } }
+    "bio": {
+      "name": "BENTHE BAL",
+      "team": "JO8-2",
+      "role": "Middenvelder",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=BENTHE"
+    },
+    "obj": {
+      "attendance": 90,
+      "minutes": 1100
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "4",
+      "aan": "4",
+      "drib": "4",
+      "schot": "3",
+      "posi": "4",
+      "vrij": "4",
+      "sam": "4",
+      "oms": "4",
+      "sne": "4",
+      "uit": "4",
+      "kra": "3",
+      "wen": "4",
+      "inz": "4",
+      "mot": "4",
+      "coa": "4",
+      "tea": "4"
+    },
+    "stats": {
+      "Techniek": 78,
+      "Tactiek": 75,
+      "Fysiek": 70,
+      "Mentaal": 80
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 75
+        }
+      }
+    }
   },
   {
     "id": "f_016",
-    "bio": { "name": "CAS CLEVER", "team": "JO8-1", "role": "Middenvelder", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=CAS" },
-    "obj": { "attendance": 100, "minutes": 1400 },
-    "ratings": { "bal": "4", "pas": "5", "aan": "4", "drib": "4", "schot": "4", "posi": "5", "vrij": "5", "sam": "5", "oms": "4", "sne": "4", "uit": "4", "kra": "4", "wen": "4", "inz": "5", "mot": "5", "coa": "5", "tea": "5" },
-    "stats": { "Techniek": 85, "Tactiek": 95, "Fysiek": 80, "Mentaal": 95 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 80 }, "ratings": { "bal": "4" } } }
+    "bio": {
+      "name": "CAS CLEVER",
+      "team": "JO8-1",
+      "role": "Middenvelder",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=CAS"
+    },
+    "obj": {
+      "attendance": 100,
+      "minutes": 1400
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "5",
+      "aan": "4",
+      "drib": "4",
+      "schot": "4",
+      "posi": "5",
+      "vrij": "5",
+      "sam": "5",
+      "oms": "4",
+      "sne": "4",
+      "uit": "4",
+      "kra": "4",
+      "wen": "4",
+      "inz": "5",
+      "mot": "5",
+      "coa": "5",
+      "tea": "5"
+    },
+    "stats": {
+      "Techniek": 85,
+      "Tactiek": 95,
+      "Fysiek": 80,
+      "Mentaal": 95
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 80
+        },
+        "ratings": {
+          "bal": "4"
+        }
+      }
+    }
   },
   {
     "id": "f_017",
-    "bio": { "name": "FEYA FLANK", "team": "JO8-2", "role": "Verdediger", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=FEYA" },
-    "obj": { "attendance": 90, "minutes": 1000 },
-    "ratings": { "bal": "4", "pas": "4", "aan": "4", "drib": "4", "schot": "3", "posi": "4", "vrij": "3", "sam": "4", "oms": "4", "sne": "4", "uit": "4", "kra": "4", "wen": "4", "inz": "4", "mot": "4", "coa": "4", "tea": "4" },
-    "stats": { "Techniek": 70, "Tactiek": 75, "Fysiek": 75, "Mentaal": 75 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 66 } } }
+    "bio": {
+      "name": "FEYA FLANK",
+      "team": "JO8-2",
+      "role": "Verdediger",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=FEYA"
+    },
+    "obj": {
+      "attendance": 90,
+      "minutes": 1000
+    },
+    "ratings": {
+      "bal": "4",
+      "pas": "4",
+      "aan": "4",
+      "drib": "4",
+      "schot": "3",
+      "posi": "4",
+      "vrij": "3",
+      "sam": "4",
+      "oms": "4",
+      "sne": "4",
+      "uit": "4",
+      "kra": "4",
+      "wen": "4",
+      "inz": "4",
+      "mot": "4",
+      "coa": "4",
+      "tea": "4"
+    },
+    "stats": {
+      "Techniek": 70,
+      "Tactiek": 75,
+      "Fysiek": 75,
+      "Mentaal": 75
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 66
+        }
+      }
+    }
   },
   {
     "id": "f_018",
-    "bio": { "name": "HUGO HARD", "team": "JO8-3", "role": "Verdediger", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=HUGO" },
-    "obj": { "attendance": 80, "minutes": 850 },
-    "ratings": { "bal": "2", "pas": "3", "aan": "2", "drib": "2", "schot": "2", "posi": "3", "vrij": "2", "sam": "3", "oms": "3", "sne": "3", "uit": "3", "kra": "5", "wen": "3", "inz": "4", "mot": "3", "coa": "3", "tea": "3" },
-    "stats": { "Techniek": 45, "Tactiek": 50, "Fysiek": 80, "Mentaal": 65 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 50 } } }
+    "bio": {
+      "name": "HUGO HARD",
+      "team": "JO8-3",
+      "role": "Verdediger",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=HUGO"
+    },
+    "obj": {
+      "attendance": 80,
+      "minutes": 850
+    },
+    "ratings": {
+      "bal": "2",
+      "pas": "3",
+      "aan": "2",
+      "drib": "2",
+      "schot": "2",
+      "posi": "3",
+      "vrij": "2",
+      "sam": "3",
+      "oms": "3",
+      "sne": "3",
+      "uit": "3",
+      "kra": "5",
+      "wen": "3",
+      "inz": "4",
+      "mot": "3",
+      "coa": "3",
+      "tea": "3"
+    },
+    "stats": {
+      "Techniek": 45,
+      "Tactiek": 50,
+      "Fysiek": 80,
+      "Mentaal": 65
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 50
+        }
+      }
+    }
   },
   {
     "id": "f_019",
-    "bio": { "name": "MILAN MEET", "team": "JO8-2", "role": "Middenvelder", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=MILAN" },
-    "obj": { "attendance": 92, "minutes": 1050 },
-    "ratings": { "bal": "3", "pas": "4", "aan": "3", "drib": "3", "schot": "3", "posi": "4", "vrij": "3", "sam": "4", "oms": "4", "sne": "4", "uit": "4", "kra": "3", "wen": "4", "inz": "4", "mot": "4", "coa": "4", "tea": "4" },
-    "stats": { "Techniek": 68, "Tactiek": 70, "Fysiek": 65, "Mentaal": 75 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 65 } } }
+    "bio": {
+      "name": "MILAN MEET",
+      "team": "JO8-2",
+      "role": "Middenvelder",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=MILAN"
+    },
+    "obj": {
+      "attendance": 92,
+      "minutes": 1050
+    },
+    "ratings": {
+      "bal": "3",
+      "pas": "4",
+      "aan": "3",
+      "drib": "3",
+      "schot": "3",
+      "posi": "4",
+      "vrij": "3",
+      "sam": "4",
+      "oms": "4",
+      "sne": "4",
+      "uit": "4",
+      "kra": "3",
+      "wen": "4",
+      "inz": "4",
+      "mot": "4",
+      "coa": "4",
+      "tea": "4"
+    },
+    "stats": {
+      "Techniek": 68,
+      "Tactiek": 70,
+      "Fysiek": 65,
+      "Mentaal": 75
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 65
+        }
+      }
+    }
   },
   {
     "id": "f_020",
-    "bio": { "name": "NOA NIET", "team": "JO8-3", "role": "Aanvaller", "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=NOA" },
-    "obj": { "attendance": 70, "minutes": 600 },
-    "ratings": { "bal": "2", "pas": "2", "aan": "2", "drib": "3", "schot": "2", "posi": "2", "vrij": "3", "sam": "2", "oms": "2", "sne": "4", "uit": "2", "kra": "2", "wen": "3", "inz": "3", "mot": "2", "coa": "2", "tea": "2" },
-    "stats": { "Techniek": 55, "Tactiek": 40, "Fysiek": 50, "Mentaal": 45 },
-    "history": { "1e seizoenshelft": { "stats": { "Techniek": 55 } } }
+    "bio": {
+      "name": "NOA NIET",
+      "team": "JO8-3",
+      "role": "Aanvaller",
+      "photo": "https://via.placeholder.com/400x600/0a0a0a/D4AF37?text=NOA"
+    },
+    "obj": {
+      "attendance": 70,
+      "minutes": 600
+    },
+    "ratings": {
+      "bal": "2",
+      "pas": "2",
+      "aan": "2",
+      "drib": "3",
+      "schot": "2",
+      "posi": "2",
+      "vrij": "3",
+      "sam": "2",
+      "oms": "2",
+      "sne": "4",
+      "uit": "2",
+      "kra": "2",
+      "wen": "3",
+      "inz": "3",
+      "mot": "2",
+      "coa": "2",
+      "tea": "2"
+    },
+    "stats": {
+      "Techniek": 55,
+      "Tactiek": 40,
+      "Fysiek": 50,
+      "Mentaal": 45
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "stats": {
+          "Techniek": 55
+        }
+      }
+    }
   }
 ]
