@@ -43,7 +43,10 @@
       "name": "Dave",
       "role": "coach",
       "teams": [
-        "JO8"
+        "JO8",
+        "JO8-1",
+        "JO8-2",
+        "JO8-3"
       ]
     }
   ]
