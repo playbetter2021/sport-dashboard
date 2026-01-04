@@ -17,7 +17,7 @@
         }
 
         .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; outline: none; transition: 0.2s; }
-        .input-luxe:focus { border-color: var(--gold); background: rgba(255,255,255,0.1); }
+        .input-luxe:focus { border-color: var(--gold); background: rgba(212,175,55,0.1); }
         
         .section-card { background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.08); padding: 25px; border-radius: 1.5rem; margin-bottom: 2rem; backdrop-filter: blur(10px); }
         
@@ -47,6 +47,7 @@
         <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-white/5 pb-6 gap-4">
             <div class="flex items-center gap-4">
                 <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase transition border border-white/10">Dashboard</a>
+                <a href="comparison.html" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase transition border border-white/10">Selection Matrix</a>
                 <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter">COACH<span class="text-yellow-500">TERMINAL</span></h1>
             </div>
             <div class="flex items-center gap-2 bg-white/5 p-2 rounded-xl border border-white/10">
@@ -61,18 +62,21 @@
                     <div class="flex items-center gap-6 mb-8">
                         <img id="pPreviewImg" class="preview-photo" src="https://via.placeholder.com/150/0a0a0a/D4AF37?text=?" alt="Preview">
                         <div>
-                            <h3>1. Algemene Gegevens</h3>
-                            <p id="coachIdent" class="text-[9px] text-gray-500 uppercase font-bold tracking-widest italic"></p>
+                            <h3>1. Algemene Gegevens & Profiel</h3>
+                            <p id="coachIdent" class="text-[9px] text-gray-400 uppercase font-bold tracking-widest italic"></p>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="col-span-2"><label>Naam Speler</label><input type="text" id="pName" class="input-luxe" required></div>
+                        <div><label>Geboortejaar</label><input type="number" id="pBirth" class="input-luxe"></div>
+                        <div><label>Foto URL</label><input type="text" id="pPhotoUrl" class="input-luxe" oninput="document.getElementById('pPreviewImg').src=this.value"></div>
                         <div><label>Team</label><select id="pTeam" class="input-luxe"></select></div>
                         <div><label>Positie</label>
                             <select id="pPos" class="input-luxe">
                                 <option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option>
                             </select>
                         </div>
+                        <div><label>Trainer / Coach</label><input type="text" id="pCoach" class="input-luxe"></div>
                         <div><label>Evaluatie Moment</label>
                             <select id="pPeriod" class="input-luxe">
                                 <option value="1e seizoenshelft">1e seizoenshelft</option>
@@ -81,45 +85,51 @@
                             </select>
                         </div>
                         <div><label>Datum</label><input type="date" id="pDate" class="input-luxe"></div>
-                        <div class="hidden"><input type="text" id="pPhotoUrl"></div>
+                        <div><label>Opkomst (%)</label><input type="number" id="pAtt" class="input-luxe" value="100"></div>
+                        <div><label>Minuten</label><input type="number" id="pMin" class="input-luxe" value="1000"></div>
                     </div>
                 </div>
                 
                 <div class="lg:col-span-5 chart-container flex flex-col items-center justify-center">
                     <label class="mb-4">Live Performance Intelligence</label>
-                    <div class="w-full max-w-[300px]">
+                    <div class="w-full max-w-[320px]">
                         <canvas id="liveRadarChart"></canvas>
                     </div>
                 </div>
             </div>
 
             <div class="section-card">
-                <h3>2. Technische Vaardigheden</h3>
+                <h3>2. Technische Vaardigheden (1-5)</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                     <div class="space-y-4">
                         <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Balcontrole</label><span id="v_bal" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_bal" min="1" max="5" value="3" class="slider-gold rating-input" data-key="bal" oninput="v_bal.innerText=this.value"></div>
                         <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Passing</label><span id="v_pas" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_pas" min="1" max="5" value="3" class="slider-gold rating-input" data-key="pas" oninput="v_pas.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Aanname</label><span id="v_aan" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_aan" min="1" max="5" value="3" class="slider-gold rating-input" data-key="aan" oninput="v_aan.innerText=this.value"></div>
                     </div>
                     <div class="space-y-4">
-                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Aanname</label><span id="v_aan" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_aan" min="1" max="5" value="3" class="slider-gold rating-input" data-key="aan" oninput="v_aan.innerText=this.value"></div>
                         <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Dribbelen</label><span id="v_drib" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_drib" min="1" max="5" value="3" class="slider-gold rating-input" data-key="drib" oninput="v_drib.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Schieten</label><span id="v_schot" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_schot" min="1" max="5" value="3" class="slider-gold rating-input" data-key="schot" oninput="v_schot.innerText=this.value"></div>
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="section-card">
-                    <h3>3a. Tactiek</h3>
+                    <h3>3a. Tactisch Inzicht</h3>
                     <div class="space-y-6">
                         <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Positiespel</label><span id="v_posi" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_posi" min="1" max="5" value="3" class="slider-gold rating-input" data-key="posi" oninput="v_posi.innerText=this.value"></div>
                         <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Omschakeling</label><span id="v_oms" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_oms" min="1" max="5" value="3" class="slider-gold rating-input" data-key="oms" oninput="v_oms.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Vrijlopen</label><span id="v_vrij" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_vrij" min="1" max="5" value="3" class="slider-gold rating-input" data-key="vrij" oninput="v_vrij.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Samenwerken</label><span id="v_sam" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_sam" min="1" max="5" value="3" class="slider-gold rating-input" data-key="sam" oninput="v_sam.innerText=this.value"></div>
                     </div>
                 </div>
                 <div class="section-card">
-                    <h3>3b. Fysiek</h3>
+                    <h3>3b. Fysieke Aspecten</h3>
                     <div class="space-y-6">
                         <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Snelheid</label><span id="v_sne" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_sne" min="1" max="5" value="3" class="slider-gold rating-input" data-key="sne" oninput="v_sne.innerText=this.value"></div>
                         <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Kracht</label><span id="v_kra" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_kra" min="1" max="5" value="3" class="slider-gold rating-input" data-key="kra" oninput="v_kra.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Conditie</label><span id="v_uit" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_uit" min="1" max="5" value="3" class="slider-gold rating-input" data-key="uit" oninput="v_uit.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Wendbaarheid</label><span id="v_wen" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_wen" min="1" max="5" value="3" class="slider-gold rating-input" data-key="wen" oninput="v_wen.innerText=this.value"></div>
                     </div>
                 </div>
             </div>
@@ -129,10 +139,29 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                     <div class="space-y-6">
                         <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Inzet</label><span id="v_inz" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_inz" min="1" max="5" value="3" class="slider-gold rating-input" data-key="inz" oninput="v_inz.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Motivatie</label><span id="v_mot" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_mot" min="1" max="5" value="3" class="slider-gold rating-input" data-key="mot" oninput="v_mot.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Coachbaarheid</label><span id="v_coa" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_coa" min="1" max="5" value="3" class="slider-gold rating-input" data-key="coa" oninput="v_coa.innerText=this.value"></div>
                         <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Teamgedrag</label><span id="v_tea" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_tea" min="1" max="5" value="3" class="slider-gold rating-input" data-key="tea" oninput="v_tea.innerText=this.value"></div>
                     </div>
                     <div class="space-y-4">
-                        <div><label>Opmerkingen Analyse</label><textarea id="pGrowth" class="input-luxe h-24 resize-none" placeholder="Noteer hier sterke punten en groeidoelen..."></textarea></div>
+                        <div><label>Sterke punten</label><textarea id="pStrengths" class="input-luxe h-20 resize-none"></textarea></div>
+                        <div><label>Ontwikkelpunten</label><textarea id="pGrowth" class="input-luxe h-20 resize-none"></textarea></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h3>5. Persoonlijke Ontwikkeldoelen (POP)</h3>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input type="text" id="g1" placeholder="Doel 1" class="input-luxe">
+                        <input type="text" id="a1" placeholder="Actie / Training" class="input-luxe">
+                        <input type="text" id="t1" placeholder="Tijdspad" class="input-luxe">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input type="text" id="g2" placeholder="Doel 2" class="input-luxe">
+                        <input type="text" id="a2" placeholder="Actie / Training" class="input-luxe">
+                        <input type="text" id="t2" placeholder="Tijdspad" class="input-luxe">
                     </div>
                 </div>
             </div>
@@ -152,7 +181,9 @@
         
         let radarChart;
         let allPlayers = [];
+        let filteredPlayers = [];
 
+        // Radar Chart Logica
         function initRadar() {
             const ctx = document.getElementById('liveRadarChart').getContext('2d');
             radarChart = new Chart(ctx, {
@@ -160,6 +191,7 @@
                 data: {
                     labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'],
                     datasets: [{
+                        label: 'Live Performance',
                         data: [3, 3, 3, 3],
                         backgroundColor: 'rgba(212, 175, 55, 0.2)',
                         borderColor: '#D4AF37',
@@ -183,10 +215,12 @@
         }
 
         function updateRadar() {
-            const tech = (parseInt(document.getElementById('s_bal').value) + parseInt(document.getElementById('s_pas').value) + parseInt(document.getElementById('s_aan').value) + parseInt(document.getElementById('s_drib').value)) / 4;
-            const tact = (parseInt(document.getElementById('s_posi').value) + parseInt(document.getElementById('s_oms').value)) / 2;
-            const phys = (parseInt(document.getElementById('s_sne').value) + parseInt(document.getElementById('s_kra').value)) / 2;
-            const ment = (parseInt(document.getElementById('s_inz').value) + parseInt(document.getElementById('s_tea').value)) / 2;
+            // Bereken gemiddeldes voor radar
+            const tech = (parseInt(document.getElementById('s_bal').value) + parseInt(document.getElementById('s_pas').value) + parseInt(document.getElementById('s_aan').value) + parseInt(document.getElementById('s_drib').value) + parseInt(document.getElementById('s_schot').value)) / 5;
+            const tact = (parseInt(document.getElementById('s_posi').value) + parseInt(document.getElementById('s_oms').value) + parseInt(document.getElementById('s_vrij').value) + parseInt(document.getElementById('s_sam').value)) / 4;
+            const phys = (parseInt(document.getElementById('s_sne').value) + parseInt(document.getElementById('s_kra').value) + parseInt(document.getElementById('s_uit').value) + parseInt(document.getElementById('s_wen').value)) / 4;
+            const ment = (parseInt(document.getElementById('s_inz').value) + parseInt(document.getElementById('s_tea').value) + parseInt(document.getElementById('s_mot').value) + parseInt(document.getElementById('s_coa').value)) / 4;
+
             radarChart.data.datasets[0].data = [tech, tact, phys, ment];
             radarChart.update();
         }
@@ -197,17 +231,37 @@
 
         async function loadAssets() {
             allPlayers = await DataProvider.getAllPlayers();
-            document.getElementById('coachIdent').innerText = `Geautoriseerd: ${sessionUser.name} | ${sessionUser.role}`;
+            document.getElementById('coachIdent').innerText = `Auth: ${sessionUser.name} | ${sessionUser.role}`;
 
-            const filtered = sessionUser.role === 'admin' ? allPlayers : allPlayers.filter(p => sessionUser.teams.includes(p.bio.team));
+            if (sessionUser.role === 'admin' || sessionUser.teams.includes("ALL")) {
+                filteredPlayers = allPlayers;
+            } else {
+                filteredPlayers = allPlayers.filter(p => sessionUser.teams.includes(p.bio.team));
+            }
+
             const search = document.getElementById('assetSearch');
-            search.innerHTML = '<option value="">-- SELECTEER SPELER --</option>' + 
-                filtered.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
+            search.innerHTML = '<option value="">-- KIES ASSET --</option>' + 
+                filteredPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
 
             const teamSelect = document.getElementById('pTeam');
-            const adminTeams = ["JO8-1", "JO9-1", "JO10-1", "JO11-1", "JO12-1", "JO13-1", "JO14-1", "JO15-1", "JO16-1", "JO17-1", "JO19-1", "Senioren 1"];
+            const adminTeams = ["JO8-1", "JO8-2", "JO9-1", "JO10-1", "JO11-1", "JO12-1", "JO13-1", "JO14-1", "JO15-1", "JO16-1", "JO17-1", "JO19-1", "Senioren 1"];
             const availableTeams = (sessionUser.role === 'admin') ? adminTeams : sessionUser.teams;
             teamSelect.innerHTML = availableTeams.map(t => `<option value="${t}">${t}</option>`).join('');
+        }
+
+        // Lock Functie
+        function toggleLock(isLocked) {
+            const inputs = document.querySelectorAll('.input-luxe, input[type="range"]');
+            const saveBtn = document.getElementById('saveBtn');
+            inputs.forEach(input => {
+                if(!["assetSearch", "pPeriod", "ghToken", "loadBtn"].includes(input.id)) {
+                    input.disabled = isLocked;
+                    input.style.opacity = isLocked ? "0.4" : "1";
+                }
+            });
+            saveBtn.disabled = isLocked;
+            saveBtn.innerText = isLocked ? "LOCKED (HISTORIE)" : "Sync Player Dossier";
+            saveBtn.style.backgroundColor = isLocked ? "#374151" : "#ca8a04";
         }
 
         document.getElementById('loadBtn').onclick = (e) => {
@@ -215,31 +269,49 @@
             const p = allPlayers.find(x => x.id === document.getElementById('assetSearch').value);
             if (!p) return;
             
-            document.getElementById('pName').value = p.bio.name;
-            document.getElementById('pTeam').value = p.bio.team;
-            document.getElementById('pPreviewImg').src = p.bio.photo;
-            document.getElementById('pPos').value = p.bio.role || "Verdediger";
+            // Bio & Obj
+            document.getElementById('pName').value = p.bio.name || "";
+            document.getElementById('pBirth').value = p.bio.birthYear || "";
+            document.getElementById('pPhotoUrl').value = p.bio.photo || "";
+            document.getElementById('pPreviewImg').src = p.bio.photo || "";
+            document.getElementById('pTeam').value = p.bio.team || "";
+            document.getElementById('pPos').value = p.bio.role || "Middenvelder";
+            document.getElementById('pCoach').value = p.bio.coach || "";
             document.getElementById('pDate').value = p.bio.date || "";
             document.getElementById('pPeriod').value = p.bio.period || "1e seizoenshelft";
-            document.getElementById('pGrowth').value = p.analysis?.growthPoints || "";
-            
-            ['bal','pas','aan','drib','posi','oms','sne','kra','inz','tea'].forEach(key => {
+            document.getElementById('pAtt').value = p.obj?.attendance || 100;
+            document.getElementById('pMin').value = p.obj?.minutes || 1000;
+
+            // Ratings & Sliders
+            ['bal','pas','aan','drib','schot','posi','vrij','sam','oms','sne','uit','kra','wen','inz','mot','coa','tea'].forEach(key => {
                 const val = p.ratings?.[key] || 3;
                 if(document.getElementById('s_'+key)) {
                     document.getElementById('s_'+key).value = val;
                     document.getElementById('v_'+key).innerText = val;
                 }
             });
+
+            // POP & Analyse
+            document.getElementById('pStrengths').value = p.analysis?.strengths || "";
+            document.getElementById('pGrowth').value = p.analysis?.growthPoints || "";
+            for(let i=1; i<=2; i++) {
+                document.getElementById('g'+i).value = p.pop?.['goal'+i] || "";
+                document.getElementById('a'+i).value = p.pop?.['action'+i] || "";
+                document.getElementById('t'+i).value = p.pop?.['time'+i] || "";
+            }
+
+            const isLocked = (sessionUser.role !== 'admin' && p.history && p.history[document.getElementById('pPeriod').value]);
+            toggleLock(isLocked);
             updateRadar();
-            alert("Speler " + p.bio.name + " succesvol geladen.");
+            alert(`Dossier ${p.bio.name} geladen.`);
         };
 
         document.getElementById('proForm').onsubmit = async (e) => {
             e.preventDefault();
-            const pId = document.getElementById('assetSearch').value;
+            const pId = document.getElementById('assetSearch').value || "p_" + Date.now();
             const token = document.getElementById('ghToken').value;
+            const period = document.getElementById('pPeriod').value;
             if(!token) return alert("GitHub Token vereist.");
-            if(!pId) return alert("Selecteer eerst een speler.");
 
             try {
                 const url = `https://api.github.com/repos/playbetter2021/sport-dashboard/contents/data/players.json`;
@@ -248,17 +320,38 @@
                 let players = JSON.parse(atob(file.content));
                 let p = players.find(x => x.id === pId);
 
+                if (!p) {
+                    p = { id: pId, bio: {}, obj: {}, ratings: {}, pop: {}, analysis: {}, stats: {}, history: {}, meta: {} };
+                    players.push(p);
+                }
+
+                // Data verzamelen
                 const currentRatings = {};
-                ['bal','pas','aan','drib','posi','oms','sne','kra','inz','tea'].forEach(k => {
+                ['bal','pas','aan','drib','schot','posi','vrij','sam','oms','sne','uit','kra','wen','inz','mot','coa','tea'].forEach(k => {
                     currentRatings[k] = document.getElementById('s_'+k).value;
                 });
 
-                p.bio.team = document.getElementById('pTeam').value;
-                p.bio.role = document.getElementById('pPos').value;
-                p.bio.date = document.getElementById('pDate').value;
-                p.bio.period = document.getElementById('pPeriod').value;
+                p.bio = { 
+                    name: document.getElementById('pName').value.toUpperCase(),
+                    birthYear: document.getElementById('pBirth').value,
+                    photo: document.getElementById('pPhotoUrl').value,
+                    team: document.getElementById('pTeam').value,
+                    role: document.getElementById('pPos').value,
+                    coach: document.getElementById('pCoach').value,
+                    date: document.getElementById('pDate').value,
+                    period: period
+                };
+                p.obj = { attendance: parseInt(document.getElementById('pAtt').value), minutes: parseInt(document.getElementById('pMin').value) };
                 p.ratings = currentRatings;
-                p.analysis = { growthPoints: document.getElementById('pGrowth').value };
+                p.analysis = { strengths: document.getElementById('pStrengths').value, growthPoints: document.getElementById('pGrowth').value };
+                p.pop = {
+                    goal1: document.getElementById('g1').value, action1: document.getElementById('a1').value, time1: document.getElementById('t1').value,
+                    goal2: document.getElementById('g2').value, action2: document.getElementById('a2').value, time2: document.getElementById('t2').value
+                };
+
+                if(!p.history) p.history = {};
+                p.history[period] = { date: p.bio.date, ratings: currentRatings };
+                p.meta = { lastModifiedBy: sessionUser.name, lastModifiedDate: new Date().toISOString() };
 
                 await fetch(url, {
                     method: "PUT",
@@ -269,7 +362,8 @@
                         sha: file.sha
                     })
                 });
-                alert("Dossier succesvol gesynchroniseerd!");
+                alert("🚀 Succesvol gesynchroniseerd!");
+                loadAssets();
             } catch (err) { alert("Fout: " + err.message); }
         };
 
