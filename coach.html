@@ -4,166 +4,142 @@
     <meta charset="UTF-8">
     <title>Elite Pro | Coach Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
-        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
-        .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; }
-        .section-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 25px; border-radius: 1.5rem; margin-bottom: 2rem; }
+        :root { --gold: #D4AF37; --gold-dark: #b8860b; --obsidian: #050505; --glass: rgba(255, 255, 255, 0.03); }
+        
+        body { 
+            background-color: var(--obsidian); 
+            color: #e5e5e5; 
+            font-family: 'Inter', sans-serif;
+            background-image: radial-gradient(circle at top right, rgba(212, 175, 55, 0.05), transparent 600px);
+        }
+
+        .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; outline: none; transition: 0.2s; }
+        .input-luxe:focus { border-color: var(--gold); background: rgba(255,255,255,0.1); }
+        
+        .section-card { background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.08); padding: 25px; border-radius: 1.5rem; margin-bottom: 2rem; backdrop-filter: blur(10px); }
+        
         label { font-size: 10px; text-transform: uppercase; color: #888; font-weight: bold; margin-bottom: 5px; display: block; }
-        h3 { font-size: 11px; color: var(--gold); text-transform: uppercase; border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 10px; margin-bottom: 20px; font-weight: 900; }
-        .slider-gold { accent-color: var(--gold); cursor: pointer; width: 100%; }
-        #assetSearch { background-color: #1a1a1a !important; color: #D4AF37 !important; border: 1px solid rgba(212,175,55,0.3); }
-        #assetSearch option { background-color: #0a0a0a; color: #D4AF37; }
-        .preview-photo { width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover; background: #111; }
+        h3 { font-size: 11px; color: var(--gold); text-transform: uppercase; border-left: 3px solid var(--gold); padding-left: 10px; margin-bottom: 20px; font-weight: 900; }
+        
+        .slider-gold { accent-color: var(--gold); cursor: pointer; width: 100%; height: 6px; }
+        .preview-photo { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--gold); object-fit: cover; background: #111; box-shadow: 0 0 20px rgba(212,175,55,0.2); }
+        
+        .chart-container { background: rgba(0,0,0,0.3); border-radius: 1.5rem; border: 1px solid rgba(255,255,255,0.05); padding: 20px; }
+        
+        .save-bar { 
+            background: rgba(10, 10, 10, 0.9); 
+            backdrop-filter: blur(15px); 
+            border-top: 1px solid rgba(212, 175, 55, 0.2); 
+            padding: 1.5rem; 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            z-index: 100; 
+        }
     </style>
 </head>
-<body class="p-6 md:p-10">
-    <div class="max-w-6xl mx-auto">
+<body class="p-6 md:p-10 pb-32">
+    <div class="max-w-7xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-white/5 pb-6 gap-4">
             <div class="flex items-center gap-4">
                 <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase transition border border-white/10">Dashboard</a>
-                <a href="comparison.html" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase transition border border-white/10">Selection Matrix</a>
-                <h1 class="text-2xl font-black italic text-white uppercase tracking-tighter ml-2">COACH<span class="text-yellow-500">TERMINAL</span></h1>
+                <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter">COACH<span class="text-yellow-500">TERMINAL</span></h1>
             </div>
             <div class="flex items-center gap-2 bg-white/5 p-2 rounded-xl border border-white/10">
-                <select id="assetSearch" class="bg-transparent outline-none cursor-pointer min-w-[150px]"></select>
-                <button id="loadBtn" class="bg-yellow-600 text-black px-4 py-1 rounded text-[10px] font-black uppercase hover:bg-yellow-400 transition">Laden</button>
+                <select id="assetSearch" class="bg-transparent text-yellow-500 font-bold outline-none cursor-pointer min-w-[200px] p-2"></select>
+                <button id="loadBtn" class="bg-yellow-600 text-black px-6 py-2 rounded-lg text-[10px] font-black uppercase hover:bg-yellow-400 transition">Laden</button>
             </div>
         </header>
 
         <form id="proForm" class="space-y-6">
-            <div class="section-card">
-                <div class="flex items-center gap-6 mb-8">
-                    <img id="pPreviewImg" class="preview-photo" src="https://via.placeholder.com/150/0a0a0a/D4AF37?text=?" alt="Preview">
-                    <div>
-                        <h3>1. Algemene Gegevens & Profiel</h3>
-                        <p id="coachIdent" class="text-[9px] text-gray-500 uppercase font-bold tracking-widest italic"></p>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+                <div class="lg:col-span-7 section-card mb-0">
+                    <div class="flex items-center gap-6 mb-8">
+                        <img id="pPreviewImg" class="preview-photo" src="https://via.placeholder.com/150/0a0a0a/D4AF37?text=?" alt="Preview">
+                        <div>
+                            <h3>1. Algemene Gegevens</h3>
+                            <p id="coachIdent" class="text-[9px] text-gray-500 uppercase font-bold tracking-widest italic"></p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2"><label>Naam Speler</label><input type="text" id="pName" class="input-luxe" required></div>
+                        <div><label>Team</label><select id="pTeam" class="input-luxe"></select></div>
+                        <div><label>Positie</label>
+                            <select id="pPos" class="input-luxe">
+                                <option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option>
+                            </select>
+                        </div>
+                        <div><label>Evaluatie Moment</label>
+                            <select id="pPeriod" class="input-luxe">
+                                <option value="1e seizoenshelft">1e seizoenshelft</option>
+                                <option value="2e seizoenshelft">2e seizoenshelft</option>
+                                <option value="Eindbeoordeling">Eindbeoordeling</option>
+                            </select>
+                        </div>
+                        <div><label>Datum</label><input type="date" id="pDate" class="input-luxe"></div>
+                        <div class="hidden"><input type="text" id="pPhotoUrl"></div>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="md:col-span-2"><label>Naam Speler</label><input type="text" id="pName" class="input-luxe" required></div>
-                    <div><label>Geboortejaar</label><input type="number" id="pBirth" class="input-luxe"></div>
-                    <div><label>Foto URL (Profiel)</label><input type="text" id="pPhotoUrl" class="input-luxe" placeholder="https://link-naar-foto.jpg" oninput="document.getElementById('pPreviewImg').src=this.value"></div>
-                    <div>
-                        <label>Team</label>
-                        <select id="pTeam" class="input-luxe"></select>
+                
+                <div class="lg:col-span-5 chart-container flex flex-col items-center justify-center">
+                    <label class="mb-4">Live Performance Intelligence</label>
+                    <div class="w-full max-w-[300px]">
+                        <canvas id="liveRadarChart"></canvas>
                     </div>
-                    <div>
-                        <label>Positie</label>
-                        <select id="pPos" class="input-luxe">
-                            <option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option>
-                        </select>
-                    </div>
-                    <div><label>Trainer / Coach</label><input type="text" id="pCoach" class="input-luxe"></div>
-                    <div>
-                        <label>Evaluatie Moment (Periode)</label>
-                        <select id="pPeriod" class="input-luxe">
-                            <option value="1e seizoenshelft">1e seizoenshelft</option>
-                            <option value="2e seizoenshelft">2e seizoenshelft</option>
-                            <option value="Eindbeoordeling">Eindbeoordeling</option>
-                        </select>
-                    </div>
-                    <div><label>Datum Evaluatie</label><input type="date" id="pDate" class="input-luxe"></div>
-                </div>
-                <div class="grid grid-cols-2 gap-4 mt-4 border-t border-white/5 pt-4">
-                    <div><label>Trainingsopkomst (%)</label><input type="number" id="pAtt" class="input-luxe" value="100"></div>
-                    <div><label>Wedstrijdminuten</label><input type="number" id="pMin" class="input-luxe" value="1000"></div>
                 </div>
             </div>
 
             <div class="section-card">
-                <h3>2. Technische Vaardigheden (1-5)</h3>
-                <div class="space-y-4" id="techSkillsContainer">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center border-b border-white/5 pb-2">
-                        <div class="flex justify-between"><label>Balcontrole</label><span id="v_bal" class="text-yellow-500 font-bold">3</span></div>
-                        <input type="range" id="s_bal" min="1" max="5" value="3" class="slider-gold" oninput="v_bal.innerText=this.value">
-                        <input type="text" id="o_bal" placeholder="Opmerkingen Balcontrole" class="input-luxe">
+                <h3>2. Technische Vaardigheden</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                    <div class="space-y-4">
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Balcontrole</label><span id="v_bal" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_bal" min="1" max="5" value="3" class="slider-gold rating-input" data-key="bal" oninput="v_bal.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Passing</label><span id="v_pas" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_pas" min="1" max="5" value="3" class="slider-gold rating-input" data-key="pas" oninput="v_pas.innerText=this.value"></div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center border-b border-white/5 pb-2">
-                        <div class="flex justify-between"><label>Passen</label><span id="v_pas" class="text-yellow-500 font-bold">3</span></div>
-                        <input type="range" id="s_pas" min="1" max="5" value="3" class="slider-gold" oninput="v_pas.innerText=this.value">
-                        <input type="text" id="o_pas" placeholder="Opmerkingen Passen" class="input-luxe">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center border-b border-white/5 pb-2">
-                        <div class="flex justify-between"><label>Aannemen</label><span id="v_aan" class="text-yellow-500 font-bold">3</span></div>
-                        <input type="range" id="s_aan" min="1" max="5" value="3" class="slider-gold" oninput="v_aan.innerText=this.value">
-                        <input type="text" id="o_aan" placeholder="Opmerkingen Aannemen" class="input-luxe">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center border-b border-white/5 pb-2">
-                        <div class="flex justify-between"><label>Dribbelen</label><span id="v_drib" class="text-yellow-500 font-bold">3</span></div>
-                        <input type="range" id="s_drib" min="1" max="5" value="3" class="slider-gold" oninput="v_drib.innerText=this.value">
-                        <input type="text" id="o_drib" placeholder="Opmerkingen Dribbelen" class="input-luxe">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center border-b border-white/5 pb-2">
-                        <div class="flex justify-between"><label>Schieten / Afwerken</label><span id="v_schot" class="text-yellow-500 font-bold">3</span></div>
-                        <input type="range" id="s_schot" min="1" max="5" value="3" class="slider-gold" oninput="v_schot.innerText=this.value">
-                        <input type="text" id="o_schot" placeholder="Opmerkingen Schieten" class="input-luxe">
+                    <div class="space-y-4">
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Aanname</label><span id="v_aan" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_aan" min="1" max="5" value="3" class="slider-gold rating-input" data-key="aan" oninput="v_aan.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Dribbelen</label><span id="v_drib" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_drib" min="1" max="5" value="3" class="slider-gold rating-input" data-key="drib" oninput="v_drib.innerText=this.value"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="section-card">
-                    <h3>3a. Tactisch Inzicht</h3>
-                    <div class="space-y-4">
-                        <div class="flex flex-col"><div class="flex justify-between"><label>Positiespel</label><span id="v_posi" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_posi" min="1" max="5" value="3" class="slider-gold" oninput="v_posi.innerText=this.value"></div>
-                        <div class="flex flex-col"><div class="flex justify-between"><label>Vrijlopen</label><span id="v_vrij" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_vrij" min="1" max="5" value="3" class="slider-gold" oninput="v_vrij.innerText=this.value"></div>
-                        <div class="flex flex-col"><div class="flex justify-between"><label>Samenwerken</label><span id="v_sam" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_sam" min="1" max="5" value="3" class="slider-gold" oninput="v_sam.innerText=this.value"></div>
-                        <div class="flex flex-col"><div class="flex justify-between"><label>Omschakeling</label><span id="v_oms" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_oms" min="1" max="5" value="3" class="slider-gold" oninput="v_oms.innerText=this.value"></div>
+                    <h3>3a. Tactiek</h3>
+                    <div class="space-y-6">
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Positiespel</label><span id="v_posi" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_posi" min="1" max="5" value="3" class="slider-gold rating-input" data-key="posi" oninput="v_posi.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Omschakeling</label><span id="v_oms" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_oms" min="1" max="5" value="3" class="slider-gold rating-input" data-key="oms" oninput="v_oms.innerText=this.value"></div>
                     </div>
                 </div>
                 <div class="section-card">
-                    <h3>3b. Fysieke Aspecten</h3>
-                    <div class="space-y-4">
-                        <div class="flex flex-col"><div class="flex justify-between"><label>Snelheid</label><span id="v_sne" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_sne" min="1" max="5" value="3" class="slider-gold" oninput="v_sne.innerText=this.value"></div>
-                        <div class="flex flex-col"><div class="flex justify-between"><label>Uithoudingsvermogen</label><span id="v_uit" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_uit" min="1" max="5" value="3" class="slider-gold" oninput="v_uit.innerText=this.value"></div>
-                        <div class="flex flex-col"><div class="flex justify-between"><label>Kracht</label><span id="v_kra" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_kra" min="1" max="5" value="3" class="slider-gold" oninput="v_kra.innerText=this.value"></div>
-                        <div class="flex flex-col"><div class="flex justify-between"><label>Wendbaarheid</label><span id="v_wen" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_wen" min="1" max="5" value="3" class="slider-gold" oninput="v_wen.innerText=this.value"></div>
+                    <h3>3b. Fysiek</h3>
+                    <div class="space-y-6">
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Snelheid</label><span id="v_sne" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_sne" min="1" max="5" value="3" class="slider-gold rating-input" data-key="sne" oninput="v_sne.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Kracht</label><span id="v_kra" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_kra" min="1" max="5" value="3" class="slider-gold rating-input" data-key="kra" oninput="v_kra.innerText=this.value"></div>
                     </div>
                 </div>
             </div>
 
             <div class="section-card">
                 <h3>4. Mentaal & Houding</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-4">
-                        <div class="flex flex-col"><div class="flex justify-between"><label>Inzet</label><span id="v_inz" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_inz" min="1" max="5" value="3" class="slider-gold" oninput="v_inz.innerText=this.value"></div>
-                        <div class="flex flex-col"><div class="flex justify-between"><label>Motivatie</label><span id="v_mot" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_mot" min="1" max="5" value="3" class="slider-gold" oninput="v_mot.innerText=this.value"></div>
-                        <div class="flex flex-col"><div class="flex justify-between"><label>Coachbaarheid</label><span id="v_coa" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_coa" min="1" max="5" value="3" class="slider-gold" oninput="v_coa.innerText=this.value"></div>
-                        <div class="flex flex-col"><div class="flex justify-between"><label>Teamgedrag</label><span id="v_tea" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_tea" min="1" max="5" value="3" class="slider-gold" oninput="v_tea.innerText=this.value"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="space-y-6">
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Inzet</label><span id="v_inz" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_inz" min="1" max="5" value="3" class="slider-gold rating-input" data-key="inz" oninput="v_inz.innerText=this.value"></div>
+                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Teamgedrag</label><span id="v_tea" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_tea" min="1" max="5" value="3" class="slider-gold rating-input" data-key="tea" oninput="v_tea.innerText=this.value"></div>
                     </div>
                     <div class="space-y-4">
-                        <div><label>Sterke punten</label><textarea id="pStrengths" class="input-luxe h-20"></textarea></div>
-                        <div><label>Ontwikkelpunten</label><textarea id="pGrowth" class="input-luxe h-20"></textarea></div>
+                        <div><label>Opmerkingen Analyse</label><textarea id="pGrowth" class="input-luxe h-24 resize-none" placeholder="Noteer hier sterke punten en groeidoelen..."></textarea></div>
                     </div>
                 </div>
             </div>
 
-            <div class="section-card">
-                <h3>5. Persoonlijke Ontwikkeldoelen (POP)</h3>
-                <div class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <input type="text" id="g1" placeholder="Doel 1" class="input-luxe">
-                        <input type="text" id="a1" placeholder="Actie / Training" class="input-luxe">
-                        <input type="text" id="t1" placeholder="Tijdspad" class="input-luxe">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <input type="text" id="g2" placeholder="Doel 2" class="input-luxe">
-                        <input type="text" id="a2" placeholder="Actie / Training" class="input-luxe">
-                        <input type="text" id="t2" placeholder="Tijdspad" class="input-luxe">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <input type="text" id="g3" placeholder="Doel 3" class="input-luxe">
-                        <input type="text" id="a3" placeholder="Actie / Training" class="input-luxe">
-                        <input type="text" id="t3" placeholder="Tijdspad" class="input-luxe">
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex gap-4 sticky bottom-6 z-50">
-                <input type="password" id="ghToken" placeholder="GitHub Access Token" class="input-luxe" required>
-                <button type="submit" id="saveBtn" class="bg-yellow-600 text-black font-black px-12 py-4 rounded uppercase text-xs tracking-widest shadow-2xl hover:bg-yellow-400 transition">Dossier Opslaan & Sync</button>
+            <div class="save-bar flex flex-col md:flex-row gap-4 items-center justify-center">
+                <input type="password" id="ghToken" placeholder="GitHub Token" class="input-luxe md:w-80 text-center">
+                <button type="submit" id="saveBtn" class="bg-yellow-600 text-black font-black px-16 py-4 rounded-xl uppercase text-xs tracking-widest hover:bg-yellow-400 transition">Sync Player Dossier</button>
             </div>
         </form>
     </div>
@@ -171,214 +147,133 @@
     <script type="module">
         import DataProvider from './js/data_provider.js';
 
-        // 1. AUTH GUARD & SESSION MANAGEMENT
-        const sessionUser = sessionStorage.getItem('elite_user');
+        const sessionUser = JSON.parse(sessionStorage.getItem('elite_user'));
         if (!sessionUser) window.location.href = 'login.html';
-        const currentUser = JSON.parse(sessionUser);
-
-        document.getElementById('coachIdent').innerText = `Geautoriseerd: ${currentUser.name} | Rol: ${currentUser.role}`;
-
+        
+        let radarChart;
         let allPlayers = [];
-        let filteredPlayers = [];
 
-        // 2. INITIALISATIE & FILTEREN
-        async function loadAssets() {
-            allPlayers = await DataProvider.getAllPlayers();
-            
-            // Filter spelers op basis van rol
-            if (currentUser.role === 'admin' || currentUser.teams.includes("ALL")) {
-                filteredPlayers = allPlayers;
-            } else {
-                filteredPlayers = allPlayers.filter(p => currentUser.teams.includes(p.bio.team));
-            }
-
-            const search = document.getElementById('assetSearch');
-            search.innerHTML = '<option value="">-- ZOEK SPELER --</option>' + 
-                filteredPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
-
-         // Vul Team selector alleen met toegestane teams voor de coach
-const teamSelect = document.getElementById('pTeam');
-
-// Uitgebreide lijst met 4 teams per leeftijdscategorie
-const adminTeams = [
-    "JO8-1", "JO8-2", "JO8-3", "JO8-4",
-    "JO9-1", "JO9-2", "JO9-3", "JO9-4",
-    "JO10-1", "JO10-2", "JO10-3", "JO10-4",
-    "JO11-1", "JO11-2", "JO11-3", "JO11-4",
-    "JO12-1", "JO12-2", "JO12-3", "JO12-4",
-    "JO13-1", "JO13-2", "JO13-3", "JO13-4",
-    "JO14-1", "JO14-2", "JO14-3", "JO14-4",
-    "JO15-1", "JO15-2", "JO15-3", "JO15-4",
-    "JO16-1", "JO16-2", "JO16-3", "JO16-4",
-    "JO17-1", "JO17-2", "JO17-3", "JO17-4",
-    "JO19-1", "JO19-2", "JO19-3", "JO19-4",
-    "Senioren 1", "Senioren 2", "Senioren 3", "Senioren 4"
-];
-
-const availableTeams = (currentUser.role === 'admin') 
-    ? adminTeams 
-    : currentUser.teams;
-
-// Render de opties in de selectie
-teamSelect.innerHTML = availableTeams.map(t => `<option value="${t}">${t}</option>`).join('');
-        }
-
-        // 3. LOCK LOGICA
-        function toggleLock(isLocked) {
-            const inputs = document.querySelectorAll('.input-luxe, input[type="range"]');
-            const saveBtn = document.getElementById('saveBtn');
-            inputs.forEach(input => {
-                if(!["assetSearch", "pPeriod", "ghToken", "loadBtn"].includes(input.id)) {
-                    input.disabled = isLocked;
-                    input.style.opacity = isLocked ? "0.4" : "1";
+        function initRadar() {
+            const ctx = document.getElementById('liveRadarChart').getContext('2d');
+            radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'],
+                    datasets: [{
+                        data: [3, 3, 3, 3],
+                        backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                        borderColor: '#D4AF37',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#FFF'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            min: 0, max: 5, stepSize: 1,
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            angleLines: { color: 'rgba(255,255,255,0.1)' },
+                            pointLabels: { color: '#888', font: { size: 10, weight: 'bold' } },
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
                 }
             });
-            if(isLocked) {
-                saveBtn.disabled = true;
-                saveBtn.innerText = "LOCKED (HISTORIE)";
-                saveBtn.classList.replace('bg-yellow-600', 'bg-gray-700');
-            } else {
-                saveBtn.disabled = false;
-                saveBtn.innerText = "Dossier Opslaan & Sync";
-                saveBtn.classList.replace('bg-gray-700', 'bg-yellow-600');
-            }
         }
 
-        function checkLock(player) {
-            const period = document.getElementById('pPeriod').value;
-            // Admin mag altijd editen, coach alleen als er nog geen historie is voor die periode
-            if (currentUser.role !== 'admin' && player.history && player.history[period]) {
-                toggleLock(true);
-            } else {
-                toggleLock(false);
-            }
+        function updateRadar() {
+            const tech = (parseInt(document.getElementById('s_bal').value) + parseInt(document.getElementById('s_pas').value) + parseInt(document.getElementById('s_aan').value) + parseInt(document.getElementById('s_drib').value)) / 4;
+            const tact = (parseInt(document.getElementById('s_posi').value) + parseInt(document.getElementById('s_oms').value)) / 2;
+            const phys = (parseInt(document.getElementById('s_sne').value) + parseInt(document.getElementById('s_kra').value)) / 2;
+            const ment = (parseInt(document.getElementById('s_inz').value) + parseInt(document.getElementById('s_tea').value)) / 2;
+            radarChart.data.datasets[0].data = [tech, tact, phys, ment];
+            radarChart.update();
         }
 
-        // 4. LADEN VAN DATA
-        document.getElementById('loadBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            const pId = document.getElementById('assetSearch').value;
-            const p = filteredPlayers.find(x => x.id === pId);
-            if (!p) return;
-
-            document.getElementById('pName').value = p.bio.name || "";
-            document.getElementById('pBirth').value = p.bio.birthYear || "";
-            document.getElementById('pPhotoUrl').value = p.bio.photo || "";
-            document.getElementById('pPreviewImg').src = p.bio.photo || "https://via.placeholder.com/150/0a0a0a/D4AF37?text=?";
-            document.getElementById('pTeam').value = p.bio.team || "";
-            document.getElementById('pPos').value = p.bio.role || "Verdediger";
-            document.getElementById('pCoach').value = p.bio.coach || "";
-            document.getElementById('pDate').value = p.bio.date || "";
-            document.getElementById('pPeriod').value = p.bio.period || "1e seizoenshelft";
-            document.getElementById('pAtt').value = p.obj?.attendance || 100;
-            document.getElementById('pMin').value = p.obj?.minutes || 1000;
-
-            const sync = (key) => {
-                const slider = document.getElementById('s_'+key);
-                const valDisp = document.getElementById('v_'+key);
-                const comm = document.getElementById('o_'+key);
-                if(slider) slider.value = p.ratings[key] || 3;
-                if(valDisp) valDisp.innerText = p.ratings[key] || 3;
-                if(comm) comm.value = p.comments[key] || "";
-            };
-            ['bal','pas','aan','drib','schot','posi','vrij','sam','oms','sne','uit','kra','wen','inz','mot','coa','tea'].forEach(sync);
-
-            document.getElementById('pStrengths').value = p.analysis.strengths || "";
-            document.getElementById('pGrowth').value = p.analysis.growthPoints || "";
-            for(let i=1; i<=3; i++) {
-                document.getElementById('g'+i).value = p.pop['goal'+i] || "";
-                document.getElementById('a'+i).value = p.pop['action'+i] || "";
-                document.getElementById('t'+i).value = p.pop['time'+i] || "";
-            }
-            
-            checkLock(p);
-            alert("✅ Dossier geladen voor " + p.bio.name);
+        document.querySelectorAll('.rating-input').forEach(input => {
+            input.addEventListener('input', updateRadar);
         });
 
-        // 5. OPSLAAN & SYNC MET METADATA
-        document.getElementById('proForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const pId = document.getElementById('assetSearch').value || "p_" + Date.now();
-            const period = document.getElementById('pPeriod').value;
-            const token = document.getElementById('ghToken').value;
+        async function loadAssets() {
+            allPlayers = await DataProvider.getAllPlayers();
+            document.getElementById('coachIdent').innerText = `Geautoriseerd: ${sessionUser.name} | ${sessionUser.role}`;
 
-            // AUTH CHECK: Assistent mag geen nieuwe spelers aanmaken
-            if (currentUser.role === 'assistant' && !document.getElementById('assetSearch').value) {
-                alert("Toegang geweigerd: Assistenten mogen geen nieuwe spelers aanmaken.");
-                return;
-            }
+            const filtered = sessionUser.role === 'admin' ? allPlayers : allPlayers.filter(p => sessionUser.teams.includes(p.bio.team));
+            const search = document.getElementById('assetSearch');
+            search.innerHTML = '<option value="">-- SELECTEER SPELER --</option>' + 
+                filtered.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
+
+            const teamSelect = document.getElementById('pTeam');
+            const adminTeams = ["JO8-1", "JO9-1", "JO10-1", "JO11-1", "JO12-1", "JO13-1", "JO14-1", "JO15-1", "JO16-1", "JO17-1", "JO19-1", "Senioren 1"];
+            const availableTeams = (sessionUser.role === 'admin') ? adminTeams : sessionUser.teams;
+            teamSelect.innerHTML = availableTeams.map(t => `<option value="${t}">${t}</option>`).join('');
+        }
+
+        document.getElementById('loadBtn').onclick = (e) => {
+            e.preventDefault();
+            const p = allPlayers.find(x => x.id === document.getElementById('assetSearch').value);
+            if (!p) return;
+            
+            document.getElementById('pName').value = p.bio.name;
+            document.getElementById('pTeam').value = p.bio.team;
+            document.getElementById('pPreviewImg').src = p.bio.photo;
+            document.getElementById('pPos').value = p.bio.role || "Verdediger";
+            document.getElementById('pDate').value = p.bio.date || "";
+            document.getElementById('pPeriod').value = p.bio.period || "1e seizoenshelft";
+            document.getElementById('pGrowth').value = p.analysis?.growthPoints || "";
+            
+            ['bal','pas','aan','drib','posi','oms','sne','kra','inz','tea'].forEach(key => {
+                const val = p.ratings?.[key] || 3;
+                if(document.getElementById('s_'+key)) {
+                    document.getElementById('s_'+key).value = val;
+                    document.getElementById('v_'+key).innerText = val;
+                }
+            });
+            updateRadar();
+            alert("Speler " + p.bio.name + " succesvol geladen.");
+        };
+
+        document.getElementById('proForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const pId = document.getElementById('assetSearch').value;
+            const token = document.getElementById('ghToken').value;
+            if(!token) return alert("GitHub Token vereist.");
+            if(!pId) return alert("Selecteer eerst een speler.");
 
             try {
                 const url = `https://api.github.com/repos/playbetter2021/sport-dashboard/contents/data/players.json`;
                 const res = await fetch(url, { headers: { "Authorization": `token ${token}` } });
                 const file = await res.json();
                 let players = JSON.parse(atob(file.content));
-                
-                let p = players.find(p => p.id === pId);
-                if (!p) {
-                    p = { id: pId, bio: {}, obj: {}, ratings: {}, comments: {}, pop: {}, analysis: {}, stats: {}, history: {}, meta: {} };
-                    players.push(p);
-                }
+                let p = players.find(x => x.id === pId);
 
                 const currentRatings = {};
-                const currentComments = {};
-                ['bal','pas','aan','drib','schot', 'posi','vrij','sam','oms','sne','uit','kra','wen','inz','mot','coa','tea'].forEach(key => {
-                    currentRatings[key] = document.getElementById('s_'+key).value;
-                    if(document.getElementById('o_'+key)) currentComments[key] = document.getElementById('o_'+key).value;
+                ['bal','pas','aan','drib','posi','oms','sne','kra','inz','tea'].forEach(k => {
+                    currentRatings[k] = document.getElementById('s_'+k).value;
                 });
 
-                const currentStats = { 
-                    "Techniek": Math.round(((parseInt(document.getElementById('s_bal').value)+parseInt(document.getElementById('s_pas').value)+parseInt(document.getElementById('s_aan').value)+parseInt(document.getElementById('s_drib').value)+parseInt(document.getElementById('s_schot').value))/25)*100),
-                    "Tactiek": Math.round(((parseInt(document.getElementById('s_posi').value)+parseInt(document.getElementById('s_vrij').value)+parseInt(document.getElementById('s_sam').value)+parseInt(document.getElementById('s_oms').value))/20)*100),
-                    "Fysiek": Math.round(((parseInt(document.getElementById('s_sne').value)+parseInt(document.getElementById('s_uit').value)+parseInt(document.getElementById('s_kra').value)+parseInt(document.getElementById('s_wen').value))/20)*100),
-                    "Mentaal": Math.round(((parseInt(document.getElementById('s_inz').value)+parseInt(document.getElementById('s_mot').value)+parseInt(document.getElementById('s_coa').value)+parseInt(document.getElementById('s_tea').value))/20)*100)
-                };
-
-                p.bio = { 
-                    name: document.getElementById('pName').value.toUpperCase(), 
-                    birthYear: document.getElementById('pBirth').value,
-                    photo: document.getElementById('pPhotoUrl').value || ("https://via.placeholder.com/400x600/0a0a0a/D4AF37?text="+document.getElementById('pName').value),
-                    team: document.getElementById('pTeam').value, 
-                    role: document.getElementById('pPos').value, 
-                    coach: document.getElementById('pCoach').value, 
-                    date: document.getElementById('pDate').value, 
-                    period: period
-                };
-                p.obj = { attendance: parseInt(document.getElementById('pAtt').value), minutes: parseInt(document.getElementById('pMin').value) };
+                p.bio.team = document.getElementById('pTeam').value;
+                p.bio.role = document.getElementById('pPos').value;
+                p.bio.date = document.getElementById('pDate').value;
+                p.bio.period = document.getElementById('pPeriod').value;
                 p.ratings = currentRatings;
-                p.comments = currentComments;
-                p.stats = currentStats;
-                p.pop = {
-                    goal1: document.getElementById('g1').value, action1: document.getElementById('a1').value, time1: document.getElementById('t1').value,
-                    goal2: document.getElementById('g2').value, action2: document.getElementById('a2').value, time2: document.getElementById('t2').value,
-                    goal3: document.getElementById('g3').value, action3: document.getElementById('a3').value, time3: document.getElementById('t3').value
-                };
-                p.analysis = { strengths: document.getElementById('pStrengths').value, growthPoints: document.getElementById('pGrowth').value };
+                p.analysis = { growthPoints: document.getElementById('pGrowth').value };
 
-                if(!p.history) p.history = {};
-                p.history[period] = { date: p.bio.date, stats: currentStats, ratings: currentRatings, obj: p.obj };
-
-                // METADATA LOGGING VOOR ADMIN
-                p.meta = {
-                    lastModifiedBy: currentUser.name,
-                    lastModifiedDate: new Date().toISOString()
-                };
-
-                await fetch(url, { 
-                    method: "PUT", 
-                    headers: { "Authorization": `token ${token}` }, 
-                    body: JSON.stringify({ 
-                        message: `Update door ${currentUser.name} voor speler: ${p.bio.name}`, 
-                        content: btoa(unescape(encodeURIComponent(JSON.stringify(players, null, 2)))), 
-                        sha: file.sha 
-                    }) 
+                await fetch(url, {
+                    method: "PUT",
+                    headers: { "Authorization": `token ${token}` },
+                    body: JSON.stringify({
+                        message: `Update ${p.bio.name} by ${sessionUser.name}`,
+                        content: btoa(unescape(encodeURIComponent(JSON.stringify(players, null, 2)))),
+                        sha: file.sha
+                    })
                 });
+                alert("Dossier succesvol gesynchroniseerd!");
+            } catch (err) { alert("Fout: " + err.message); }
+        };
 
-                alert("🚀 Dossier succesvol gesynchroniseerd en gelogd!");
-                loadAssets();
-            } catch (err) { alert("Fout bij opslaan: " + err.message); }
-        });
-
+        initRadar();
         loadAssets();
     </script>
 </body>
