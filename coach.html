@@ -8,53 +8,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #D4AF37; --gold-dark: #b8860b; --obsidian: #050505; --glass: rgba(255, 255, 255, 0.03); }
-        
         body { 
-            background-color: var(--obsidian); 
-            color: #e5e5e5; 
-            font-family: 'Inter', sans-serif;
+            background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif;
             background-image: radial-gradient(circle at top right, rgba(212, 175, 55, 0.05), transparent 600px);
-            /* Ruimte onderaan voor de fixed save-bar */
             padding-bottom: 180px; 
         }
-
         .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; outline: none; transition: 0.2s; }
         .input-luxe:focus { border-color: var(--gold); background: rgba(212,175,55,0.1); }
-        
         .section-card { background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.08); padding: 25px; border-radius: 1.5rem; margin-bottom: 2rem; backdrop-filter: blur(10px); }
-        
         label { font-size: 10px; text-transform: uppercase; color: #888; font-weight: bold; margin-bottom: 5px; display: block; }
         h3 { font-size: 11px; color: var(--gold); text-transform: uppercase; border-left: 3px solid var(--gold); padding-left: 10px; margin-bottom: 20px; font-weight: 900; }
-        
         .slider-gold { accent-color: var(--gold); cursor: pointer; width: 100%; height: 6px; }
         .preview-photo { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--gold); object-fit: cover; background: #111; box-shadow: 0 0 20px rgba(212,175,55,0.2); }
-        
         .chart-container { background: rgba(0,0,0,0.3); border-radius: 1.5rem; border: 1px solid rgba(255,255,255,0.05); padding: 20px; }
+        .save-bar { background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(212, 175, 55, 0.3); padding: 1.5rem; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; box-shadow: 0 -10px 40px rgba(0,0,0,0.9); }
         
-        .save-bar { 
-            background: rgba(10, 10, 10, 0.95); 
-            backdrop-filter: blur(20px); 
-            border-top: 1px solid rgba(212, 175, 55, 0.3); 
-            padding: 1.5rem; 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            z-index: 1000; 
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.9);
-        }
-
-        /* Navigatie Knoppen */
-        .nav-link { 
-            font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
-            padding: 10px 20px; border-radius: 50px; transition: all 0.3s; border: 1px solid transparent;
-        }
+        .nav-link { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; padding: 10px 20px; border-radius: 50px; transition: all 0.3s; border: 1px solid transparent; }
         .nav-home { background: rgba(255,255,255,0.05); color: white; border-color: rgba(255,255,255,0.1); }
-        .nav-home:hover { background: rgba(255,255,255,0.15); }
         .nav-planner { background: rgba(37, 99, 235, 0.1); color: #60a5fa; border-color: rgba(37, 99, 235, 0.3); }
-        .nav-planner:hover { background: rgba(37, 99, 235, 0.2); transform: translateY(-2px); }
         .nav-matrix { background: rgba(147, 51, 234, 0.1); color: #c084fc; border-color: rgba(147, 51, 234, 0.3); }
-        .nav-matrix:hover { background: rgba(147, 51, 234, 0.2); transform: translateY(-2px); }
     </style>
 </head>
 <body class="p-6 md:p-10">
@@ -63,7 +35,7 @@
             <div class="flex flex-col md:flex-row items-center gap-6">
                 <div>
                     <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter leading-none">COACH<span class="text-yellow-500">TERMINAL</span></h1>
-                    <p class="text-[8px] text-gray-500 uppercase font-bold tracking-[0.4em] mt-1">Intelligence Input Unit</p>
+                    <p class="text-[8px] text-gray-500 uppercase font-bold tracking-[0.4em] mt-1 italic">Intelligence Input Unit</p>
                 </div>
                 <nav class="flex flex-wrap justify-center gap-3">
                     <a href="index.html" class="nav-link nav-home">🏠 Dashboard</a>
@@ -72,7 +44,7 @@
                 </nav>
             </div>
             <div class="flex items-center gap-2 bg-white/5 p-3 rounded-2xl border border-white/10 w-full xl:w-auto">
-                <select id="assetSearch" class="bg-transparent text-yellow-500 font-black text-xs outline-none cursor-pointer min-w-[220px] px-2 uppercase"></select>
+                <select id="assetSearch" class="bg-transparent text-yellow-500 font-black text-xs min-w-[220px] outline-none px-2 uppercase"></select>
                 <button id="loadBtn" class="bg-yellow-600 text-black px-6 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-yellow-400 transition">Load Asset</button>
             </div>
         </header>
@@ -87,90 +59,90 @@
                             <p id="coachIdent" class="text-[9px] text-gray-400 uppercase font-bold tracking-widest italic"></p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="col-span-2"><label>Naam Speler</label><input type="text" id="pName" class="input-luxe font-bold" required></div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="md:col-span-2"><label>Naam Speler</label><input type="text" id="pName" class="input-luxe font-bold" required></div>
                         <div><label>Geboortejaar</label><input type="number" id="pBirth" class="input-luxe"></div>
                         <div><label>Foto URL</label><input type="text" id="pPhotoUrl" class="input-luxe" oninput="document.getElementById('pPreviewImg').src=this.value"></div>
-                        <div><label>Team</label><select id="pTeam" class="input-luxe"></select></div>
+                        <div class="md:col-span-2"><label>Team / Leeftijdscategorie</label><select id="pTeam" class="input-luxe"></select></div>
                         <div><label>Positie</label>
                             <select id="pPos" class="input-luxe">
                                 <option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option>
                             </select>
                         </div>
                         <div><label>Trainer / Coach</label><input type="text" id="pCoach" class="input-luxe"></div>
-                        <div><label>Evaluatie Moment</label>
+                        <div class="md:col-span-2"><label>Evaluatie Moment (Periode)</label>
                             <select id="pPeriod" class="input-luxe">
-                                <option value="1e seizoenshelft">1e seizoenshelft</option>
-                                <option value="2e seizoenshelft">2e seizoenshelft</option>
-                                <option value="Eindbeoordeling">Eindbeoordeling</option>
+                                <option>Voorseizoen</option><option>1e seizoenshelft</option><option>2e seizoenshelft</option><option>Eindbeoordeling</option>
                             </select>
                         </div>
-                        <div><label>Datum</label><input type="date" id="pDate" class="input-luxe"></div>
-                        <div><label>Opkomst (%)</label><input type="number" id="pAtt" class="input-luxe" value="100"></div>
-                        <div><label>Minuten</label><input type="number" id="pMin" class="input-luxe" value="1000"></div>
+                        <div class="md:col-span-2"><label>Datum Evaluatie</label><input type="date" id="pDate" class="input-luxe"></div>
                     </div>
                 </div>
-                
                 <div class="lg:col-span-5 chart-container flex flex-col items-center justify-center">
                     <label class="mb-4 uppercase text-[9px] tracking-widest text-gray-400">Live Intelligence Matrix</label>
-                    <div class="w-full max-w-[320px]">
+                    <div class="w-full max-w-[300px]">
                         <canvas id="liveRadarChart"></canvas>
                     </div>
                 </div>
             </div>
 
+            
+
             <div class="section-card">
                 <h3>2. Technische Vaardigheden (1-5)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-                    <div class="space-y-4">
-                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Balcontrole</label><span id="v_bal" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_bal" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_bal.innerText=this.value"></div>
-                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Passing</label><span id="v_pas" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_pas" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_pas.innerText=this.value"></div>
-                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Aanname</label><span id="v_aan" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_aan" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_aan.innerText=this.value"></div>
+                <div class="space-y-4" id="techSkillsContainer">
                     </div>
-                    <div class="space-y-4">
-                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Dribbelen</label><span id="v_drib" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_drib" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_drib.innerText=this.value"></div>
-                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Schieten</label><span id="v_schot" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_schot" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_schot.innerText=this.value"></div>
-                    </div>
-                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="section-card">
                     <h3>3a. Tactisch Inzicht</h3>
-                    <div class="space-y-6">
-                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Positiespel</label><span id="v_posi" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_posi" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_posi.innerText=this.value"></div>
-                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Omschakeling</label><span id="v_oms" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_oms" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_oms.innerText=this.value"></div>
-                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Vrijlopen</label><span id="v_vrij" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_vrij" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_vrij.innerText=this.value"></div>
-                    </div>
+                    <div class="space-y-4" id="tacticalContainer"></div>
                 </div>
                 <div class="section-card">
                     <h3>3b. Fysieke Aspecten</h3>
-                    <div class="space-y-6">
-                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Snelheid</label><span id="v_sne" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_sne" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_sne.innerText=this.value"></div>
-                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Kracht</label><span id="v_kra" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_kra" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_kra.innerText=this.value"></div>
-                        <div class="flex flex-col gap-2"><div class="flex justify-between"><label>Conditie</label><span id="v_uit" class="text-yellow-500 font-bold">3</span></div><input type="range" id="s_uit" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_uit.innerText=this.value"></div>
+                    <div class="space-y-4" id="physicalContainer"></div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h3>4. Mentaal & Houding</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div class="space-y-4" id="mentalContainer"></div>
+                    <div class="space-y-4">
+                        <div><label>Sterke punten van de speler</label><textarea id="pStrengths" class="input-luxe h-32 resize-none" placeholder="- Punt 1&#10;- Punt 2"></textarea></div>
+                        <div><label>Ontwikkelpunten</label><textarea id="pGrowth" class="input-luxe h-32 resize-none" placeholder="- Punt 1&#10;- Punt 2"></textarea></div>
                     </div>
                 </div>
             </div>
 
             <div class="section-card">
-                <h3>4. POP & Strategische Analyse</h3>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                    <div class="space-y-4">
-                        <div><label>Observaties & Sterke Punten</label><textarea id="pStrengths" class="input-luxe h-32 resize-none"></textarea></div>
+                <h3>5. Persoonlijke Ontwikkeldoelen (POP)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-4 bg-white/5 rounded-xl border border-white/5">
+                        <label class="text-yellow-500 font-black mb-3">Doelstelling 1</label>
+                        <input type="text" id="g1" placeholder="Wat is het doel?" class="input-luxe mb-2">
+                        <textarea id="a1" placeholder="Acties / Training" class="input-luxe mb-2 text-xs h-20"></textarea>
+                        <input type="text" id="t1" placeholder="Tijdspad" class="input-luxe text-xs">
                     </div>
-                    <div class="space-y-4">
-                        <label>Ontwikkeldoelen (POP)</label>
-                        <input type="text" id="g1" placeholder="🎯 Doelstelling 1" class="input-luxe mb-3">
-                        <input type="text" id="g2" placeholder="🎯 Doelstelling 2" class="input-luxe">
-                        <textarea id="pGrowth" class="input-luxe h-12 mt-3 resize-none" placeholder="Overige ontwikkelpunten..."></textarea>
+                    <div class="p-4 bg-white/5 rounded-xl border border-white/5">
+                        <label class="text-yellow-500 font-black mb-3">Doelstelling 2</label>
+                        <input type="text" id="g2" placeholder="Wat is het doel?" class="input-luxe mb-2">
+                        <textarea id="a2" placeholder="Acties / Training" class="input-luxe mb-2 text-xs h-20"></textarea>
+                        <input type="text" id="t2" placeholder="Tijdspad" class="input-luxe text-xs">
+                    </div>
+                    <div class="p-4 bg-white/5 rounded-xl border border-white/5">
+                        <label class="text-yellow-500 font-black mb-3">Doelstelling 3</label>
+                        <input type="text" id="g3" placeholder="Wat is het doel?" class="input-luxe mb-2">
+                        <textarea id="a3" placeholder="Acties / Training" class="input-luxe mb-2 text-xs h-20"></textarea>
+                        <input type="text" id="t3" placeholder="Tijdspad" class="input-luxe text-xs">
                     </div>
                 </div>
             </div>
 
             <div class="save-bar flex flex-col md:flex-row gap-4 items-center justify-center">
-                <input type="password" id="ghToken" placeholder="GitHub Token" class="input-luxe md:w-80 text-center">
-                <button type="submit" id="saveBtn" class="bg-yellow-600 text-black font-black px-16 py-4 rounded-xl uppercase text-xs tracking-widest hover:bg-yellow-400 transition shadow-2xl">Sync Player Dossier</button>
+                <input type="password" id="ghToken" placeholder="GitHub Token" class="input-luxe md:w-80 text-center" required>
+                <button type="submit" id="saveBtn" class="bg-yellow-600 text-black font-black px-16 py-4 rounded-xl uppercase text-xs tracking-widest hover:bg-yellow-400 transition shadow-2xl">Dossier Opslaan & Sync</button>
             </div>
         </form>
     </div>
@@ -183,7 +155,29 @@
         
         let radarChart;
         let allPlayers = [];
-        let filteredPlayers = [];
+
+        const skillMap = {
+            tech: { container: 'techSkillsContainer', keys: ['bal', 'pas', 'aan', 'drib', 'schot'], labels: ['Balcontrole', 'Passen', 'Aannemen', 'Dribbelen', 'Schieten / Afwerken'] },
+            tact: { container: 'tacticalContainer', keys: ['posi', 'vrij', 'sam', 'oms'], labels: ['Positiespel', 'Vrijlopen', 'Samenwerken', 'Omschakeling'] },
+            phys: { container: 'physicalContainer', keys: ['sne', 'uit', 'kra', 'wen'], labels: ['Snelheid', 'Uithoudingsvermogen', 'Kracht', 'Wendbaarheid'] },
+            ment: { container: 'mentalContainer', keys: ['inz', 'mot', 'coa', 'tea'], labels: ['Inzet', 'Motivatie', 'Coachbaarheid', 'Teamgedrag'] }
+        };
+
+        function generateSkillRows() {
+            Object.values(skillMap).forEach(cat => {
+                const target = document.getElementById(cat.container);
+                cat.keys.forEach((key, i) => {
+                    const row = document.createElement('div');
+                    row.className = "grid grid-cols-1 md:grid-cols-3 gap-4 items-center border-b border-white/5 pb-2";
+                    row.innerHTML = `
+                        <div class="flex justify-between"><label class="mb-0">${cat.labels[i]}</label><span id="v_${key}" class="text-yellow-500 font-bold">3</span></div>
+                        <input type="range" id="s_${key}" min="1" max="5" value="3" class="slider-gold rating-input" oninput="document.getElementById('v_${key}').innerText=this.value">
+                        <input type="text" id="o_${key}" placeholder="Opmerkingen..." class="input-luxe text-[11px] py-1">
+                    `;
+                    target.appendChild(row);
+                });
+            });
+        }
 
         function initRadar() {
             const ctx = document.getElementById('liveRadarChart').getContext('2d');
@@ -205,7 +199,7 @@
                             min: 0, max: 5, stepSize: 1,
                             grid: { color: 'rgba(255,255,255,0.05)' },
                             angleLines: { color: 'rgba(255,255,255,0.05)' },
-                            pointLabels: { color: '#666', font: { size: 9, weight: 'bold' } },
+                            pointLabels: { color: '#666', font: { size: 9, weight: '900' } },
                             ticks: { display: false }
                         }
                     },
@@ -215,30 +209,26 @@
         }
 
         function updateRadar() {
-            const tech = (parseInt(document.getElementById('s_bal').value) + parseInt(document.getElementById('s_pas').value) + parseInt(document.getElementById('s_aan').value) + parseInt(document.getElementById('s_drib').value) + parseInt(document.getElementById('s_schot').value)) / 5;
-            const tact = (parseInt(document.getElementById('s_posi').value) + parseInt(document.getElementById('s_oms').value) + parseInt(document.getElementById('s_vrij').value)) / 3;
-            const phys = (parseInt(document.getElementById('s_sne').value) + parseInt(document.getElementById('s_kra').value) + parseInt(document.getElementById('s_uit').value)) / 3;
-            radarChart.data.datasets[0].data = [tech, tact, phys, 3.5];
+            const getAvg = (keys) => keys.reduce((a, b) => a + parseInt(document.getElementById('s_'+b).value), 0) / keys.length;
+            radarChart.data.datasets[0].data = [
+                getAvg(skillMap.tech.keys), getAvg(skillMap.tact.keys), 
+                getAvg(skillMap.phys.keys), getAvg(skillMap.ment.keys)
+            ];
             radarChart.update();
         }
 
-        document.querySelectorAll('.rating-input').forEach(input => {
-            input.addEventListener('input', updateRadar);
-        });
-
         async function loadAssets() {
             allPlayers = await DataProvider.getAllPlayers();
-            document.getElementById('coachIdent').innerText = `Auth: ${sessionUser.name} | ${sessionUser.role}`;
+            document.getElementById('coachIdent').innerText = `Authorized: ${sessionUser.name} | ${sessionUser.role}`;
 
-            filteredPlayers = sessionUser.role === 'admin' ? allPlayers : allPlayers.filter(p => sessionUser.teams.includes(p.bio.team));
-            
+            const filtered = sessionUser.role === 'admin' ? allPlayers : allPlayers.filter(p => sessionUser.teams.includes(p.bio.team));
             const search = document.getElementById('assetSearch');
-            search.innerHTML = '<option value="">-- KIES ASSET --</option>' + 
-                filteredPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
+            search.innerHTML = '<option value="">-- SELECT ASSET --</option>' + 
+                filtered.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
 
             const teamSelect = document.getElementById('pTeam');
-            const teams = ["JO8-1", "JO9-1", "JO10-1", "JO11-1", "JO12-1", "JO13-1", "JO14-1", "JO15-1", "JO16-1", "JO17-1", "JO19-1", "Senioren 1"];
-            teamSelect.innerHTML = (sessionUser.role === 'admin' ? teams : sessionUser.teams).map(t => `<option value="${t}">${t}</option>`).join('');
+            const adminTeams = ["JO8-1", "JO9-1", "JO10-1", "JO11-1", "JO12-1", "JO13-1", "JO14-1", "JO15-1", "JO16-1", "JO17-1", "JO19-1", "Senioren 1"];
+            teamSelect.innerHTML = (sessionUser.role === 'admin' ? adminTeams : sessionUser.teams).map(t => `<option value="${t}">${t}</option>`).join('');
         }
 
         document.getElementById('loadBtn').onclick = (e) => {
@@ -246,39 +236,83 @@
             const p = allPlayers.find(x => x.id === document.getElementById('assetSearch').value);
             if (!p) return;
             
-            document.getElementById('pName').value = p.bio.name || "";
-            document.getElementById('pTeam').value = p.bio.team || "";
-            document.getElementById('pPreviewImg').src = p.bio.photo || "";
+            document.getElementById('pName').value = p.bio.name;
+            document.getElementById('pBirth').value = p.bio.birthYear || "";
+            document.getElementById('pTeam').value = p.bio.team;
+            document.getElementById('pPreviewImg').src = p.bio.photo;
+            document.getElementById('pPos').value = p.bio.role || "Middenvelder";
+            document.getElementById('pCoach').value = p.bio.coach || "";
             document.getElementById('pDate').value = p.bio.date || "";
             document.getElementById('pPeriod').value = p.bio.period || "1e seizoenshelft";
             document.getElementById('pStrengths').value = p.analysis?.strengths || "";
             document.getElementById('pGrowth').value = p.analysis?.growthPoints || "";
-            document.getElementById('g1').value = p.pop?.goal1 || "";
-            document.getElementById('g2').value = p.pop?.goal2 || "";
 
-            ['bal','pas', 'aan', 'drib', 'schot', 'posi', 'oms', 'vrij', 'sne', 'kra', 'uit'].forEach(k => {
+            Object.values(skillMap).flatMap(c => c.keys).forEach(k => {
                 const val = p.ratings?.[k] || 3;
-                const s = document.getElementById('s_'+k);
-                const v = document.getElementById('v_'+k);
-                if(s) s.value = val;
-                if(v) v.innerText = val;
+                document.getElementById('s_'+k).value = val;
+                document.getElementById('v_'+k).innerText = val;
+                document.getElementById('o_'+k).value = p.comments?.[k] || "";
             });
+
+            for(let i=1; i<=3; i++){
+                document.getElementById(`g${i}`).value = p.pop?.[`goal${i}`] || "";
+                document.getElementById(`a${i}`).value = p.pop?.[`action${i}`] || "";
+                document.getElementById(`t${i}`).value = p.pop?.[`time${i}`] || "";
+            }
             updateRadar();
-            alert("Speler geladen.");
+            alert("✅ Dossier geladen.");
         };
 
         document.getElementById('proForm').onsubmit = async (e) => {
             e.preventDefault();
             const pId = document.getElementById('assetSearch').value;
             const token = document.getElementById('ghToken').value;
-            if(!token || !pId) return alert("Selecteer speler en vul token in.");
-            
-            // Sync logica hier invoegen (zoals in je eerdere werkende script)
-            alert("Dossier gesynchroniseerd met GitHub.");
+            if(!pId) return alert("Selecteer eerst een speler.");
+
+            try {
+                const url = `https://api.github.com/repos/playbetter2021/sport-dashboard/contents/data/players.json`;
+                const res = await fetch(url, { headers: { "Authorization": `token ${token}` } });
+                const file = await res.json();
+                let players = JSON.parse(atob(file.content));
+                let p = players.find(x => x.id === pId);
+
+                const ratings = {}, comments = {};
+                Object.values(skillMap).flatMap(c => c.keys).forEach(k => {
+                    ratings[k] = document.getElementById('s_'+k).value;
+                    comments[k] = document.getElementById('o_'+k).value;
+                });
+
+                p.bio.team = document.getElementById('pTeam').value;
+                p.bio.role = document.getElementById('pPos').value;
+                p.bio.coach = document.getElementById('pCoach').value;
+                p.bio.date = document.getElementById('pDate').value;
+                p.bio.period = document.getElementById('pPeriod').value;
+                p.ratings = ratings;
+                p.comments = comments;
+                p.analysis = { strengths: document.getElementById('pStrengths').value, growthPoints: document.getElementById('pGrowth').value };
+                p.pop = { 
+                    goal1: document.getElementById('g1').value, action1: document.getElementById('a1').value, time1: document.getElementById('t1').value,
+                    goal2: document.getElementById('g2').value, action2: document.getElementById('a2').value, time2: document.getElementById('t2').value,
+                    goal3: document.getElementById('g3').value, action3: document.getElementById('a3').value, time3: document.getElementById('t3').value
+                };
+
+                await fetch(url, {
+                    method: "PUT",
+                    headers: { "Authorization": `token ${token}` },
+                    body: JSON.stringify({
+                        message: `Update ${p.bio.name} by ${sessionUser.name}`,
+                        content: btoa(unescape(encodeURIComponent(JSON.stringify(players, null, 2)))),
+                        sha: file.sha
+                    })
+                });
+                alert("🚀 Sync succesvol!");
+            } catch (err) { alert("Fout: " + err.message); }
         };
 
+        generateSkillRows();
         initRadar();
         loadAssets();
+        document.body.addEventListener('input', (e) => { if(e.target.classList.contains('rating-input')) updateRadar(); });
     </script>
 </body>
 </html>
