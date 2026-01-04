@@ -2,230 +2,276 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Elite Pro | Coach Terminal & Planning</title>
+    <title>Elite Pro | TC Dashboard & Coach Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #D4AF37; --obsidian: #0a0a0a; --red: #ef4444; }
-        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; padding-bottom: 180px; }
+        :root { --gold: #D4AF37; --obsidian: #0a0a0a; --glass: rgba(255, 255, 255, 0.03); }
+        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; background-image: radial-gradient(circle at top right, rgba(212, 175, 55, 0.05), transparent 600px); }
         .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; outline: none; transition: 0.2s; }
         .input-luxe:focus { border-color: var(--gold); background: rgba(212,175,55,0.1); }
-        .section-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 25px; border-radius: 1.5rem; margin-bottom: 2rem; }
+        .section-card { background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.05); padding: 25px; border-radius: 1.5rem; margin-bottom: 2rem; backdrop-filter: blur(10px); }
         label { font-size: 10px; text-transform: uppercase; color: #888; font-weight: bold; margin-bottom: 5px; display: block; }
         h3 { font-size: 11px; color: var(--gold); text-transform: uppercase; border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 10px; margin-bottom: 20px; font-weight: 900; }
         .slider-gold { accent-color: var(--gold); cursor: pointer; width: 100%; }
-        .preview-photo { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--gold); object-fit: cover; background: #111; box-shadow: 0 0 20px rgba(212,175,55,0.2); }
-        .save-bar { background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(212, 175, 55, 0.3); padding: 1.5rem; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; }
-        .status-missing { color: var(--red); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .preview-photo { width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover; background: #111; }
+        .status-pill { padding: 2px 8px; border-radius: 99px; font-size: 9px; font-weight: 900; text-transform: uppercase; }
+        .status-ready { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .status-pending { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .progress-bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--gold); transition: width 0.5s ease; }
     </style>
 </head>
 <body class="p-6 md:p-10">
-    <div id="capture-area" class="max-w-7xl mx-auto">
-        
-        <header class="flex flex-col xl:flex-row justify-between items-start mb-10 border-b border-white/5 pb-8 gap-6 no-print">
-            <div class="space-y-4">
-                <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter">COACH<span class="text-yellow-500">TERMINAL</span></h1>
-                <div class="flex gap-4">
-                    <div class="bg-white/5 p-3 rounded-xl border border-white/10">
-                        <label>Deadline 1e Helft</label>
-                        <span class="text-white text-xs font-bold">15 Dec 2025</span>
-                    </div>
-                    <div class="bg-white/5 p-3 rounded-xl border border-white/10">
-                        <label>Deadline Eindgesprek</label>
-                        <span class="text-yellow-500 text-xs font-bold">01 Juni 2026</span>
-                    </div>
-                </div>
+    <div class="max-w-7xl mx-auto">
+        <header class="flex flex-col xl:flex-row justify-between items-center mb-10 border-b border-white/5 pb-8 gap-6">
+            <div class="flex items-center gap-6">
+                <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter leading-none">ELITE<span class="text-yellow-500">TERMINAL</span></h1>
+                <nav class="flex gap-3">
+                    <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase transition border border-white/10">Dashboard</a>
+                    <button onclick="toggleAdminPanel()" class="bg-yellow-600/10 hover:bg-yellow-600/20 text-yellow-500 px-4 py-2 rounded-full text-[10px] font-bold uppercase transition border border-yellow-600/30">TC Overzicht</button>
+                </nav>
             </div>
-
-            <div class="flex flex-col items-end gap-3 w-full xl:w-auto">
-                <div class="flex gap-2 bg-white/5 p-2 rounded-xl border border-white/10 w-full">
-                    <select id="assetSearch" class="bg-transparent text-yellow-500 font-bold outline-none cursor-pointer min-w-[200px] p-2 text-xs uppercase"></select>
-                    <button id="loadBtn" class="bg-yellow-600 text-black px-6 py-2 rounded-lg text-[10px] font-black uppercase hover:bg-yellow-400 transition">Laden</button>
-                </div>
-                <div id="missingEvalBox" class="text-[10px] text-right">
-                    <span class="text-gray-500 font-bold uppercase">Nog te beoordelen:</span>
-                    <div id="missingList" class="status-missing font-black">Laden...</div>
+            <div class="flex items-center gap-4">
+                <div class="bg-white/5 p-3 rounded-2xl border border-white/10">
+                    <label>Snel Zoeken</label>
+                    <div class="flex gap-2">
+                        <select id="assetSearch" class="bg-transparent text-yellow-500 font-bold outline-none cursor-pointer min-w-[200px] text-xs"></select>
+                        <button id="loadBtn" class="bg-yellow-600 text-black px-4 py-1 rounded text-[10px] font-black uppercase hover:bg-yellow-400">Laden</button>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <form id="proForm" class="space-y-6">
-            <div class="section-card">
-                <div class="flex flex-col md:flex-row gap-8 items-center">
-                    <div class="relative">
-                        <img id="pPreviewImg" class="preview-photo" src="https://via.placeholder.com/150/0a0a0a/D4AF37?text=ELITE" alt="Preview">
+        <div id="adminPanel" class="hidden space-y-6 mb-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="section-card">
+                    <h3>Club Voortgang</h3>
+                    <div id="teamProgressList" class="space-y-4 max-h-60 overflow-y-auto pr-2">
+                        </div>
+                </div>
+                <div class="section-card md:col-span-2">
+                    <h3>Actielijst: Nog te beoordelen</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-[10px] text-left">
+                            <thead class="text-gray-500 border-b border-white/5">
+                                <tr><th class="py-2">Speler</th><th>Team</th><th>Coach</th><th>Status</th></tr>
+                            </thead>
+                            <tbody id="missingEvalsList">
+                                </tbody>
+                        </table>
                     </div>
-                    
-                    <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-                        <div class="md:col-span-2"><label>Naam Speler</label><input type="text" id="pName" class="input-luxe font-black uppercase" required></div>
-                        <div><label>E-mail Speler/Ouder (voor notificatie)</label><input type="email" id="pEmail" class="input-luxe" placeholder="player@gmail.com"></div>
-                        <div><label>Speler ID</label><input type="text" id="pId" class="input-luxe"></div>
-                        <div><label>Foto URL</label><input type="text" id="pPhotoUrl" class="input-luxe" oninput="document.getElementById('pPreviewImg').src=this.value"></div>
-                        <div><label>Team</label><select id="pTeam" class="input-luxe" onchange="updateMissingList()"></select></div>
-                        <div><label>Periode</label>
-                            <select id="pPeriod" class="input-luxe" onchange="checkLockStatus()">
-                                <option value="1e seizoenshelft">1e seizoenshelft</option>
-                                <option value="2e seizoenshelft">2e seizoenshelft</option>
-                                <option value="Eindbeoordeling">Eindbeoordeling</option>
-                            </select>
+                </div>
+            </div>
+        </div>
+
+        <form id="proForm" class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            <div class="xl:col-span-8 space-y-6">
+                <div class="section-card">
+                    <div class="flex items-center gap-6 mb-8">
+                        <img id="pPreviewImg" class="preview-photo" src="https://via.placeholder.com/150/0a0a0a/D4AF37?text=?" alt="Preview">
+                        <div>
+                            <h3>1. Profiel & Cyclus</h3>
+                            <p id="coachIdent" class="text-[9px] text-gray-500 uppercase font-bold tracking-widest italic"></p>
                         </div>
                     </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="md:col-span-2"><label>Naam Speler</label><input type="text" id="pName" class="input-luxe" required></div>
+                        <div><label>Foto URL</label><input type="text" id="pPhotoUrl" class="input-luxe" oninput="document.getElementById('pPreviewImg').src=this.value"></div>
+                        <div><label>Team</label><select id="pTeam" class="input-luxe"></select></div>
+                        <div><label>Positie</label><select id="pPos" class="input-luxe"><option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option></select></div>
+                        <div><label>Coach</label><input type="text" id="pCoach" class="input-luxe"></div>
+                        <div><label>Periode</label><select id="pPeriod" class="input-luxe"><option value="1e seizoenshelft">1e seizoenshelft</option><option value="2e seizoenshelft">2e seizoenshelft</option><option value="Eindbeoordeling">Eindbeoordeling</option></select></div>
+                        <div><label>Datum</label><input type="date" id="pDate" class="input-luxe"></div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 section-card">
+                <div class="section-card">
                     <div class="flex justify-between items-center mb-6">
-                        <h3>2. Beoordeling & Feedback</h3>
-                        <button type="button" onclick="generateAIFeedback()" class="text-[9px] bg-yellow-500/10 text-yellow-500 px-4 py-2 rounded-full border border-yellow-500/20 font-black uppercase">✨ Smart AI Feedback</button>
+                        <h3>2. Vaardigheden (1-5)</h3>
+                        <button type="button" onclick="autoFeedback()" class="text-[9px] text-yellow-500 italic hover:underline">✨ AI Suggestie Feedback</button>
                     </div>
-                    <div id="skillContainer" class="space-y-4"></div>
+                    <div id="techSkillsContainer" class="space-y-4">
+                        </div>
                 </div>
-                <div class="section-card flex flex-col items-center justify-center">
-                    <canvas id="radarChart"></canvas>
-                </div>
-            </div>
 
-            <div class="section-card">
-                <h3>3. Persoonlijke Ontwikkeldoelen (POP)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="space-y-3 bg-white/5 p-4 rounded-2xl border border-white/5">
-                        <label class="text-yellow-500">Doel 1</label>
-                        <input type="text" id="g1" placeholder="Wat?" class="input-luxe"><textarea id="a1" placeholder="Hoe?" class="input-luxe h-16 text-xs"></textarea><input type="text" id="t1" placeholder="Wanneer?" class="input-luxe text-xs">
-                    </div>
-                    <div class="space-y-3 bg-white/5 p-4 rounded-2xl border border-white/5">
-                        <label class="text-yellow-500">Doel 2</label>
-                        <input type="text" id="g2" placeholder="Wat?" class="input-luxe"><textarea id="a2" placeholder="Hoe?" class="input-luxe h-16 text-xs"></textarea><input type="text" id="t2" placeholder="Wanneer?" class="input-luxe text-xs">
-                    </div>
-                    <div class="space-y-3 bg-white/5 p-4 rounded-2xl border border-white/5">
-                        <label class="text-yellow-500">Doel 3</label>
-                        <input type="text" id="g3" placeholder="Wat?" class="input-luxe"><textarea id="a3" placeholder="Hoe?" class="input-luxe h-16 text-xs"></textarea><input type="text" id="t3" placeholder="Wanneer?" class="input-luxe text-xs">
+                <div class="section-card">
+                    <h3>3. Persoonlijke Ontwikkeldoelen (POP)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="space-y-2"><label>Doel 1</label><input type="text" id="g1" class="input-luxe"><textarea id="a1" placeholder="Actie" class="input-luxe h-12 text-[11px]"></textarea></div>
+                        <div class="space-y-2"><label>Doel 2</label><input type="text" id="g2" class="input-luxe"><textarea id="a2" placeholder="Actie" class="input-luxe h-12 text-[11px]"></textarea></div>
+                        <div class="space-y-2"><label>Doel 3</label><input type="text" id="g3" class="input-luxe"><textarea id="a3" placeholder="Actie" class="input-luxe h-12 text-[11px]"></textarea></div>
                     </div>
                 </div>
             </div>
 
-            <div class="save-bar flex flex-col md:flex-row gap-4 items-center justify-center no-print">
-                <input type="password" id="ghToken" placeholder="GitHub Access Token" class="input-luxe md:w-80 text-center">
-                <button type="submit" id="saveBtn" class="bg-yellow-600 text-black font-black px-12 py-4 rounded-xl uppercase text-xs tracking-widest shadow-2xl hover:bg-yellow-400">Sync, Lock & Mail</button>
-                <button type="button" onclick="window.print()" class="bg-white/10 text-white px-8 py-4 rounded-xl uppercase text-xs font-black border border-white/20">Print PDF</button>
+            <div class="xl:col-span-4 space-y-6">
+                <div class="section-card flex flex-col items-center">
+                    <h3>Performance Radar</h3>
+                    <canvas id="liveRadar" width="300" height="300"></canvas>
+                </div>
+
+                <div class="section-card">
+                    <h3>Analyse</h3>
+                    <label>Sterke Punten</label>
+                    <textarea id="pStrengths" class="input-luxe h-24 mb-4"></textarea>
+                    <label>Ontwikkelpunten</label>
+                    <textarea id="pGrowth" class="input-luxe h-24"></textarea>
+                </div>
+
+                <div class="sticky bottom-10 space-y-4">
+                    <input type="password" id="ghToken" placeholder="GitHub Access Token" class="input-luxe text-center" required>
+                    <button type="submit" id="saveBtn" class="w-full bg-yellow-600 text-black font-black py-5 rounded-2xl uppercase text-xs tracking-widest shadow-2xl hover:bg-yellow-400 transition">Dossier Opslaan & Sync</button>
+                </div>
             </div>
         </form>
     </div>
 
     <script type="module">
         import DataProvider from './js/data_provider.js';
-        const currentUser = JSON.parse(sessionStorage.getItem('elite_user'));
-        if (!currentUser) window.location.href = 'login.html';
 
-        let radarChart, allPlayers = [], currentPlayer = null;
+        const sessionUser = JSON.parse(sessionStorage.getItem('elite_user'));
+        if (!sessionUser) window.location.href = 'login.html';
+        const currentUser = sessionUser;
 
-        const skillMap = {
-            'Techniek': ['bal', 'pas', 'aan', 'drib', 'schot'],
-            'Tactiek': ['posi', 'vrij', 'sam', 'oms'],
-            'Fysiek': ['sne', 'uit', 'kra', 'wen'],
-            'Mentaal': ['inz', 'mot', 'coa', 'tea']
-        };
+        let allPlayers = [];
+        let radarChart;
 
-        const labels = {
-            bal: 'Balcontrole', pas: 'Passen', aan: 'Aanname', drib: 'Dribbel', schot: 'Schot',
+        const skillKeys = ['bal','pas','aan','drib','schot','posi','vrij','sam','oms','sne','uit','kra','wen','inz','mot','coa','tea'];
+        const skillLabels = {
+            bal: 'Balcontrole', pas: 'Passen', aan: 'Aanname', drib: 'Dribbel', schot: 'Schieten',
             posi: 'Positie', vrij: 'Vrijlopen', sam: 'Samenspel', oms: 'Omschakeling',
             sne: 'Snelheid', uit: 'Conditie', kra: 'Kracht', wen: 'Wendbaar',
-            inz: 'Inzet', mot: 'Motivatie', coa: 'Coachbaar', tea: 'Team'
+            inz: 'Inzet', mot: 'Motivatie', coa: 'Coachbaarheid', tea: 'Teamgedrag'
         };
 
-        function generateSkillFields() {
-            const container = document.getElementById('skillContainer');
-            Object.keys(skillMap).forEach(cat => {
-                const h = document.createElement('h4');
-                h.className = "text-[9px] text-gray-500 uppercase font-black mt-6 mb-3 tracking-widest";
-                h.innerText = cat;
-                container.appendChild(h);
-                skillMap[cat].forEach(key => {
-                    const row = document.createElement('div');
-                    row.className = "grid grid-cols-1 md:grid-cols-12 gap-4 items-center border-b border-white/5 pb-3";
-                    row.innerHTML = `
-                        <div class="md:col-span-3 flex justify-between"><label class="mb-0 text-white">${labels[key]}</label><span id="v_${key}" class="text-yellow-500 font-black">3</span></div>
-                        <div class="md:col-span-4"><input type="range" id="s_${key}" min="1" max="5" value="3" class="slider-gold rating-input" oninput="v_${key}.innerText=this.value"></div>
-                        <div class="md:col-span-5"><input type="text" id="o_${key}" placeholder="Observatie" class="input-luxe py-1 text-[11px]"></div>
-                    `;
-                    container.appendChild(row);
+        // --- UI RENDERING ---
+        function renderSkills() {
+            const container = document.getElementById('techSkillsContainer');
+            skillKeys.forEach(key => {
+                const row = document.createElement('div');
+                row.className = "grid grid-cols-1 md:grid-cols-12 gap-4 items-center border-b border-white/5 pb-2";
+                row.innerHTML = `
+                    <div class="md:col-span-3 flex justify-between"><label class="mb-0">${skillLabels[key]}</label><span id="v_${key}" class="text-yellow-500 font-bold">3</span></div>
+                    <div class="md:col-span-3"><input type="range" id="s_${key}" min="1" max="5" value="3" class="slider-gold rating-slider" oninput="v_${key}.innerText=this.value"></div>
+                    <div class="md:col-span-6"><input type="text" id="o_${key}" placeholder="Opmerking..." class="input-luxe text-[11px] py-1"></div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function initRadar() {
+            const ctx = document.getElementById('liveRadar').getContext('2d');
+            radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'],
+                    datasets: [{
+                        data: [3, 3, 3, 3],
+                        backgroundColor: 'rgba(212, 175, 55, 0.2)', borderColor: '#D4AF37', borderWidth: 2, pointRadius: 0
+                    }]
+                },
+                options: {
+                    scales: { r: { min: 0, max: 5, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' }, angleLines: { color: 'rgba(255,255,255,0.05)' }, pointLabels: { color: '#888', font: { size: 10 } } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        window.updateRadar = () => {
+            const tech = (parseInt(s_bal.value) + parseInt(s_pas.value) + parseInt(s_aan.value) + parseInt(s_drib.value) + parseInt(s_schot.value)) / 5;
+            const tact = (parseInt(s_posi.value) + parseInt(s_vrij.value) + parseInt(s_sam.value) + parseInt(s_oms.value)) / 4;
+            const phys = (parseInt(s_sne.value) + parseInt(s_uit.value) + parseInt(s_kra.value) + parseInt(s_wen.value)) / 4;
+            const ment = (parseInt(s_inz.value) + parseInt(s_mot.value) + parseInt(s_coa.value) + parseInt(s_tea.value)) / 4;
+            radarChart.data.datasets[0].data = [tech, tact, phys, ment];
+            radarChart.update();
+        };
+
+        // --- TC ADMIN TOOLS ---
+        window.toggleAdminPanel = () => {
+            const panel = document.getElementById('adminPanel');
+            panel.classList.toggle('hidden');
+            if(!panel.classList.contains('hidden')) calculateAdminStats();
+        };
+
+        function calculateAdminStats() {
+            const period = document.getElementById('pPeriod').value;
+            const teams = [...new Set(allPlayers.map(p => p.bio.team))].sort();
+            const progList = document.getElementById('teamProgressList');
+            const missingList = document.getElementById('missingEvalsList');
+            
+            progList.innerHTML = '';
+            missingList.innerHTML = '';
+
+            teams.forEach(team => {
+                const teamPlayers = allPlayers.filter(p => p.bio.team === team);
+                const completed = teamPlayers.filter(p => p.history && p.history[period]).length;
+                const perc = Math.round((completed / teamPlayers.length) * 100);
+
+                progList.innerHTML += `
+                    <div>
+                        <div class="flex justify-between text-[9px] mb-1"><span>${team}</span><span class="text-yellow-500">${completed}/${teamPlayers.length}</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: ${perc}%"></div></div>
+                    </div>
+                `;
+
+                teamPlayers.forEach(p => {
+                    if(!p.history || !p.history[period]) {
+                        missingList.innerHTML += `
+                            <tr class="border-b border-white/5">
+                                <td class="py-2 text-white font-bold">${p.bio.name}</td>
+                                <td>${p.bio.team}</td>
+                                <td class="italic text-gray-400">${p.bio.coach || 'Niet toegewezen'}</td>
+                                <td><span class="status-pill status-pending">Nodig</span></td>
+                            </tr>
+                        `;
+                    }
                 });
             });
         }
 
-        async function updateMissingList() {
-            const period = document.getElementById('pPeriod').value;
-            const selectedTeam = document.getElementById('pTeam').value;
-            const playersInTeam = allPlayers.filter(p => p.bio.team === selectedTeam);
-            const missing = playersInTeam.filter(p => !p.history || !p.history[period]);
-            document.getElementById('missingList').innerText = missing.length > 0 ? missing.map(m => m.bio.name).join(', ') : 'Alles Voltooid ✅';
-        }
-
-        window.checkLockStatus = function() {
-            if (!currentPlayer) return;
-            const period = document.getElementById('pPeriod').value;
-            const isLocked = (currentUser.role !== 'admin' && currentPlayer.history && currentPlayer.history[period]);
-            document.querySelectorAll('.input-luxe, .slider-gold').forEach(el => {
-                if(!['assetSearch', 'pPeriod', 'ghToken', 'pId', 'pTeam', 'pEmail'].includes(el.id)) el.disabled = isLocked;
-            });
-            updateMissingList();
-        }
-
-        window.generateAIFeedback = function() {
-            Object.keys(labels).forEach(key => {
-                const v = parseInt(document.getElementById('s_'+key).value);
-                const o = document.getElementById('o_'+key);
-                o.value = v >= 4 ? "Uitstekende uitvoering. Focus behouden." : (v <= 2 ? "Aandachtspunt voor training." : "Gemiddeld niveau, werk aan details.");
-            });
-        }
-
-        async function saveAndNotify(e) {
-            e.preventDefault();
-            const token = document.getElementById('ghToken').value;
-            const email = document.getElementById('pEmail').value;
-            const name = document.getElementById('pName').value;
-            const period = document.getElementById('pPeriod').value;
-
-            if(!token) return alert("GitHub Token vereist voor sync.");
-
-            // HIER KOMT DE FETCH LOGICA NAAR GITHUB (Zoals in eerdere versies)
-            // Na succesvolle sync:
-            alert("✅ Dossier gesynchroniseerd op GitHub.");
-
-            if(email) {
-                const subject = encodeURIComponent(`Nieuwe beoordeling Elite Pro: ${name}`);
-                const body = encodeURIComponent(`Beste ${name},\n\nJe coach heeft zojuist je beoordeling voor de ${period} afgerond en vastgelegd.\n\nJe kunt je volledige rapport inzien via het dashboard.\n\nMet sportieve groet,\nElite Pro Coach Terminal`);
-                window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-            }
-        }
-
+        // --- CORE FUNCTIONALITY ---
         async function init() {
-            generateSkillFields();
+            renderSkills();
+            initRadar();
             allPlayers = await DataProvider.getAllPlayers();
-            const search = document.getElementById('assetSearch');
-            search.innerHTML = '<option value="">-- KIES SPELER --</option>' + 
-                allPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
-            const teams = ["JO8-1","JO9-1","JO10-1","JO11-1","JO12-1","JO13-1","JO14-1","JO15-1","JO16-1","JO17-1","JO19-1","Senioren 1"];
-            document.getElementById('pTeam').innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
-            document.getElementById('loadBtn').onclick = (e) => {
-                e.preventDefault();
-                currentPlayer = allPlayers.find(x => x.id === search.value);
-                if (currentPlayer) {
-                    document.getElementById('pName').value = currentPlayer.bio.name;
-                    document.getElementById('pEmail').value = currentPlayer.bio.email || "";
-                    document.getElementById('pId').value = currentPlayer.id;
-                    document.getElementById('pPhotoUrl').value = currentPlayer.bio.photo;
-                    document.getElementById('pPreviewImg').src = currentPlayer.bio.photo;
-                    document.getElementById('pTeam').value = currentPlayer.bio.team;
-                    checkLockStatus();
-                }
-            };
-            document.getElementById('proForm').onsubmit = saveAndNotify;
+            
+            document.getElementById('coachIdent').innerText = `Geautoriseerd: ${currentUser.name} | Rol: ${currentUser.role}`;
+
+            const filtered = (currentUser.role === 'admin') ? allPlayers : allPlayers.filter(p => currentUser.teams.includes(p.bio.team));
+            document.getElementById('assetSearch').innerHTML = '<option value="">-- KIES SPELER --</option>' + filtered.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
+            
+            const teamSelect = document.getElementById('pTeam');
+            const adminTeams = ["JO8-1","JO8-2","JO9-1","JO9-2","JO10-1","JO11-1","JO13-1","JO15-1","JO17-1","JO19-1","Senioren 1","Senioren 2"];
+            teamSelect.innerHTML = (currentUser.role === 'admin' ? adminTeams : currentUser.teams).map(t => `<option value="${t}">${t}</option>`).join('');
+
+            document.querySelectorAll('.rating-slider').forEach(s => s.addEventListener('input', updateRadar));
         }
+
+        window.autoFeedback = () => {
+            skillKeys.forEach(k => {
+                const val = document.getElementById('s_'+k).value;
+                const comment = document.getElementById('o_'+k);
+                if(val >= 4) comment.value = "Uitmuntende uitvoering, behoud deze standaard.";
+                else if(val <= 2) comment.value = "Extra aandacht nodig op de trainingen.";
+                else comment.value = "Stabiele factor, werk aan details voor de volgende stap.";
+            });
+        };
+
+        document.getElementById('loadBtn').onclick = (e) => {
+            e.preventDefault();
+            const p = allPlayers.find(x => x.id === document.getElementById('assetSearch').value);
+            if (!p) return;
+            document.getElementById('pName').value = p.bio.name;
+            document.getElementById('pPreviewImg').src = p.bio.photo;
+            skillKeys.forEach(k => {
+                const val = p.ratings[k] || 3;
+                document.getElementById('s_'+k).value = val;
+                document.getElementById('v_'+k).innerText = val;
+                document.getElementById('o_'+k).value = p.comments[k] || "";
+            });
+            updateRadar();
+        };
 
         init();
     </script>
