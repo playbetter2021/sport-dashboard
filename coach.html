@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #D4AF37; --gold-light: #f1d592; --obsidian: #050505; --glass: rgba(255, 255, 255, 0.03); --glass-border: rgba(255, 255, 255, 0.08); --red: #ef4444; }
+        :root { --gold: #D4AF37; --gold-light: #f1d592; --obsidian: #050505; --glass: rgba(255, 255, 255, 0.03); --glass-border: rgba(255, 255, 255, 0.1); --red: #ef4444; }
         
         body { 
             background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif;
@@ -15,122 +15,122 @@
                 radial-gradient(circle at 0% 0%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
             background-attachment: fixed;
-            padding-bottom: 140px;
+            padding-bottom: 60px;
         }
 
         .section-card { 
-            background: var(--glass); 
+            background: rgba(10, 10, 10, 0.6); 
             border: 1px solid var(--glass-border); 
-            padding: 25px; 
+            padding: 30px; 
             border-radius: 1.5rem; 
             margin-bottom: 2rem; 
-            backdrop-filter: blur(20px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            position: relative;
+        }
+        
+        /* Decoratieve lijn onder h3 */
+        .section-card::after {
+            content: ''; position: absolute; top: 65px; left: 30px; right: 30px;
+            height: 1px; background: linear-gradient(90deg, var(--gold), transparent);
+            opacity: 0.2;
         }
 
         .input-luxe { 
-            background: rgba(0,0,0,0.3); 
-            border: 1px solid rgba(212, 175, 55, 0.2); 
-            color: var(--gold); 
-            padding: 12px; 
-            border-radius: 12px; 
+            background: rgba(0,0,0,0.6); 
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            color: var(--gold-light); 
+            padding: 12px 16px; 
+            border-radius: 10px; 
             width: 100%; 
             font-size: 13px; 
             outline: none; 
-            transition: all 0.3s; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
         }
+        .input-luxe:focus { border-color: #fff; background: rgba(0,0,0,0.8); box-shadow: 0 0 10px rgba(255,255,255,0.1); }
+
+        label { color: #aaa; font-size: 10px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 6px; display: block; }
 
         h3 { 
-            font-size: 12px; 
-            color: var(--gold); 
-            text-transform: uppercase; 
-            border-left: 4px solid var(--gold); 
-            padding-left: 12px; 
-            margin-bottom: 25px; 
-            font-weight: 900; 
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+            font-size: 13px; color: var(--gold); text-transform: uppercase; 
+            border-left: 4px solid var(--gold); padding-left: 15px; 
+            margin-bottom: 40px; font-weight: 900; letter-spacing: 3px;
         }
 
-        /* SPELERSKAART ONTWERP */
+        /* SPELERSKAART MET DUBBELE LIJN EN GLOW */
         .player-card-container {
             position: relative;
-            width: 260px;
-            height: 380px;
+            width: 270px;
+            height: 390px;
             border-radius: 2rem;
             overflow: hidden;
-            border: 2px solid var(--gold);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            border: 2.5px solid var(--gold); /* Gouden hoofdlijn */
+            box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.3), 0 25px 60px rgba(0,0,0,0.9); /* Witte subtiele buitenlijn */
             background: #000;
         }
-        .player-card-photo { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+        .player-card-photo { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
         .player-card-overlay {
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 25px 15px;
-            background: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 40%, transparent 100%);
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px 20px;
+            background: linear-gradient(to top, rgba(0,0,0,1) 15%, transparent 100%);
+            z-index: 20;
         }
         .player-card-number {
-            position: absolute; top: 15px; right: 20px;
-            font-size: 42px; font-weight: 900; color: var(--gold);
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+            position: absolute; top: 25px; right: 25px;
+            font-size: 48px; font-weight: 900; color: #fff;
+            text-shadow: 0 0 15px var(--gold), 0 0 30px rgba(0,0,0,1);
             z-index: 10;
         }
-        .player-card-name { font-size: 28px; font-weight: 900; font-style: italic; text-transform: uppercase; color: #fff; line-height: 0.9; }
-        .player-card-info { font-size: 9px; font-weight: 900; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
+        .player-card-name { font-size: 30px; font-weight: 900; font-style: italic; text-transform: uppercase; color: #fff; line-height: 0.85; }
+        .player-card-info { font-size: 10px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-top: 8px; }
 
         .radar-box { width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; }
-        #liveRadar { max-width: 250px !important; max-height: 250px !important; }
+        #liveRadar { max-width: 260px !important; max-height: 260px !important; }
 
-        .slider-gold { accent-color: var(--gold); cursor: pointer; width: 100%; height: 8px; border-radius: 5px; }
-        .score-display { background: rgba(212, 175, 55, 0.1); color: var(--gold); font-weight: 900; padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3); min-width: 45px; text-align: center; }
-        .save-bar { background: rgba(5, 5, 5, 0.9); backdrop-filter: blur(20px); border-top: 2px solid var(--gold); padding: 1.5rem; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; box-shadow: 0 -15px 40px rgba(0,0,0,0.8); }
-        .btn-gold { background: linear-gradient(135deg, #D4AF37, #b8860b); color: black; font-weight: 900; text-transform: uppercase; transition: all 0.3s; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); }
-        .btn-gold:hover { transform: translateY(-3px); filter: brightness(1.1); }
+        .slider-gold { accent-color: var(--gold); cursor: pointer; width: 100%; height: 6px; }
+        .score-display { background: var(--gold); color: black; font-weight: 900; padding: 2px 10px; border-radius: 6px; min-width: 40px; text-align: center; font-size: 14px; }
+
+        /* HEADER SYNC MODULE */
+        .header-sync-bar { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 15px; padding: 8px 15px; }
+
+        .btn-gold { 
+            background: linear-gradient(135deg, #D4AF37, #b8860b); 
+            color: black; font-weight: 900; text-transform: uppercase; 
+            transition: all 0.3s; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4); 
+            border-radius: 8px; font-size: 10px; padding: 10px 20px;
+        }
+        .btn-gold:hover { transform: scale(1.05); filter: brightness(1.2); }
+        
+        .no-print { display: flex; }
     </style>
 </head>
 <body class="p-6">
     <div class="max-w-7xl mx-auto">
-        <header class="flex flex-col xl:flex-row justify-between items-center mb-10 border-b border-white/10 pb-8 gap-6 no-print">
-            <div class="flex items-center gap-6">
+        <header class="flex flex-col lg:flex-row justify-between items-center mb-12 border-b border-white/10 pb-8 gap-6 no-print">
+            <div class="flex items-center gap-8">
                 <h1 class="text-4xl font-black italic text-white uppercase tracking-tighter leading-none">ELITE<span class="text-yellow-500">TERMINAL</span></h1>
-                <nav class="flex gap-4">
-                    <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-6 py-2 rounded-full text-[10px] font-black uppercase transition border border-white/10 tracking-widest">Dashboard</a>
-                    <button onclick="toggleTCPanel()" class="bg-yellow-600/10 hover:bg-yellow-600/20 text-yellow-500 px-6 py-2 rounded-full text-[10px] font-black uppercase transition border border-yellow-600/30 tracking-widest">📊 TC Monitor</button>
+                <nav class="flex gap-3">
+                    <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-5 py-2 rounded-xl text-[9px] font-black uppercase transition border border-white/10">Dashboard</a>
+                    <button onclick="toggleTCPanel()" class="bg-yellow-600/10 hover:bg-yellow-600/20 text-yellow-500 px-5 py-2 rounded-xl text-[9px] font-black uppercase transition border border-yellow-600/20">📊 TC Monitor</button>
                 </nav>
             </div>
-            <div class="flex items-center gap-4 bg-black/40 p-3 rounded-2xl border border-white/10 backdrop-blur-md">
-                <select id="assetSearch" class="bg-transparent text-yellow-500 font-black text-xs min-w-[200px] outline-none uppercase cursor-pointer"></select>
-                <button id="loadBtn" class="btn-gold px-8 py-2 rounded-xl text-[10px] font-black">Laden</button>
+
+            <div class="flex flex-col md:flex-row items-center gap-4">
+                <div class="header-sync-bar flex items-center gap-3">
+                    <input type="password" id="ghToken" placeholder="GitHub Token" class="bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-[10px] text-white outline-none w-36 focus:border-yellow-500">
+                    <button type="button" onclick="document.getElementById('realSubmitBtn').click()" class="btn-gold">Update Cloud</button>
+                </div>
+                <div class="flex items-center gap-2 bg-black/60 p-2 rounded-2xl border border-white/10">
+                    <select id="assetSearch" class="bg-transparent text-yellow-500 font-black text-[11px] min-w-[180px] outline-none uppercase cursor-pointer"></select>
+                    <button id="loadBtn" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase">Laden</button>
+                </div>
             </div>
         </header>
 
-        <div id="tcPanel" class="hidden mb-12 space-y-6 animate-fade-in">
-            <div class="bg-gradient-to-r from-yellow-600/20 to-transparent p-6 rounded-2xl border-l-4 border-yellow-600 flex justify-between items-center backdrop-blur-xl">
-                <div>
-                    <h2 class="text-yellow-500 font-black uppercase tracking-tighter text-xl italic">TC Monitoring Bureau</h2>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Real-time voortgang & kwaliteit</p>
-                </div>
-                <select id="tcPeriodFilter" class="bg-black text-white p-3 rounded-xl border border-yellow-600/30 text-[10px] font-black uppercase outline-none" onchange="refreshTCMonitor()">
-                    <option value="1e seizoenshelft">1e seizoenshelft</option>
-                    <option value="2e seizoenshelft">2e seizoenshelft</option>
-                    <option value="Eindbeoordeling">Eindbeoordeling</option>
-                </select>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="section-card">
-                    <h3>Voortgang per Team</h3>
-                    <div id="tcTeamList" class="space-y-6 max-h-[500px] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-yellow-600"></div>
-                </div>
-                <div class="section-card">
-                    <h3>Openstaande Dossiers</h3>
-                    <div id="tcMissingPlayers" class="max-h-[500px] overflow-y-auto space-y-4 pr-4"></div>
-                </div>
-            </div>
-        </div>
-
         <form id="proForm" class="space-y-6">
-            <div class="section-card grid grid-cols-1 lg:grid-cols-12 gap-10">
-                <div class="lg:col-span-4 flex justify-center items-start">
+            <button type="submit" id="realSubmitBtn" class="hidden"></button>
+
+            <div class="section-card grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div class="lg:col-span-4 flex justify-center items-center">
                     <div class="player-card-container">
                         <div id="dispNumber" class="player-card-number">--</div>
                         <img id="pPreviewImg" class="player-card-photo" src="https://via.placeholder.com/400x600/000000/FFFFFF?text=FOTO" alt="Preview">
@@ -141,8 +141,8 @@
                     </div>
                 </div>
                 
-                <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6 content-start">
-                    <div><label>Naam Speler</label><input type="text" id="pName" class="input-luxe font-black uppercase" oninput="document.getElementById('dispName').innerText=this.value"></div>
+                <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8 content-center">
+                    <div><label>Volledige Naam</label><input type="text" id="pName" class="input-luxe font-black uppercase" oninput="document.getElementById('dispName').innerText=this.value"></div>
                     <div><label>Rugnummer</label><input type="number" id="pNumber" class="input-luxe font-black" oninput="document.getElementById('dispNumber').innerText=this.value"></div>
                     <div><label>Team</label><select id="pTeam" class="input-luxe font-bold" onchange="updateCardInfo()"></select></div>
                     <div><label>Positie</label>
@@ -150,61 +150,63 @@
                             <option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option>
                         </select>
                     </div>
-                    <div><label>Foto URL</label><input type="text" id="pPhotoUrl" class="input-luxe" oninput="document.getElementById('pPreviewImg').src=this.value"></div>
-                    <div><label>Periode</label>
-                        <select id="pPeriod" class="input-luxe font-black text-white bg-yellow-900/20" onchange="checkLockStatus()">
+                    <div><label>Foto URL (400x600)</label><input type="text" id="pPhotoUrl" class="input-luxe" oninput="document.getElementById('pPreviewImg').src=this.value"></div>
+                    <div><label>Beoordelingsperiode</label>
+                        <select id="pPeriod" class="input-luxe font-black">
                             <option value="1e seizoenshelft">1e seizoenshelft</option>
                             <option value="2e seizoenshelft">2e seizoenshelft</option>
                             <option value="Eindbeoordeling">Eindbeoordeling</option>
                         </select>
                     </div>
-                    <div><label>E-mail (notificatie)</label><input type="email" id="pEmail" class="input-luxe" placeholder="ouder@email.com"></div>
-                    <div><label>Speler ID</label><input type="text" id="pId" class="input-luxe text-gray-500" placeholder="f_001"></div>
+                    <div class="md:col-span-2 border-t border-white/5 pt-4">
+                         <div class="grid grid-cols-2 gap-8">
+                             <div><label>E-mail (notificatie)</label><input type="email" id="pEmail" class="input-luxe" placeholder="ouder@email.com"></div>
+                             <div><label>Systeem ID</label><input type="text" id="pId" class="input-luxe text-gray-500" placeholder="f_001"></div>
+                         </div>
+                    </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 section-card border-l-4 border-yellow-600">
                     <div class="flex justify-between items-center mb-8">
-                        <div>
-                            <h3>2. Beoordeling & Feedback (1-10)</h3>
-                        </div>
-                        <button type="button" onclick="generateAIFeedback()" class="bg-yellow-500/10 text-yellow-500 px-6 py-2 rounded-full border border-yellow-500/20 font-black uppercase text-[10px] hover:bg-yellow-500 hover:text-black transition duration-500">✨ AI Feedback</button>
+                        <h3>2. Technische & Tactische Analyse (1-10)</h3>
+                        <button type="button" onclick="generateAIFeedback()" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg text-[9px] font-black uppercase transition border border-white/10">✨ AI Suggesties</button>
                     </div>
                     <div id="skillContainer" class="space-y-6"></div>
                 </div>
                 
                 <div class="section-card bg-black/40 flex flex-col items-center">
-                    <h3 class="w-full text-center">Performance Radar</h3>
+                    <h3 class="w-full text-center">Data Radar</h3>
                     <div class="radar-box"><canvas id="liveRadar"></canvas></div>
+                    <div class="mt-12 p-5 bg-black/60 rounded-2xl border border-white/5 w-full text-center">
+                        <p class="text-[9px] text-gray-500 font-black uppercase tracking-widest">Totaal Score</p>
+                        <div id="avgScoreDisp" class="text-4xl font-black text-white italic mt-2">0.0</div>
+                    </div>
                 </div>
             </div>
 
             <div class="section-card">
-                <h3>3. Persoonlijke Ontwikkeldoelen (POP)</h3>
+                <h3>3. Ontwikkelplan (POP)</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="space-y-4 bg-black/30 p-6 rounded-2xl border border-white/5">
-                        <label class="text-yellow-500 font-black tracking-widest">🎯 Doel 1</label>
-                        <input type="text" id="g1" placeholder="Wat is het hoofddoel?" class="input-luxe">
-                        <textarea id="a1" placeholder="Concrete actie of training..." class="input-luxe h-20 text-xs"></textarea>
+                    <div class="space-y-4 bg-black/50 p-6 rounded-2xl border border-white/5">
+                        <label class="text-yellow-500">🎯 Ontwikkeldoel</label>
+                        <textarea id="g1" placeholder="Wat is de prioriteit?" class="input-luxe h-24 text-xs"></textarea>
                     </div>
-                    <div class="space-y-4 bg-black/30 p-6 rounded-2xl border border-white/5">
-                        <label class="text-yellow-500 font-black tracking-widest">🎯 Doel 2</label>
-                        <input type="text" id="g2" placeholder="Wat is het nevendoel?" class="input-luxe">
-                        <textarea id="a2" placeholder="Concrete actie of training..." class="input-luxe h-20 text-xs"></textarea>
+                    <div class="space-y-4 bg-black/50 p-6 rounded-2xl border border-white/5">
+                        <label class="text-yellow-500">🎯 Actiepunten</label>
+                        <textarea id="a1" placeholder="Hoe gaan we dit trainen?" class="input-luxe h-24 text-xs"></textarea>
                     </div>
-                    <div class="space-y-4 bg-black/30 p-6 rounded-2xl border border-white/5">
-                        <label class="text-yellow-500 font-black tracking-widest">📊 Analyse</label>
-                        <textarea id="pStrengths" placeholder="Absolute sterke punten?" class="input-luxe h-20 text-xs mb-2"></textarea>
-                        <textarea id="pGrowth" placeholder="Ontwikkelpunten?" class="input-luxe h-20 text-xs"></textarea>
+                    <div class="space-y-4 bg-black/50 p-6 rounded-2xl border border-white/5">
+                        <label class="text-yellow-500">📊 SWOT Analyse</label>
+                        <textarea id="pStrengths" placeholder="Sterke punten" class="input-luxe h-10 text-[10px] mb-2"></textarea>
+                        <textarea id="pGrowth" placeholder="Aandachtspunten" class="input-luxe h-10 text-[10px]"></textarea>
                     </div>
                 </div>
             </div>
-
-            <div class="save-bar flex flex-col md:flex-row gap-6 items-center justify-center no-print">
-                <input type="password" id="ghToken" placeholder="GitHub Personal Access Token" class="input-luxe md:w-96 text-center border-yellow-600/40">
-                <button type="submit" id="saveBtn" class="btn-gold px-16 py-4 rounded-2xl text-[11px] tracking-[0.2em]">Sync & Update Dossier</button>
-                <button type="button" onclick="window.print()" class="bg-white/5 text-white px-10 py-4 rounded-2xl uppercase text-[11px] font-black border border-white/10 hover:bg-white/10 transition">PDF Rapport</button>
+            
+            <div class="flex justify-center gap-6 pb-12">
+                 <button type="button" onclick="window.print()" class="bg-white/5 hover:bg-white/10 text-white px-10 py-4 rounded-xl uppercase text-[10px] font-black border border-white/10 transition">PDF Rapportage</button>
             </div>
         </form>
     </div>
@@ -212,11 +214,13 @@
     <script type="module">
         import DataProvider from './js/data_provider.js';
 
-        const currentUser = JSON.parse(sessionStorage.getItem('elite_user'));
-        if (!currentUser) window.location.href = 'login.html';
-
         let radarChart, allPlayers = [], currentPlayer = null;
-        const skillMap = { 'Techniek': ['bal', 'pas', 'aan', 'drib', 'schot'], 'Tactiek': ['posi', 'vrij', 'sam', 'oms'], 'Fysiek': ['sne', 'uit', 'kra', 'wen'], 'Mentaal': ['inz', 'mot', 'coa', 'tea'] };
+        const skillMap = { 
+            'Techniek': ['bal', 'pas', 'aan', 'drib', 'schot'], 
+            'Tactiek': ['posi', 'vrij', 'sam', 'oms'], 
+            'Fysiek': ['sne', 'uit', 'kra', 'wen'], 
+            'Mentaal': ['inz', 'mot', 'coa', 'tea'] 
+        };
         const labels = { bal: 'Balcontrole', pas: 'Passen', aan: 'Aanname', drib: 'Dribbel', schot: 'Schot', posi: 'Positie', vrij: 'Vrijlopen', sam: 'Samenspel', oms: 'Omschakeling', sne: 'Snelheid', uit: 'Conditie', kra: 'Kracht', wen: 'Wendbaar', inz: 'Inzet', mot: 'Motivatie', coa: 'Coachbaar', tea: 'Team' };
 
         window.updateCardInfo = () => {
@@ -229,16 +233,16 @@
             const container = document.getElementById('skillContainer');
             Object.keys(skillMap).forEach(cat => {
                 const h = document.createElement('h4');
-                h.className = "text-[10px] text-gray-400 uppercase font-black mt-8 mb-4 tracking-widest border-b border-white/5 pb-2";
+                h.className = "text-[9px] text-gray-500 uppercase font-black mt-10 mb-4 tracking-[2px] opacity-70";
                 h.innerText = cat;
                 container.appendChild(h);
                 skillMap[cat].forEach(key => {
                     const row = document.createElement('div');
-                    row.className = "grid grid-cols-1 md:grid-cols-12 gap-6 items-center border-b border-white/5 pb-4 mb-4 hover:bg-white/5 transition px-2 rounded-lg";
+                    row.className = "grid grid-cols-1 md:grid-cols-12 gap-6 items-center bg-black/30 p-4 rounded-xl border border-white/5 hover:border-yellow-600/20 transition";
                     row.innerHTML = `
                         <div class="md:col-span-3 flex justify-between items-center"><label class="mb-0 text-white font-bold">${labels[key]}</label><span id="v_${key}" class="score-display">5</span></div>
                         <div class="md:col-span-4"><input type="range" id="s_${key}" min="1" max="10" value="5" class="slider-gold" oninput="v_${key}.innerText=this.value; updateRadar();"></div>
-                        <div class="md:col-span-5"><input type="text" id="o_${key}" placeholder="Opmerking..." class="input-luxe py-2 text-[11px] italic"></div>
+                        <div class="md:col-span-5"><input type="text" id="o_${key}" placeholder="Observatie..." class="input-luxe py-2 text-[10px] border-none bg-transparent italic"></div>
                     `;
                     container.appendChild(row);
                 });
@@ -246,63 +250,25 @@
         }
 
         window.updateRadar = () => {
-            const getAvg = (keys) => keys.reduce((a, b) => a + parseInt(document.getElementById('s_'+b).value), 0) / keys.length;
-            radarChart.data.datasets[0].data = [getAvg(skillMap.Techniek), getAvg(skillMap.Tactiek), getAvg(skillMap.Fysiek), getAvg(skillMap.Mentaal)];
+            const scores = [];
+            Object.values(skillMap).forEach(keys => {
+                const avg = keys.reduce((a, b) => a + parseInt(document.getElementById('s_'+b).value), 0) / keys.length;
+                scores.push(avg);
+            });
+            radarChart.data.datasets[0].data = scores;
             radarChart.update();
+            
+            const totalAvg = scores.reduce((a,b) => a+b, 0) / scores.length;
+            document.getElementById('avgScoreDisp').innerText = totalAvg.toFixed(1);
         }
-
-        window.toggleTCPanel = () => {
-            const panel = document.getElementById('tcPanel');
-            panel.classList.toggle('hidden');
-            if(!panel.classList.contains('hidden')) refreshTCMonitor();
-        };
-
-        window.refreshTCMonitor = () => {
-            const period = document.getElementById('tcPeriodFilter').value;
-            const teams = [...new Set(allPlayers.map(p => p.bio.team))].sort();
-            const teamContainer = document.getElementById('tcTeamList');
-            const missingContainer = document.getElementById('tcMissingPlayers');
-            teamContainer.innerHTML = '';
-            missingContainer.innerHTML = '';
-            teams.forEach(team => {
-                const teamPlayers = allPlayers.filter(p => p.bio.team === team);
-                const done = teamPlayers.filter(p => p.history && p.history[period]).length;
-                const perc = Math.round((done / teamPlayers.length) * 100);
-                const missing = teamPlayers.filter(p => !p.history || !p.history[period]);
-                teamContainer.innerHTML += `<div class="team-row p-5 rounded-2xl mb-4"><div class="flex justify-between items-center mb-3"><span class="font-black text-white text-xs uppercase italic tracking-widest">${team}</span><span class="text-yellow-500 font-black text-xs">${perc}%</span></div><div class="progress-track"><div class="progress-fill" style="width: ${perc}%"></div></div></div>`;
-                if(missing.length > 0) {
-                    missingContainer.innerHTML += `<div class="p-5 border-l-4 border-red-600 bg-red-600/5 rounded-r-2xl mb-6 shadow-xl"><div class="text-[10px] text-gray-500 uppercase font-black mb-3 tracking-widest">${team} - Onvoltooid:</div><div class="flex flex-wrap gap-2">${missing.map(m => `<span class="player-badge">${m.bio.name}</span>`).join('')}</div></div>`;
-                }
-            });
-        };
-
-        window.checkLockStatus = () => {
-            if (!currentPlayer) return;
-            const period = document.getElementById('pPeriod').value;
-            const isLocked = (currentUser.role !== 'admin' && currentPlayer.history && currentPlayer.history[period]);
-            document.querySelectorAll('input, select, textarea').forEach(el => {
-                if(!['assetSearch', 'ghToken', 'loadBtn', 'pPeriod', 'pTeam'].includes(el.id)) {
-                    el.disabled = isLocked;
-                    el.style.opacity = isLocked ? "0.4" : "1";
-                }
-            });
-        };
-
-        window.generateAIFeedback = () => {
-            Object.keys(labels).forEach(k => {
-                const v = parseInt(document.getElementById('s_'+k).value);
-                const field = document.getElementById('o_'+k);
-                if (v >= 8) field.value = "Elite niveau getoond. Behoud deze standaard.";
-                else if (v <= 4) field.value = "Prioritair ontwikkelpunt. Extra focus vereist.";
-                else field.value = "Goede basis aanwezig, werk aan details.";
-            });
-        };
 
         async function init() {
             generateSkillFields();
             allPlayers = await DataProvider.getAllPlayers();
+            
             const search = document.getElementById('assetSearch');
             search.innerHTML = '<option value="">ZOEK SPELER...</option>' + allPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
+            
             const teams = ["JO8-1","JO9-1","JO10-1","JO11-1","JO12-1","JO13-1","JO14-1","JO15-1","JO16-1","JO17-1","JO19-1","Senioren 1"];
             document.getElementById('pTeam').innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
 
@@ -310,61 +276,54 @@
             radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: { labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'], datasets: [{ data: [5,5,5,5], backgroundColor: 'rgba(212, 175, 55, 0.2)', borderColor: '#D4AF37', borderWidth: 2, pointRadius: 4 }] },
-                options: { scales: { r: { min: 0, max: 10, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: false } } }
+                options: { scales: { r: { min: 0, max: 10, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' }, angleLines: { color: 'rgba(255,255,255,0.1)' } } }, plugins: { legend: { display: false } } }
             });
 
             document.getElementById('loadBtn').onclick = (e) => {
                 e.preventDefault();
-                currentPlayer = allPlayers.find(x => x.id === search.value);
-                if (currentPlayer) {
-                    document.getElementById('pName').value = currentPlayer.bio.name;
-                    document.getElementById('pId').value = currentPlayer.id;
-                    document.getElementById('pNumber').value = currentPlayer.bio.number || "";
-                    document.getElementById('pPhotoUrl').value = currentPlayer.bio.photo;
-                    document.getElementById('pPreviewImg').src = currentPlayer.bio.photo;
-                    document.getElementById('pTeam').value = currentPlayer.bio.team;
-                    document.getElementById('pPos').value = currentPlayer.bio.role || "Middenvelder";
-                    document.getElementById('dispName').innerText = currentPlayer.bio.name;
-                    document.getElementById('dispNumber').innerText = currentPlayer.bio.number || "--";
+                const p = allPlayers.find(x => x.id === search.value);
+                if (p) {
+                    document.getElementById('pName').value = p.bio.name;
+                    document.getElementById('pId').value = p.id;
+                    document.getElementById('pNumber').value = p.bio.number || "";
+                    document.getElementById('pPhotoUrl').value = p.bio.photo;
+                    document.getElementById('pPreviewImg').src = p.bio.photo;
+                    document.getElementById('pTeam').value = p.bio.team;
+                    document.getElementById('pPos').value = p.bio.role || "Middenvelder";
+                    document.getElementById('dispName').innerText = p.bio.name;
+                    document.getElementById('dispNumber').innerText = p.bio.number || "--";
                     updateCardInfo();
                     Object.keys(labels).forEach(k => {
-                        const val = currentPlayer.ratings?.[k] || 5;
+                        const val = p.ratings?.[k] || 5;
                         document.getElementById('s_'+k).value = val;
                         document.getElementById('v_'+k).innerText = val;
-                        document.getElementById('o_'+k).value = currentPlayer.comments?.[k] || "";
+                        document.getElementById('o_'+k).value = p.comments?.[k] || "";
                     });
                     updateRadar();
-                    checkLockStatus();
                 }
             };
 
             document.getElementById('proForm').onsubmit = async (e) => {
                 e.preventDefault();
                 const token = document.getElementById('ghToken').value;
-                if(!token) return alert("GitHub Token vereist.");
-                const ratings = {};
-                const comments = {};
+                if(!token) return alert("GitHub Token ontbreekt in de header.");
+                
+                const ratings = {}; const comments = {};
                 Object.keys(labels).forEach(k => {
                     ratings[k] = parseInt(document.getElementById('s_'+k).value);
                     comments[k] = document.getElementById('o_'+k).value;
                 });
+
                 const updatedData = {
-                    id: document.getElementById('pId').value,
-                    bio: {
-                        name: document.getElementById('pName').value,
-                        number: document.getElementById('pNumber').value,
-                        team: document.getElementById('pTeam').value,
-                        role: document.getElementById('pPos').value,
-                        photo: document.getElementById('pPhotoUrl').value
-                    },
+                    id: document.getElementById('pId').value || "p_" + Date.now(),
+                    bio: { name: document.getElementById('pName').value, number: document.getElementById('pNumber').value, team: document.getElementById('pTeam').value, role: document.getElementById('pPos').value, photo: document.getElementById('pPhotoUrl').value },
                     ratings, comments
                 };
+
                 try {
-                    await DataProvider.savePlayerData(updatedData, token);
-                    alert("Dossier succesvol bijgewerkt!");
-                } catch(err) {
-                    alert("Fout bij opslaan: " + err.message);
-                }
+                    await DataProvider.updatePlayer(updatedData, token);
+                    alert("Data succesvol gesynchroniseerd!");
+                } catch(err) { alert("Sync fout: " + err.message); }
             };
         }
         init();
