@@ -9,8 +9,14 @@
         body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
         .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; transition: all 0.3s ease; }
         .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: white; padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; }
-        select[multiple] { height: 100px; }
         
+        /* Verbeterde scrollbar voor de lange teamlijst */
+        select[multiple] { 
+            height: 250px; 
+        }
+        select[multiple]::-webkit-scrollbar { width: 5px; }
+        select[multiple]::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+
         .nav-item:hover { border-color: rgba(212, 175, 55, 0.5); transform: translateY(-2px); background: rgba(255, 255, 255, 0.05); }
     </style>
 </head>
@@ -77,14 +83,8 @@
                         </div>
 
                         <div>
-                            <label class="text-[10px] uppercase font-bold text-gray-500">Koppel Teams</label>
-                            <select id="uTeams" class="input-luxe" multiple>
-                                <option value="JO8">JO8</option><option value="JO9">JO9</option><option value="JO10">JO10</option>
-                                <option value="JO11">JO11</option><option value="JO12">JO12</option><option value="JO13">JO13</option>
-                                <option value="JO14">JO14</option><option value="JO15">JO15</option><option value="JO16">JO16</option>
-                                <option value="JO17">JO17</option><option value="JO19">JO19</option><option value="Senioren">Senioren</option>
-                                <option value="ALL">ALLE TEAMS</option>
-                            </select>
+                            <label class="text-[10px] uppercase font-bold text-gray-500">Koppel Teams (JOXX-X)</label>
+                            <select id="uTeams" class="input-luxe custom-scroll" multiple></select>
                         </div>
 
                         <div class="pt-4 space-y-3">
@@ -98,7 +98,7 @@
             <div class="lg:col-span-7 space-y-6">
                 <div class="glass-card p-8">
                     <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-yellow-500 font-black uppercase text-xs italic">Huidige Staff Bezetting</h3>
+                        <h3 class="text-yellow-500 font-black uppercase text-xs italic">Staff Bezetting</h3>
                         <button id="exportUsers" class="text-[9px] font-black uppercase text-gray-500 hover:text-white transition">📥 Export CSV</button>
                     </div>
                     <div class="overflow-x-auto">
@@ -119,6 +119,18 @@
         if (!sessionUser || sessionUser.role !== 'admin') {
             window.location.href = 'login.html';
         }
+
+        // Genereer de uitgebreide teamlijst JO8-1 t/m Senioren 4
+        const levels = ["JO8", "JO9", "JO10", "JO11", "JO12", "JO13", "JO14", "JO15", "JO16", "JO17", "JO19"];
+        let adminTeams = [];
+        levels.forEach(l => {
+            for(let i=1; i<=4; i++) adminTeams.push(`${l}-${i}`);
+        });
+        for(let i=1; i<=4; i++) adminTeams.push(`Senioren ${i}`);
+        adminTeams.push("ALL");
+
+        const uTeamsSelect = document.getElementById('uTeams');
+        uTeamsSelect.innerHTML = adminTeams.map(t => `<option value="${t}">${t}</option>`).join('');
 
         let allUsers = [];
 
