@@ -129,7 +129,57 @@
       "strengths": "",
       "growth": ""
     },
-    "lastUpdated": "2026-01-04T22:27:57.625Z"
+    "lastUpdated": "2026-01-04T22:27:57.625Z",
+    "history": {
+      "1e seizoenshelft": {
+        "status": "locked",
+        "lastUpdated": "2026-01-04T22:38:56.228Z",
+        "ratings": {
+          "bal": 6,
+          "pas": 8,
+          "aan": 7,
+          "drib": 5,
+          "schot": 8,
+          "posi": 8,
+          "vrij": 5,
+          "sam": 8,
+          "oms": 5,
+          "sne": 5,
+          "uit": 8,
+          "kra": 8,
+          "wen": 8,
+          "inz": 8,
+          "mot": 8,
+          "coa": 10,
+          "tea": 10
+        },
+        "comments": {
+          "bal": "",
+          "pas": "",
+          "aan": "",
+          "drib": "",
+          "schot": "",
+          "posi": "",
+          "vrij": "",
+          "sam": "",
+          "oms": "",
+          "sne": "",
+          "uit": "",
+          "kra": "",
+          "wen": "",
+          "inz": "",
+          "mot": "",
+          "coa": "",
+          "tea": ""
+        },
+        "pop": {
+          "goal": "",
+          "action": "",
+          "strengths": "",
+          "growth": ""
+        }
+      }
+    }
   },
   {
     "id": "f_001",
