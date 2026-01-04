@@ -18,7 +18,6 @@
             padding-bottom: 140px;
         }
 
-        /* Geavanceerde Card Styling */
         .section-card { 
             background: var(--glass); 
             border: 1px solid var(--glass-border); 
@@ -60,16 +59,14 @@
             text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
         }
 
-        /* Goud-gekleurde slider */
         .slider-gold { 
             accent-color: var(--gold); 
             cursor: pointer; 
             width: 100%; 
-            height: 6px;
+            height: 8px;
             border-radius: 5px;
         }
 
-        /* Profielfoto met Glow */
         .preview-photo-container { 
             position: relative; 
             width: 140px; 
@@ -87,7 +84,6 @@
         }
         .preview-photo:hover { transform: scale(1.05) rotate(2deg); box-shadow: 0 0 45px rgba(212, 175, 55, 0.6); }
 
-        /* TC Monitor Visuals */
         .team-row { 
             background: rgba(255,255,255,0.03); 
             border: 1px solid rgba(255,255,255,0.05); 
@@ -137,8 +133,18 @@
             display: inline-block;
             transition: 0.2s;
         }
-        .player-badge:hover { background: rgba(239, 68, 68, 0.3); transform: scale(1.05); }
         
+        .score-display {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold);
+            font-weight: 900;
+            padding: 4px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            min-width: 45px;
+            text-align: center;
+        }
+
         .no-print { display: flex; }
     </style>
 </head>
@@ -219,7 +225,7 @@
                     <div class="flex justify-between items-center mb-8">
                         <div>
                             <h3>2. Beoordeling & Feedback</h3>
-                            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-[-15px]">Score van 1 tot 5 (Elite)</p>
+                            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-[-15px]">Score van 1 tot 10</p>
                         </div>
                         <button type="button" onclick="generateAIFeedback()" class="bg-yellow-500/10 text-yellow-500 px-6 py-2 rounded-full border border-yellow-500/20 font-black uppercase text-[10px] hover:bg-yellow-500 hover:text-black transition duration-500">✨ AI Feedback</button>
                     </div>
@@ -298,8 +304,8 @@
                     const row = document.createElement('div');
                     row.className = "grid grid-cols-1 md:grid-cols-12 gap-6 items-center border-b border-white/5 pb-4 mb-4 hover:bg-white/5 transition px-2 rounded-lg";
                     row.innerHTML = `
-                        <div class="md:col-span-3 flex justify-between items-center"><label class="mb-0 text-white font-bold">${labels[key]}</label><span id="v_${key}" class="text-yellow-500 font-black text-lg">3</span></div>
-                        <div class="md:col-span-4"><input type="range" id="s_${key}" min="1" max="5" value="3" class="slider-gold" oninput="v_${key}.innerText=this.value; updateRadar();"></div>
+                        <div class="md:col-span-3 flex justify-between items-center"><label class="mb-0 text-white font-bold">${labels[key]}</label><span id="v_${key}" class="score-display">5</span></div>
+                        <div class="md:col-span-4"><input type="range" id="s_${key}" min="1" max="10" value="5" class="slider-gold" oninput="v_${key}.innerText=this.value; updateRadar();"></div>
                         <div class="md:col-span-5"><input type="text" id="o_${key}" placeholder="Geef toelichting voor de speler..." class="input-luxe py-2 text-[11px] italic"></div>
                     `;
                     container.appendChild(row);
@@ -371,9 +377,9 @@
             Object.keys(labels).forEach(k => {
                 const v = parseInt(document.getElementById('s_'+k).value);
                 const field = document.getElementById('o_'+k);
-                if (v >= 4) field.value = "Elite niveau getoond. Behoud deze standaard en intensiteit.";
-                else if (v <= 2) field.value = "Dit is een kritiek aandachtspunt. Focus vereist tijdens groepstrainingen.";
-                else field.value = "Voldoende basis, werk aan de fijne details voor de volgende stap.";
+                if (v >= 8) field.value = "Uitmuntend niveau (Elite). Behoud deze focus en intensiteit.";
+                else if (v <= 4) field.value = "Dit is een prioritair ontwikkelpunt. Extra aandacht vereist tijdens training.";
+                else field.value = "Goede basis aanwezig, werk aan consistentie onder druk.";
             });
         };
 
@@ -396,14 +402,14 @@
                 data: {
                     labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'],
                     datasets: [{
-                        data: [3, 3, 3, 3],
+                        data: [5, 5, 5, 5],
                         backgroundColor: 'rgba(212, 175, 55, 0.2)', borderColor: '#D4AF37', borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#D4AF37'
                     }]
                 },
                 options: {
                     scales: { 
                         r: { 
-                            min: 0, max: 5, 
+                            min: 0, max: 10, 
                             grid: { color: 'rgba(255,255,255,0.05)' }, 
                             angleLines: { color: 'rgba(255,255,255,0.1)' },
                             pointLabels: { color: '#888', font: { size: 11, weight: 'bold' } }, 
@@ -425,7 +431,7 @@
                     document.getElementById('pTeam').value = currentPlayer.bio.team;
                     document.getElementById('pEmail').value = currentPlayer.bio.email || "";
                     Object.keys(labels).forEach(k => {
-                        const val = currentPlayer.ratings?.[k] || 3;
+                        const val = currentPlayer.ratings?.[k] || 5;
                         const slider = document.getElementById('s_'+k);
                         if(slider) slider.value = val;
                         const label = document.getElementById('v_'+k);
