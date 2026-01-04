@@ -132,8 +132,8 @@
     "lastUpdated": "2026-01-04T22:27:57.625Z",
     "history": {
       "1e seizoenshelft": {
-        "status": "locked",
-        "lastUpdated": "2026-01-04T22:45:07.217Z",
+        "status": "draft",
+        "lastUpdated": "2026-01-04T22:43:34.577Z",
         "ratings": {
           "bal": 9,
           "pas": 9,
@@ -171,6 +171,54 @@
           "mot": "",
           "coa": "",
           "tea": ""
+        },
+        "pop": {
+          "goal": "",
+          "action": "",
+          "strengths": "",
+          "growth": ""
+        }
+      },
+      "2e seizoenshelft": {
+        "status": "draft",
+        "lastUpdated": "2026-01-04T22:47:46.441Z",
+        "ratings": {
+          "bal": 10,
+          "pas": 9,
+          "aan": 10,
+          "drib": 10,
+          "schot": 10,
+          "posi": 10,
+          "vrij": 8,
+          "sam": 10,
+          "oms": 10,
+          "sne": 9,
+          "uit": 9,
+          "kra": 10,
+          "wen": 10,
+          "inz": 10,
+          "mot": 10,
+          "coa": 10,
+          "tea": 10
+        },
+        "comments": {
+          "bal": "Elite niveau. Vasthouden.",
+          "pas": "Elite niveau. Vasthouden.",
+          "aan": "Elite niveau. Vasthouden.",
+          "drib": "Elite niveau. Vasthouden.",
+          "schot": "Elite niveau. Vasthouden.",
+          "posi": "Elite niveau. Vasthouden.",
+          "vrij": "Elite niveau. Vasthouden.",
+          "sam": "Elite niveau. Vasthouden.",
+          "oms": "Elite niveau. Vasthouden.",
+          "sne": "Elite niveau. Vasthouden.",
+          "uit": "Elite niveau. Vasthouden.",
+          "kra": "Elite niveau. Vasthouden.",
+          "wen": "Elite niveau. Vasthouden.",
+          "inz": "Elite niveau. Vasthouden.",
+          "mot": "Elite niveau. Vasthouden.",
+          "coa": "Elite niveau. Vasthouden.",
+          "tea": "Elite niveau. Vasthouden."
         },
         "pop": {
           "goal": "",
