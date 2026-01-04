@@ -7,10 +7,15 @@
     <style>
         :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
         body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
+        
         .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; transition: all 0.3s ease; }
-        .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: white; padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; outline: none; }
+        
+        .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: white; padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; outline: none; transition: 0.3s; }
         .input-luxe:focus { border-color: var(--gold); background: rgba(255,255,255,0.1); }
         
+        /* FIX: Zwarte achtergrond voor dropdown opties */
+        .input-luxe option { background-color: #000; color: white; padding: 5px; }
+
         .team-badge { 
             padding: 6px 10px; font-size: 10px; font-weight: 800; border-radius: 6px; 
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
@@ -37,6 +42,26 @@
         .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
         .file-upload-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
         .hidden { display: none; }
+
+        /* --- SPELERSKAART CSS --- */
+        .player-card-container {
+            position: relative; width: 220px; height: 320px; border-radius: 1.5rem;
+            overflow: hidden; border: 2px solid var(--gold); margin: 0 auto;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2), 0 20px 40px rgba(0,0,0,0.8);
+            background: #000; transition: transform 0.3s;
+        }
+        .player-card-photo { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+        .player-card-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px 15px;
+            background: linear-gradient(to top, rgba(0,0,0,1) 15%, transparent 100%);
+        }
+        .player-card-number {
+            position: absolute; top: 15px; right: 20px;
+            font-size: 42px; font-weight: 900; color: #fff;
+            text-shadow: 0 0 15px var(--gold); z-index: 10; line-height: 1;
+        }
+        .player-card-name { font-size: 24px; font-weight: 900; font-style: italic; text-transform: uppercase; color: #fff; line-height: 0.85; }
+        .player-card-info { font-size: 9px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; }
     </style>
 </head>
 <body class="p-8 text-left text-xs">
@@ -65,8 +90,7 @@
         </section>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-5">
-                <div class="glass-card p-8">
+            <div class="lg:col-span-6"> <div class="glass-card p-8">
                     <div class="flex border-b border-white/10 mb-6">
                         <button onclick="switchTab('coach')" id="tab-coach" class="tab-btn active">Coach Manager</button>
                         <button onclick="switchTab('player')" id="tab-player" class="tab-btn">Speler Manager</button>
@@ -123,24 +147,36 @@
                     <div id="playerFormContainer" class="hidden">
                         <div class="flex justify-between items-center mb-6">
                             <h3 class="text-yellow-500 font-black uppercase text-xs italic">Nieuwe Speler Invoeren</h3>
-                            <button type="button" onclick="document.getElementById('playerForm').reset()" class="text-[8px] font-black uppercase text-gray-500 hover:text-white transition">Reset</button>
+                            <button type="button" onclick="resetPlayerForm()" class="text-[8px] font-black uppercase text-gray-500 hover:text-white transition">Reset</button>
                         </div>
-                        <form id="playerForm" class="space-y-4">
-                            <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Naam Speler</label><input type="text" id="pName" class="input-luxe text-left" placeholder="Volledige naam..." required></div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Team</label><select id="pTeamSelect" class="input-luxe text-left"></select></div>
-                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Rugnummer</label><input type="number" id="pNumber" class="input-luxe text-left"></div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Positie</label>
-                                    <select id="pPos" class="input-luxe text-left">
-                                        <option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option>
-                                    </select>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="flex justify-center md:justify-start">
+                                <div class="player-card-container">
+                                    <div id="dispNumber" class="player-card-number">--</div>
+                                    <img id="pPreviewImg" class="player-card-photo" src="https://via.placeholder.com/400x600/000000/FFFFFF?text=FOTO" alt="Preview">
+                                    <div class="player-card-overlay">
+                                        <div id="dispName" class="player-card-name">NAAM</div>
+                                        <div id="dispTeam" class="player-card-info">TEAM • POSITIE</div>
+                                    </div>
                                 </div>
-                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Email Ouder</label><input type="email" id="pEmail" class="input-luxe text-left"></div>
                             </div>
-                            <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Foto URL</label><input type="text" id="pPhotoUrl" class="input-luxe text-left" placeholder="https://..."></div>
-                        </form>
+
+                            <form id="playerForm" class="space-y-4">
+                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Naam Speler</label><input type="text" id="pName" class="input-luxe text-left" placeholder="Volledige naam..." required oninput="updateCard()"></div>
+                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Team</label><select id="pTeamSelect" class="input-luxe text-left" onchange="updateCard()"></select></div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Rugnummer</label><input type="number" id="pNumber" class="input-luxe text-left" oninput="updateCard()"></div>
+                                    <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Positie</label>
+                                        <select id="pPos" class="input-luxe text-left" onchange="updateCard()">
+                                            <option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Foto URL</label><input type="text" id="pPhotoUrl" class="input-luxe text-left" placeholder="https://..." oninput="updateCard()"></div>
+                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Email Ouder</label><input type="email" id="pEmail" class="input-luxe text-left"></div>
+                            </form>
+                        </div>
                     </div>
 
                     <div class="pt-6 border-t border-white/5 space-y-3 mt-4">
@@ -150,7 +186,7 @@
                 </div>
             </div>
 
-            <div class="lg:col-span-7">
+            <div class="lg:col-span-6">
                 <div class="glass-card p-8 h-full">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-yellow-500 font-black uppercase text-xs italic">Staff Bezetting</h3>
@@ -176,9 +212,8 @@
         const levels = ["JO8", "JO9", "JO10", "JO11", "JO12", "JO13", "JO14", "JO15", "JO16", "JO17", "JO19", "Senioren"];
         let selectedTeams = new Set();
         let allUsers = [];
-        let allPlayers = []; // Voor het ophalen van bestaande spelers
+        let allPlayers = [];
 
-        // Tab Switcher
         window.switchTab = (tab) => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`tab-${tab}`).classList.add('active');
@@ -191,7 +226,6 @@
             }
         };
 
-        // File handling (Coach)
         const fileInput = document.getElementById('fileInput');
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -212,7 +246,25 @@
             document.querySelectorAll('.team-badge').forEach(b => b.classList.remove('selected'));
         };
 
-        // Teams genereren (Coach form)
+        window.resetPlayerForm = () => {
+            document.getElementById('playerForm').reset();
+            updateCard();
+        };
+
+        // CARD PREVIEW UPDATE FUNCTIE
+        window.updateCard = () => {
+            const name = document.getElementById('pName').value || "NAAM";
+            const number = document.getElementById('pNumber').value || "--";
+            const team = document.getElementById('pTeamSelect').value;
+            const pos = document.getElementById('pPos').value;
+            const photo = document.getElementById('pPhotoUrl').value || "https://via.placeholder.com/400x600/000000/FFFFFF?text=FOTO";
+
+            document.getElementById('dispName').innerText = name;
+            document.getElementById('dispNumber').innerText = number;
+            document.getElementById('dispTeam').innerText = `${team} • ${pos}`;
+            document.getElementById('pPreviewImg').src = photo;
+        };
+
         const categoryGrid = document.getElementById('categoryGrid');
         categoryGrid.innerHTML = levels.map(l => `<button type="button" class="cat-btn" onclick="toggleCategory('${l}')">${l}</button>`).join('');
 
@@ -245,25 +297,17 @@
             });
         };
 
-        // DATA LADEN
         async function loadData() {
             try {
-                // Users
                 const resU = await fetch('./data/users.json');
                 const dataU = await resU.json();
                 allUsers = dataU.users;
                 renderTable();
-
-                // Players (om ze aan te vullen, al laten we ze nu niet in tabel zien)
                 try {
                     const resP = await fetch('./data/players.json');
                     allPlayers = await resP.json();
                     if(!Array.isArray(allPlayers)) allPlayers = [];
-                } catch(e) { 
-                    allPlayers = []; 
-                    console.log("Nog geen players.json of fout bij laden.");
-                }
-
+                } catch(e) { allPlayers = []; }
             } catch(e) { console.error("Laden mislukt", e); }
         }
 
@@ -288,11 +332,9 @@
             const token = document.getElementById('ghToken').value;
             if(!token) return alert("GitHub Token vereist.");
 
-            // Check welke tab actief is
             const isCoachTab = document.getElementById('tab-coach').classList.contains('active');
 
             if(isCoachTab) {
-                // --- COACH OPSLAAN ---
                 const newUser = {
                     username: document.getElementById('uUsername').value,
                     password: document.getElementById('uPassword').value,
@@ -301,20 +343,14 @@
                     photo: document.getElementById('uPhoto').value,
                     teams: Array.from(selectedTeams)
                 };
-                
                 if(!newUser.username) return alert("Vul gebruikersnaam in.");
-
                 const idx = allUsers.findIndex(u => u.username === newUser.username);
                 idx !== -1 ? allUsers[idx] = newUser : allUsers.push(newUser);
-
                 await syncWithGithub(token, `Update User: ${newUser.name}`, { users: allUsers }, 'data/users.json');
                 resetForm();
-
             } else {
-                // --- SPELER OPSLAAN ---
                 const pName = document.getElementById('pName').value;
                 if(!pName) return alert("Vul naam speler in.");
-
                 const newPlayer = {
                     id: "p_" + Date.now(),
                     bio: {
@@ -327,40 +363,29 @@
                     },
                     ratings: {}, comments: {}, history: {}
                 };
-
                 allPlayers.push(newPlayer);
-                await syncWithGithub(token, `New Player: ${newPlayer.bio.name}`, allPlayers, 'data/players.json'); // Let op: players.json is een Array
-                document.getElementById('playerForm').reset();
+                await syncWithGithub(token, `New Player: ${newPlayer.bio.name}`, allPlayers, 'data/players.json');
+                resetPlayerForm();
             }
         };
 
-        // Universele Sync Functie
         async function syncWithGithub(token, msg, contentObj, path) {
             try {
                 const url = `https://api.github.com/repos/playbetter2021/sport-dashboard/contents/${path}`;
-                
-                // Get SHA
                 const getRes = await fetch(url, { headers: { "Authorization": `token ${token}` } });
                 let sha = null;
                 if(getRes.ok) {
                     const file = await getRes.json();
                     sha = file.sha;
                 }
-
-                // Put content
                 const putRes = await fetch(url, { 
                     method: "PUT", 
                     headers: { "Authorization": `token ${token}` }, 
-                    body: JSON.stringify({ 
-                        message: msg, 
-                        content: btoa(JSON.stringify(contentObj, null, 2)), 
-                        sha: sha 
-                    }) 
+                    body: JSON.stringify({ message: msg, content: btoa(JSON.stringify(contentObj, null, 2)), sha: sha }) 
                 });
-
                 if(putRes.ok) {
                     alert(`${path} succesvol bijgewerkt!`);
-                    if(path === 'data/users.json') loadData(); // Reload table
+                    if(path === 'data/users.json') loadData();
                 } else {
                     const err = await putRes.json();
                     throw new Error(err.message);
@@ -372,14 +397,13 @@
             const token = document.getElementById('ghToken').value;
             if(!token) return alert("GitHub Token vereist.");
             if(!confirm(`Trainer ${allUsers[idx].name} verwijderen?`)) return;
-            
             const name = allUsers[idx].name;
             allUsers.splice(idx, 1);
             await syncWithGithub(token, `Delete User: ${name}`, { users: allUsers }, 'data/users.json');
         };
 
         window.editUser = (idx) => {
-            switchTab('coach'); // Forceer tab naar coach
+            switchTab('coach');
             const u = allUsers[idx];
             document.getElementById('uName').value = u.name;
             document.getElementById('uUsername').value = u.username;
