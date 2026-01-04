@@ -1158,5 +1158,61 @@
         }
       }
     }
+  },
+  {
+    "id": "p_1767564988443",
+    "bio": {
+      "name": "bennie sneller",
+      "number": "1",
+      "team": "JO8-3",
+      "role": "Keeper",
+      "photo": "",
+      "email": ""
+    },
+    "ratings": {
+      "bal": 8,
+      "pas": 4,
+      "aan": 4,
+      "drib": 5,
+      "schot": 3,
+      "posi": 5,
+      "vrij": 4,
+      "sam": 5,
+      "oms": 5,
+      "sne": 5,
+      "uit": 5,
+      "kra": 5,
+      "wen": 5,
+      "inz": 5,
+      "mot": 5,
+      "coa": 5,
+      "tea": 5
+    },
+    "comments": {
+      "bal": "Elite niveau. Vasthouden.",
+      "pas": "Prioriteit voor ontwikkeling.",
+      "aan": "Prioriteit voor ontwikkeling.",
+      "drib": "Prioriteit voor ontwikkeling.",
+      "schot": "Prioriteit voor ontwikkeling.",
+      "posi": "Prioriteit voor ontwikkeling.",
+      "vrij": "Prioriteit voor ontwikkeling.",
+      "sam": "Prioriteit voor ontwikkeling.",
+      "oms": "Prioriteit voor ontwikkeling.",
+      "sne": "Prioriteit voor ontwikkeling.",
+      "uit": "Prioriteit voor ontwikkeling.",
+      "kra": "Prioriteit voor ontwikkeling.",
+      "wen": "Prioriteit voor ontwikkeling.",
+      "inz": "Prioriteit voor ontwikkeling.",
+      "mot": "Prioriteit voor ontwikkeling.",
+      "coa": "Prioriteit voor ontwikkeling.",
+      "tea": "Prioriteit voor ontwikkeling."
+    },
+    "pop": {
+      "goal": "",
+      "action": "",
+      "strengths": "",
+      "growth": ""
+    },
+    "lastUpdated": "2026-01-04T22:16:28.443Z"
   }
 ]
