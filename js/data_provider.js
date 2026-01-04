@@ -4,8 +4,8 @@
  */
 
 const CONFIG = {
-    repoOwner: "JOUW_GITHUB_GEBRUIKERSNAAM", // Vul hier je eigen gebruikersnaam in
-    repoName: "JOUW_REPO_NAAM",             // Vul hier de naam van je repository in
+    repoOwner: "playbetter2021", // Vul hier je eigen gebruikersnaam in
+    repoName: "sport-dashboard",             // Vul hier de naam van je repository in
     filePath: "data/players.json"
 };
 
