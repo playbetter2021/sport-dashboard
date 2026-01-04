@@ -180,8 +180,8 @@
         }
       },
       "2e seizoenshelft": {
-        "status": "draft",
-        "lastUpdated": "2026-01-04T22:47:46.441Z",
+        "status": "locked",
+        "lastUpdated": "2026-01-04T22:49:38.048Z",
         "ratings": {
           "bal": 10,
           "pas": 9,
