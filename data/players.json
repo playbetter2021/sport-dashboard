@@ -1294,5 +1294,66 @@
       "growth": ""
     },
     "lastUpdated": "2026-01-04T22:16:28.443Z"
+  },
+  {
+    "id": "p_1767567231594",
+    "bio": {
+      "name": "stef blank",
+      "number": "1",
+      "team": "JO16-1",
+      "role": "Keeper",
+      "photo": "https://www.shutterstock.com/image-photo/rotterdam-netherlands-may-21-2023-600nw-2311377969.jpg",
+      "email": ""
+    },
+    "history": {
+      "1e seizoenshelft": {
+        "status": "draft",
+        "lastUpdated": "2026-01-04T22:53:51.594Z",
+        "ratings": {
+          "bal": 8,
+          "pas": 5,
+          "aan": 5,
+          "drib": 8,
+          "schot": 8,
+          "posi": 5,
+          "vrij": 5,
+          "sam": 5,
+          "oms": 5,
+          "sne": 5,
+          "uit": 5,
+          "kra": 5,
+          "wen": 5,
+          "inz": 5,
+          "mot": 5,
+          "coa": 5,
+          "tea": 5
+        },
+        "comments": {
+          "bal": "",
+          "pas": "",
+          "aan": "",
+          "drib": "",
+          "schot": "",
+          "posi": "",
+          "vrij": "",
+          "sam": "",
+          "oms": "",
+          "sne": "",
+          "uit": "",
+          "kra": "",
+          "wen": "",
+          "inz": "",
+          "mot": "",
+          "coa": "",
+          "tea": ""
+        },
+        "pop": {
+          "goal": "",
+          "action": "",
+          "strengths": "",
+          "growth": ""
+        }
+      }
+    }
   }
 ]
