@@ -7,57 +7,164 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #D4AF37; --obsidian: #050505; --glass: rgba(255, 255, 255, 0.03); --red: #ef4444; }
+        :root { --gold: #D4AF37; --gold-light: #f1d592; --obsidian: #050505; --glass: rgba(255, 255, 255, 0.03); --glass-border: rgba(255, 255, 255, 0.08); --red: #ef4444; }
+        
         body { 
             background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif;
-            background-image: radial-gradient(circle at top right, rgba(212, 175, 55, 0.08), transparent 800px);
-            padding-bottom: 120px;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+            padding-bottom: 140px;
         }
-        .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; outline: none; transition: 0.2s; }
-        .section-card { background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.08); padding: 25px; border-radius: 1.5rem; margin-bottom: 2rem; backdrop-filter: blur(15px); }
-        h3 { font-size: 11px; color: var(--gold); text-transform: uppercase; border-left: 3px solid var(--gold); padding-left: 10px; margin-bottom: 20px; font-weight: 900; letter-spacing: 1px; }
-        .slider-gold { accent-color: var(--gold); cursor: pointer; width: 100%; }
-        
-        /* TC Dashboard Styles */
-        .team-row { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
-        .progress-track { height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #b8860b, #D4AF37); transition: width 1s ease-in-out; }
-        .player-badge { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; margin: 2px; display: inline-block; }
-        
-        /* VERBETERDE PROFIEL FOTO STYLING */
-        .preview-photo-container { position: relative; width: 130px; height: 130px; flex-shrink: 0; }
-        .preview-photo { 
-            width: 100%; height: 100%; border-radius: 50%; 
-            border: 3px solid var(--gold); object-fit: cover; 
-            background: #111; box-shadow: 0 0 25px rgba(212,175,55,0.25);
-            transition: transform 0.3s ease;
-        }
-        .preview-photo:hover { transform: scale(1.03); }
 
-        .save-bar { background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(15px); border-top: 1px solid rgba(212, 175, 55, 0.2); padding: 1.5rem; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; }
+        /* Geavanceerde Card Styling */
+        .section-card { 
+            background: var(--glass); 
+            border: 1px solid var(--glass-border); 
+            padding: 25px; 
+            border-radius: 1.5rem; 
+            margin-bottom: 2rem; 
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .section-card:hover { border-color: rgba(212, 175, 55, 0.3); }
+
+        .input-luxe { 
+            background: rgba(0,0,0,0.3); 
+            border: 1px solid rgba(212, 175, 55, 0.2); 
+            color: var(--gold); 
+            padding: 12px; 
+            border-radius: 12px; 
+            width: 100%; 
+            font-size: 13px; 
+            outline: none; 
+            transition: all 0.3s; 
+        }
+        .input-luxe:focus { 
+            border-color: var(--gold); 
+            background: rgba(212, 175, 55, 0.1); 
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+        }
+
+        h3 { 
+            font-size: 12px; 
+            color: var(--gold); 
+            text-transform: uppercase; 
+            border-left: 4px solid var(--gold); 
+            padding-left: 12px; 
+            margin-bottom: 25px; 
+            font-weight: 900; 
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Goud-gekleurde slider */
+        .slider-gold { 
+            accent-color: var(--gold); 
+            cursor: pointer; 
+            width: 100%; 
+            height: 6px;
+            border-radius: 5px;
+        }
+
+        /* Profielfoto met Glow */
+        .preview-photo-container { 
+            position: relative; 
+            width: 140px; 
+            height: 140px; 
+            flex-shrink: 0; 
+        }
+        .preview-photo { 
+            width: 100%; height: 100%; 
+            border-radius: 50%; 
+            border: 4px solid var(--gold); 
+            object-fit: cover; 
+            background: #111; 
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .preview-photo:hover { transform: scale(1.05) rotate(2deg); box-shadow: 0 0 45px rgba(212, 175, 55, 0.6); }
+
+        /* TC Monitor Visuals */
+        .team-row { 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid rgba(255,255,255,0.05); 
+            border-radius: 15px;
+            padding: 15px;
+            transition: 0.3s; 
+        }
+        .progress-track { height: 10px; background: rgba(0,0,0,0.5); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .progress-fill { 
+            height: 100%; 
+            background: linear-gradient(90deg, #8a6609, #D4AF37, #f1d592); 
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+
+        .save-bar { 
+            background: rgba(5, 5, 5, 0.9); 
+            backdrop-filter: blur(20px); 
+            border-top: 2px solid var(--gold); 
+            padding: 1.5rem; 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            z-index: 1000;
+            box-shadow: 0 -15px 40px rgba(0,0,0,0.8);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #D4AF37, #b8860b);
+            color: black;
+            font-weight: 900;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+        .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5); filter: brightness(1.1); }
+
+        .player-badge { 
+            background: rgba(239, 68, 68, 0.15); 
+            color: #ff5f5f; 
+            border: 1px solid rgba(239, 68, 68, 0.3); 
+            padding: 4px 10px; 
+            border-radius: 8px; 
+            font-size: 11px; 
+            font-weight: 800; 
+            margin: 3px; 
+            display: inline-block;
+            transition: 0.2s;
+        }
+        .player-badge:hover { background: rgba(239, 68, 68, 0.3); transform: scale(1.05); }
+        
         .no-print { display: flex; }
     </style>
 </head>
 <body class="p-6">
     <div class="max-w-7xl mx-auto">
-        <header class="flex flex-col xl:flex-row justify-between items-center mb-10 border-b border-white/5 pb-8 gap-6 no-print">
+        <header class="flex flex-col xl:flex-row justify-between items-center mb-10 border-b border-white/10 pb-8 gap-6 no-print">
             <div class="flex items-center gap-6">
-                <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter leading-none">ELITE<span class="text-yellow-500">TERMINAL</span></h1>
+                <h1 class="text-4xl font-black italic text-white uppercase tracking-tighter leading-none">ELITE<span class="text-yellow-500">TERMINAL</span></h1>
                 <nav class="flex gap-4">
-                    <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-5 py-2 rounded-full text-[10px] font-bold uppercase transition border border-white/10">Dashboard</a>
-                    <button onclick="toggleTCPanel()" class="bg-yellow-600/10 hover:bg-yellow-600/20 text-yellow-500 px-5 py-2 rounded-full text-[10px] font-black uppercase transition border border-yellow-600/30">📊 TC Monitor</button>
+                    <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-6 py-2 rounded-full text-[10px] font-black uppercase transition border border-white/10 tracking-widest">Dashboard</a>
+                    <button onclick="toggleTCPanel()" class="bg-yellow-600/10 hover:bg-yellow-600/20 text-yellow-500 px-6 py-2 rounded-full text-[10px] font-black uppercase transition border border-yellow-600/30 tracking-widest">📊 TC Monitor</button>
                 </nav>
             </div>
-            <div class="flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/10">
-                <select id="assetSearch" class="bg-transparent text-yellow-500 font-black text-xs min-w-[200px] outline-none uppercase"></select>
-                <button id="loadBtn" class="bg-yellow-600 text-black px-6 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-yellow-400 transition">Laden</button>
+            <div class="flex items-center gap-4 bg-black/40 p-3 rounded-2xl border border-white/10 backdrop-blur-md">
+                <select id="assetSearch" class="bg-transparent text-yellow-500 font-black text-xs min-w-[200px] outline-none uppercase cursor-pointer"></select>
+                <button id="loadBtn" class="btn-gold px-8 py-2 rounded-xl text-[10px] font-black">Laden</button>
             </div>
         </header>
 
-        <div id="tcPanel" class="hidden mb-12 space-y-6">
-            <div class="bg-yellow-600/10 p-4 rounded-xl border border-yellow-600/20 flex justify-between items-center">
-                <h2 class="text-yellow-500 font-black uppercase tracking-tighter text-lg italic">TC Monitoring Bureau</h2>
-                <select id="tcPeriodFilter" class="bg-black text-white p-2 rounded border border-white/10 text-xs" onchange="refreshTCMonitor()">
+        <div id="tcPanel" class="hidden mb-12 space-y-6 animate-fade-in">
+            <div class="bg-gradient-to-r from-yellow-600/20 to-transparent p-6 rounded-2xl border-l-4 border-yellow-600 flex justify-between items-center backdrop-blur-xl">
+                <div>
+                    <h2 class="text-yellow-500 font-black uppercase tracking-tighter text-xl italic">TC Monitoring Bureau</h2>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Real-time voortgang & kwaliteit</p>
+                </div>
+                <select id="tcPeriodFilter" class="bg-black text-white p-3 rounded-xl border border-yellow-600/30 text-[10px] font-black uppercase outline-none" onchange="refreshTCMonitor()">
                     <option value="1e seizoenshelft">1e seizoenshelft</option>
                     <option value="2e seizoenshelft">2e seizoenshelft</option>
                     <option value="Eindbeoordeling">Eindbeoordeling</option>
@@ -66,84 +173,94 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="section-card">
                     <h3>Voortgang per Team</h3>
-                    <div id="tcTeamList" class="space-y-6 max-h-[500px] overflow-y-auto pr-2"></div>
+                    <div id="tcTeamList" class="space-y-6 max-h-[500px] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-yellow-600"></div>
                 </div>
                 <div class="section-card">
-                    <h3>Openstaande Dossiers (Rode Vlaggen)</h3>
-                    <div id="tcMissingPlayers" class="max-h-[500px] overflow-y-auto space-y-4"></div>
+                    <h3>Openstaande Dossiers</h3>
+                    <div id="tcMissingPlayers" class="max-h-[500px] overflow-y-auto space-y-4 pr-4"></div>
                 </div>
             </div>
         </div>
 
         <form id="proForm" class="space-y-6">
             <div class="section-card">
-                <div class="flex flex-col md:flex-row gap-10 items-center">
+                <div class="flex flex-col md:flex-row gap-12 items-center">
                     <div class="preview-photo-container">
                         <img id="pPreviewImg" class="preview-photo" src="https://via.placeholder.com/150/0a0a0a/D4AF37?text=PLAYER" alt="Profielfoto">
                     </div>
                     
-                    <div class="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
-                        <div class="md:col-span-2"><label>Naam Speler</label><input type="text" id="pName" class="input-luxe font-black uppercase" required></div>
+                    <div class="flex-1 grid grid-cols-1 md:grid-cols-4 gap-6 w-full">
+                        <div class="md:col-span-2">
+                            <label>Naam Speler</label>
+                            <input type="text" id="pName" class="input-luxe font-black uppercase placeholder-yellow-900" placeholder="Naam invoeren..." required>
+                        </div>
                         <div><label>E-mail (notificatie)</label><input type="email" id="pEmail" class="input-luxe" placeholder="ouder@email.com"></div>
                         <div><label>Foto URL</label><input type="text" id="pPhotoUrl" class="input-luxe" oninput="document.getElementById('pPreviewImg').src=this.value" placeholder="https://..."></div>
-                        <div><label>Team</label><select id="pTeam" class="input-luxe"></select></div>
+                        <div><label>Team</label><select id="pTeam" class="input-luxe font-bold"></select></div>
                         <div><label>Positie</label>
-                            <select id="pPos" class="input-luxe">
+                            <select id="pPos" class="input-luxe font-bold">
                                 <option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option>
                             </select>
                         </div>
                         <div><label>Periode</label>
-                            <select id="pPeriod" class="input-luxe" onchange="checkLockStatus()">
+                            <select id="pPeriod" class="input-luxe font-black text-white bg-yellow-900/20" onchange="checkLockStatus()">
                                 <option value="1e seizoenshelft">1e seizoenshelft</option>
                                 <option value="2e seizoenshelft">2e seizoenshelft</option>
                                 <option value="Eindbeoordeling">Eindbeoordeling</option>
                             </select>
                         </div>
-                        <div><label>Speler ID</label><input type="text" id="pId" class="input-luxe" placeholder="p_01"></div>
+                        <div><label>Speler ID</label><input type="text" id="pId" class="input-luxe text-gray-500" placeholder="p_01"></div>
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 section-card">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3>2. Beoordeling & Feedback</h3>
-                        <button type="button" onclick="generateAIFeedback()" class="text-[9px] bg-yellow-500/10 text-yellow-500 px-4 py-2 rounded-full border border-yellow-500/20 font-black uppercase hover:bg-yellow-500/20 transition">✨ AI Feedback</button>
+                <div class="lg:col-span-2 section-card border-l-4 border-yellow-600">
+                    <div class="flex justify-between items-center mb-8">
+                        <div>
+                            <h3>2. Beoordeling & Feedback</h3>
+                            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-[-15px]">Score van 1 tot 5 (Elite)</p>
+                        </div>
+                        <button type="button" onclick="generateAIFeedback()" class="bg-yellow-500/10 text-yellow-500 px-6 py-2 rounded-full border border-yellow-500/20 font-black uppercase text-[10px] hover:bg-yellow-500 hover:text-black transition duration-500">✨ AI Feedback</button>
                     </div>
-                    <div id="skillContainer" class="space-y-4"></div>
+                    <div id="skillContainer" class="space-y-6"></div>
                 </div>
-                <div class="section-card flex flex-col items-center justify-center">
-                    <canvas id="liveRadar"></canvas>
+                
+                <div class="section-card flex flex-col items-center justify-center bg-black/40">
+                    <h3 class="w-full text-center">Performance Radar</h3>
+                    <div class="p-4 w-full h-full flex items-center justify-center">
+                        <canvas id="liveRadar"></canvas>
+                    </div>
                 </div>
             </div>
 
             <div class="section-card">
                 <h3>3. Persoonlijke Ontwikkeldoelen (POP)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="space-y-3 bg-white/5 p-4 rounded-xl border border-white/5">
-                        <label class="text-yellow-500 font-bold">Doel 1</label>
-                        <input type="text" id="g1" placeholder="Wat?" class="input-luxe">
-                        <textarea id="a1" placeholder="Actie / Training" class="input-luxe h-16 text-xs"></textarea>
-                        <input type="text" id="t1" placeholder="Tijdspad" class="input-luxe text-xs">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="space-y-4 bg-black/30 p-6 rounded-2xl border border-white/5 hover:border-yellow-600/30 transition">
+                        <label class="text-yellow-500 font-black tracking-widest">🎯 Doel 1</label>
+                        <input type="text" id="g1" placeholder="Wat is het hoofddoel?" class="input-luxe">
+                        <textarea id="a1" placeholder="Concrete actie of training..." class="input-luxe h-20 text-xs"></textarea>
+                        <input type="text" id="t1" placeholder="Tijdspad (bijv. 3 maanden)" class="input-luxe text-xs">
                     </div>
-                    <div class="space-y-3 bg-white/5 p-4 rounded-xl border border-white/5">
-                        <label class="text-yellow-500 font-bold">Doel 2</label>
-                        <input type="text" id="g2" placeholder="Wat?" class="input-luxe">
-                        <textarea id="a2" placeholder="Actie / Training" class="input-luxe h-16 text-xs"></textarea>
-                        <input type="text" id="t2" placeholder="Tijdspad" class="input-luxe text-xs">
+                    <div class="space-y-4 bg-black/30 p-6 rounded-2xl border border-white/5 hover:border-yellow-600/30 transition">
+                        <label class="text-yellow-500 font-black tracking-widest">🎯 Doel 2</label>
+                        <input type="text" id="g2" placeholder="Wat is het nevendoel?" class="input-luxe">
+                        <textarea id="a2" placeholder="Concrete actie of training..." class="input-luxe h-20 text-xs"></textarea>
+                        <input type="text" id="t2" placeholder="Tijdspad (bijv. 3 maanden)" class="input-luxe text-xs">
                     </div>
-                    <div class="space-y-3 bg-white/5 p-4 rounded-xl border border-white/5">
-                        <label class="text-yellow-500 font-bold">Analyse</label>
-                        <textarea id="pStrengths" placeholder="Sterke punten" class="input-luxe h-12 text-xs mb-2"></textarea>
-                        <textarea id="pGrowth" placeholder="Ontwikkelpunten" class="input-luxe h-12 text-xs"></textarea>
+                    <div class="space-y-4 bg-black/30 p-6 rounded-2xl border border-white/5 hover:border-yellow-600/30 transition">
+                        <label class="text-yellow-500 font-black tracking-widest">📊 Analyse</label>
+                        <textarea id="pStrengths" placeholder="Wat zijn de absolute sterke punten?" class="input-luxe h-20 text-xs mb-2"></textarea>
+                        <textarea id="pGrowth" placeholder="Wat zijn de kritieke ontwikkelpunten?" class="input-luxe h-20 text-xs"></textarea>
                     </div>
                 </div>
             </div>
 
-            <div class="save-bar flex flex-col md:flex-row gap-4 items-center justify-center no-print">
-                <input type="password" id="ghToken" placeholder="GitHub Personal Access Token" class="input-luxe md:w-80 text-center">
-                <button type="submit" id="saveBtn" class="bg-yellow-600 text-black font-black px-12 py-4 rounded-xl uppercase text-xs tracking-widest hover:bg-yellow-400 transition shadow-2xl">Sync, Lock & Mail Notificatie</button>
-                <button type="button" onclick="window.print()" class="bg-white/10 text-white px-8 py-4 rounded-xl uppercase text-xs font-black border border-white/20">Print Rapport</button>
+            <div class="save-bar flex flex-col md:flex-row gap-6 items-center justify-center no-print">
+                <input type="password" id="ghToken" placeholder="GitHub Personal Access Token" class="input-luxe md:w-96 text-center border-yellow-600/40">
+                <button type="submit" id="saveBtn" class="btn-gold px-16 py-4 rounded-2xl text-[11px] tracking-[0.2em]">Sync, Lock & Mail Notificatie</button>
+                <button type="button" onclick="window.print()" class="bg-white/5 text-white px-10 py-4 rounded-2xl uppercase text-[11px] font-black border border-white/10 hover:bg-white/10 transition">PDF Rapport</button>
             </div>
         </form>
     </div>
@@ -174,16 +291,16 @@
             const container = document.getElementById('skillContainer');
             Object.keys(skillMap).forEach(cat => {
                 const h = document.createElement('h4');
-                h.className = "text-[9px] text-gray-500 uppercase font-black mt-6 mb-3 tracking-widest";
+                h.className = "text-[10px] text-gray-400 uppercase font-black mt-8 mb-4 tracking-widest border-b border-white/5 pb-2";
                 h.innerText = cat;
                 container.appendChild(h);
                 skillMap[cat].forEach(key => {
                     const row = document.createElement('div');
-                    row.className = "grid grid-cols-1 md:grid-cols-12 gap-4 items-center border-b border-white/5 pb-3";
+                    row.className = "grid grid-cols-1 md:grid-cols-12 gap-6 items-center border-b border-white/5 pb-4 mb-4 hover:bg-white/5 transition px-2 rounded-lg";
                     row.innerHTML = `
-                        <div class="md:col-span-3 flex justify-between"><label class="mb-0 text-white">${labels[key]}</label><span id="v_${key}" class="text-yellow-500 font-black">3</span></div>
+                        <div class="md:col-span-3 flex justify-between items-center"><label class="mb-0 text-white font-bold">${labels[key]}</label><span id="v_${key}" class="text-yellow-500 font-black text-lg">3</span></div>
                         <div class="md:col-span-4"><input type="range" id="s_${key}" min="1" max="5" value="3" class="slider-gold" oninput="v_${key}.innerText=this.value; updateRadar();"></div>
-                        <div class="md:col-span-5"><input type="text" id="o_${key}" placeholder="Opmerking..." class="input-luxe py-1 text-[11px]"></div>
+                        <div class="md:col-span-5"><input type="text" id="o_${key}" placeholder="Geef toelichting voor de speler..." class="input-luxe py-2 text-[11px] italic"></div>
                     `;
                     container.appendChild(row);
                 });
@@ -218,10 +335,10 @@
                 const missing = teamPlayers.filter(p => !p.history || !p.history[period]);
 
                 teamContainer.innerHTML += `
-                    <div class="team-row p-4 rounded-xl">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="font-black text-white text-xs uppercase italic">${team}</span>
-                            <span class="text-yellow-500 font-bold text-xs">${perc}%</span>
+                    <div class="team-row p-5 rounded-2xl mb-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="font-black text-white text-xs uppercase italic tracking-widest">${team}</span>
+                            <span class="text-yellow-500 font-black text-xs">${perc}%</span>
                         </div>
                         <div class="progress-track"><div class="progress-fill" style="width: ${perc}%"></div></div>
                     </div>
@@ -229,9 +346,9 @@
 
                 if(missing.length > 0) {
                     missingContainer.innerHTML += `
-                        <div class="p-4 border-l-4 border-red-500 bg-red-500/5 rounded-r-xl mb-4">
-                            <div class="text-[10px] text-gray-400 uppercase font-black mb-2 tracking-tighter">${team} - Onvoltooid:</div>
-                            <div class="flex flex-wrap">${missing.map(m => `<span class="player-badge">${m.bio.name}</span>`).join('')}</div>
+                        <div class="p-5 border-l-4 border-red-600 bg-red-600/5 rounded-r-2xl mb-6 shadow-xl">
+                            <div class="text-[10px] text-gray-500 uppercase font-black mb-3 tracking-widest">${team} - Onvoltooid:</div>
+                            <div class="flex flex-wrap gap-2">${missing.map(m => `<span class="player-badge">${m.bio.name}</span>`).join('')}</div>
                         </div>
                     `;
                 }
@@ -243,7 +360,10 @@
             const period = document.getElementById('pPeriod').value;
             const isLocked = (currentUser.role !== 'admin' && currentPlayer.history && currentPlayer.history[period]);
             document.querySelectorAll('input, select, textarea').forEach(el => {
-                if(!['assetSearch', 'ghToken', 'loadBtn', 'pPeriod', 'pTeam'].includes(el.id)) el.disabled = isLocked;
+                if(!['assetSearch', 'ghToken', 'loadBtn', 'pPeriod', 'pTeam'].includes(el.id)) {
+                    el.disabled = isLocked;
+                    el.style.opacity = isLocked ? "0.4" : "1";
+                }
             });
         };
 
@@ -251,7 +371,9 @@
             Object.keys(labels).forEach(k => {
                 const v = parseInt(document.getElementById('s_'+k).value);
                 const field = document.getElementById('o_'+k);
-                field.value = v >= 4 ? "Elite niveau. Zeer stabiel." : (v <= 2 ? "Aandachtspunt voor training." : "Voldoende basis, werk aan details.");
+                if (v >= 4) field.value = "Elite niveau getoond. Behoud deze standaard en intensiteit.";
+                else if (v <= 2) field.value = "Dit is een kritiek aandachtspunt. Focus vereist tijdens groepstrainingen.";
+                else field.value = "Voldoende basis, werk aan de fijne details voor de volgende stap.";
             });
         };
 
@@ -275,11 +397,19 @@
                     labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'],
                     datasets: [{
                         data: [3, 3, 3, 3],
-                        backgroundColor: 'rgba(212, 175, 55, 0.2)', borderColor: '#D4AF37', borderWidth: 2, pointRadius: 0
+                        backgroundColor: 'rgba(212, 175, 55, 0.2)', borderColor: '#D4AF37', borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#D4AF37'
                     }]
                 },
                 options: {
-                    scales: { r: { min: 0, max: 5, grid: { color: 'rgba(255,255,255,0.05)' }, pointLabels: { color: '#888' }, ticks: { display: false } } },
+                    scales: { 
+                        r: { 
+                            min: 0, max: 5, 
+                            grid: { color: 'rgba(255,255,255,0.05)' }, 
+                            angleLines: { color: 'rgba(255,255,255,0.1)' },
+                            pointLabels: { color: '#888', font: { size: 11, weight: 'bold' } }, 
+                            ticks: { display: false } 
+                        } 
+                    },
                     plugins: { legend: { display: false } }
                 }
             });
