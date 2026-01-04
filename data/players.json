@@ -79,75 +79,57 @@
     "id": "p_1767438205214",
     "bio": {
       "name": "KENAI VADER",
-      "photo": "https://www.shutterstock.com/image-photo/girona-spain-10th-dec-2024-600nw-2561740585.jpg",
-      "team": "JO14",
+      "number": "5",
+      "team": "JO14-1",
       "role": "Aanvaller",
-      "date": "2026-01-03",
-      "period": "Eindbeoordeling"
+      "photo": "https://www.shutterstock.com/image-photo/girona-spain-10th-dec-2024-600nw-2561740585.jpg",
+      "email": "d.vader@hetnet.nl"
     },
     "ratings": {
-      "bal": "4",
-      "pas": "5",
-      "aan": "5",
-      "drib": "5",
-      "schot": "5",
-      "posi": "4",
-      "vrij": "5",
-      "sam": "5",
-      "oms": "5",
-      "sne": "5",
-      "uit": "4",
-      "kra": "4",
-      "wen": "5",
-      "inz": "5",
-      "mot": "4",
-      "coa": "5",
-      "tea": "5"
+      "bal": 9,
+      "pas": 9,
+      "aan": 5,
+      "drib": 5,
+      "schot": 5,
+      "posi": 4,
+      "vrij": 5,
+      "sam": 5,
+      "oms": 5,
+      "sne": 5,
+      "uit": 4,
+      "kra": 4,
+      "wen": 8,
+      "inz": 8,
+      "mot": 7,
+      "coa": 8,
+      "tea": 8
     },
-    "stats": {
-      "Techniek": 96,
-      "Tactiek": 95,
-      "Fysiek": 90,
-      "Mentaal": 95
+    "comments": {
+      "bal": "",
+      "pas": "",
+      "aan": "",
+      "drib": "",
+      "schot": "",
+      "posi": "",
+      "vrij": "",
+      "sam": "",
+      "oms": "",
+      "sne": "",
+      "uit": "",
+      "kra": "",
+      "wen": "",
+      "inz": "",
+      "mot": "",
+      "coa": "",
+      "tea": ""
     },
-    "obj": {
-      "attendance": 100,
-      "minutes": 1000
+    "pop": {
+      "goal": "",
+      "action": "",
+      "strengths": "",
+      "growth": ""
     },
-    "history": {
-      "1e seizoenshelft": {
-        "date": "2025-09-01",
-        "stats": {
-          "Techniek": 90,
-          "Tactiek": 90,
-          "Fysiek": 85,
-          "Mentaal": 90
-        },
-        "ratings": {
-          "bal": "4",
-          "pas": "4",
-          "aan": "4",
-          "drib": "4",
-          "schot": "4",
-          "posi": "4",
-          "vrij": "4",
-          "sam": "4",
-          "oms": "4",
-          "sne": "4",
-          "uit": "4",
-          "kra": "4",
-          "wen": "4",
-          "inz": "4",
-          "mot": "4",
-          "coa": "4",
-          "tea": "4"
-        },
-        "obj": {
-          "attendance": 100,
-          "minutes": 500
-        }
-      }
-    }
+    "lastUpdated": "2026-01-04T22:27:57.625Z"
   },
   {
     "id": "f_001",
