@@ -11,158 +11,143 @@
         
         body { 
             background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif;
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
-            background-attachment: fixed;
-            padding-bottom: 60px;
+            background-image: radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.1) 0%, transparent 60%);
+            background-attachment: fixed; padding-bottom: 60px;
         }
 
+        /* PREMIUM GLASS CARDS */
         .section-card { 
-            background: rgba(10, 10, 10, 0.6); 
-            border: 1px solid var(--glass-border); 
-            padding: 30px; 
-            border-radius: 1.5rem; 
-            margin-bottom: 2rem; 
-            backdrop-filter: blur(25px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            position: relative;
+            background: rgba(10, 10, 10, 0.7); border: 1px solid var(--glass-border); 
+            padding: 30px; border-radius: 1.5rem; margin-bottom: 2rem; 
+            backdrop-filter: blur(25px); box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            position: relative; overflow: hidden;
         }
-        
-        /* Decoratieve lijn onder h3 */
-        .section-card::after {
-            content: ''; position: absolute; top: 65px; left: 30px; right: 30px;
-            height: 1px; background: linear-gradient(90deg, var(--gold), transparent);
-            opacity: 0.2;
+        .section-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0.5;
         }
 
         .input-luxe { 
-            background: rgba(0,0,0,0.6); 
-            border: 1px solid rgba(212, 175, 55, 0.3); 
-            color: var(--gold-light); 
-            padding: 12px 16px; 
-            border-radius: 10px; 
-            width: 100%; 
-            font-size: 13px; 
-            outline: none; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255, 255, 255, 0.1); 
+            color: var(--gold-light); padding: 12px 16px; border-radius: 10px; 
+            width: 100%; font-size: 13px; outline: none; transition: 0.3s;
         }
-        .input-luxe:focus { border-color: #fff; background: rgba(0,0,0,0.8); box-shadow: 0 0 10px rgba(255,255,255,0.1); }
+        .input-luxe:focus { border-color: var(--gold); background: rgba(0,0,0,0.8); }
+        .input-error { border-color: var(--red) !important; background: rgba(239, 68, 68, 0.1) !important; }
 
-        label { color: #aaa; font-size: 10px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 6px; display: block; }
+        label { color: #888; font-size: 10px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 6px; display: block; }
+        h3 { font-size: 13px; color: var(--gold); text-transform: uppercase; border-left: 3px solid var(--gold); padding-left: 15px; margin-bottom: 30px; font-weight: 900; letter-spacing: 2px; }
 
-        h3 { 
-            font-size: 13px; color: var(--gold); text-transform: uppercase; 
-            border-left: 4px solid var(--gold); padding-left: 15px; 
-            margin-bottom: 40px; font-weight: 900; letter-spacing: 3px;
-        }
-
-        /* SPELERSKAART MET DUBBELE LIJN EN GLOW */
+        /* SPELERSKAART GLOW */
         .player-card-container {
-            position: relative;
-            width: 270px;
-            height: 390px;
-            border-radius: 2rem;
-            overflow: hidden;
-            border: 2.5px solid var(--gold); /* Gouden hoofdlijn */
-            box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.3), 0 25px 60px rgba(0,0,0,0.9); /* Witte subtiele buitenlijn */
-            background: #000;
+            position: relative; width: 280px; height: 400px; border-radius: 2rem;
+            overflow: hidden; border: 2px solid var(--gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2), 0 30px 60px rgba(0,0,0,0.9);
+            background: #000; transition: transform 0.3s;
         }
+        .player-card-container:hover { transform: translateY(-5px); }
         .player-card-photo { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
         .player-card-overlay {
             position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px 20px;
             background: linear-gradient(to top, rgba(0,0,0,1) 15%, transparent 100%);
-            z-index: 20;
         }
         .player-card-number {
-            position: absolute; top: 25px; right: 25px;
-            font-size: 48px; font-weight: 900; color: #fff;
-            text-shadow: 0 0 15px var(--gold), 0 0 30px rgba(0,0,0,1);
-            z-index: 10;
+            position: absolute; top: 20px; right: 25px;
+            font-size: 52px; font-weight: 900; color: #fff;
+            text-shadow: 0 0 15px var(--gold); z-index: 10;
         }
-        .player-card-name { font-size: 30px; font-weight: 900; font-style: italic; text-transform: uppercase; color: #fff; line-height: 0.85; }
-        .player-card-info { font-size: 10px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-top: 8px; }
-
-        .radar-box { width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; }
-        #liveRadar { max-width: 260px !important; max-height: 260px !important; }
-
-        .slider-gold { accent-color: var(--gold); cursor: pointer; width: 100%; height: 6px; }
-        .score-display { background: var(--gold); color: black; font-weight: 900; padding: 2px 10px; border-radius: 6px; min-width: 40px; text-align: center; font-size: 14px; }
-
-        /* HEADER SYNC MODULE */
-        .header-sync-bar { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 15px; padding: 8px 15px; }
+        .player-card-name { font-size: 32px; font-weight: 900; font-style: italic; text-transform: uppercase; color: #fff; line-height: 0.85; }
+        .player-card-info { font-size: 11px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-top: 8px; }
 
         .btn-gold { 
-            background: linear-gradient(135deg, #D4AF37, #b8860b); 
-            color: black; font-weight: 900; text-transform: uppercase; 
-            transition: all 0.3s; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4); 
-            border-radius: 8px; font-size: 10px; padding: 10px 20px;
+            background: linear-gradient(135deg, #D4AF37, #b8860b); color: black; 
+            font-weight: 900; text-transform: uppercase; padding: 10px 24px; 
+            border-radius: 10px; font-size: 11px; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+            transition: 0.3s; cursor: pointer; border: none;
         }
         .btn-gold:hover { transform: scale(1.05); filter: brightness(1.2); }
+        .btn-gold:disabled { filter: grayscale(1); cursor: not-allowed; }
+
+        .radar-box { width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; }
+        .score-display { background: var(--gold); color: black; font-weight: 900; padding: 2px 8px; border-radius: 6px; min-width: 35px; text-align: center; }
+        .slider-gold { accent-color: var(--gold); width: 100%; cursor: pointer; }
         
         .no-print { display: flex; }
     </style>
 </head>
-<body class="p-6">
+<body class="p-4 md:p-8">
     <div class="max-w-7xl mx-auto">
-        <header class="flex flex-col lg:flex-row justify-between items-center mb-12 border-b border-white/10 pb-8 gap-6 no-print">
-            <div class="flex items-center gap-8">
+        <header class="flex flex-col xl:flex-row justify-between items-center mb-10 border-b border-white/10 pb-8 gap-6 no-print">
+            <div class="flex items-center gap-6">
                 <h1 class="text-4xl font-black italic text-white uppercase tracking-tighter leading-none">ELITE<span class="text-yellow-500">TERMINAL</span></h1>
                 <nav class="flex gap-3">
-                    <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-5 py-2 rounded-xl text-[9px] font-black uppercase transition border border-white/10">Dashboard</a>
-                    <button onclick="toggleTCPanel()" class="bg-yellow-600/10 hover:bg-yellow-600/20 text-yellow-500 px-5 py-2 rounded-xl text-[9px] font-black uppercase transition border border-yellow-600/20">📊 TC Monitor</button>
+                    <button type="button" onclick="resetForm()" class="bg-white/5 hover:bg-white/10 text-white px-5 py-2 rounded-xl text-[10px] font-black uppercase border border-white/10 transition">
+                        + Nieuw Dossier
+                    </button>
+                    <button type="button" onclick="document.getElementById('tcPanel').classList.toggle('hidden')" class="bg-yellow-600/10 hover:bg-yellow-600/20 text-yellow-500 px-5 py-2 rounded-xl text-[10px] font-black uppercase border border-yellow-600/20 transition">
+                        📊 TC Monitor
+                    </button>
                 </nav>
             </div>
 
             <div class="flex flex-col md:flex-row items-center gap-4">
-                <div class="header-sync-bar flex items-center gap-3">
-                    <input type="password" id="ghToken" placeholder="GitHub Token" class="bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-[10px] text-white outline-none w-36 focus:border-yellow-500">
-                    <button type="button" onclick="document.getElementById('realSubmitBtn').click()" class="btn-gold">Update Cloud</button>
+                <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-2">
+                    <input type="password" id="ghToken" placeholder="GitHub Token" class="bg-transparent text-white text-[11px] px-2 outline-none w-28">
+                    <button type="button" onclick="triggerSubmit()" id="headerSaveBtn" class="btn-gold">SYNC</button>
                 </div>
-                <div class="flex items-center gap-2 bg-black/60 p-2 rounded-2xl border border-white/10">
-                    <select id="assetSearch" class="bg-transparent text-yellow-500 font-black text-[11px] min-w-[180px] outline-none uppercase cursor-pointer"></select>
-                    <button id="loadBtn" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase">Laden</button>
+                <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-2">
+                    <select id="assetSearch" class="bg-transparent text-yellow-500 font-black text-[11px] min-w-[150px] outline-none uppercase cursor-pointer"></select>
+                    <button id="loadBtn" class="text-white text-[10px] font-bold px-3 hover:text-yellow-500 uppercase">Laden</button>
                 </div>
             </div>
         </header>
 
-        <form id="proForm" class="space-y-6">
-            <button type="submit" id="realSubmitBtn" class="hidden"></button>
+        <div id="tcPanel" class="hidden mb-12 p-6 bg-black/40 border border-yellow-600/30 rounded-2xl animate-fade-in">
+            <h3 class="text-yellow-500 mb-4">TC Monitoring</h3>
+            <div id="tcTeamList" class="grid grid-cols-2 md:grid-cols-4 gap-4 max-h-[300px] overflow-y-auto"></div>
+        </div>
+
+        <form id="proForm" class="space-y-8">
+            <button type="submit" id="realSubmit" class="hidden"></button>
 
             <div class="section-card grid grid-cols-1 lg:grid-cols-12 gap-12">
-                <div class="lg:col-span-4 flex justify-center items-center">
+                <div class="lg:col-span-4 flex justify-center">
                     <div class="player-card-container">
                         <div id="dispNumber" class="player-card-number">--</div>
                         <img id="pPreviewImg" class="player-card-photo" src="https://via.placeholder.com/400x600/000000/FFFFFF?text=FOTO" alt="Preview">
                         <div class="player-card-overlay">
-                            <div id="dispName" class="player-card-name">NAAM SPELER</div>
+                            <div id="dispName" class="player-card-name">NAAM</div>
                             <div id="dispTeam" class="player-card-info">TEAM • POSITIE</div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8 content-center">
-                    <div><label>Volledige Naam</label><input type="text" id="pName" class="input-luxe font-black uppercase" oninput="document.getElementById('dispName').innerText=this.value"></div>
-                    <div><label>Rugnummer</label><input type="number" id="pNumber" class="input-luxe font-black" oninput="document.getElementById('dispNumber').innerText=this.value"></div>
-                    <div><label>Team</label><select id="pTeam" class="input-luxe font-bold" onchange="updateCardInfo()"></select></div>
-                    <div><label>Positie</label>
-                        <select id="pPos" class="input-luxe font-bold" onchange="updateCardInfo()">
-                            <option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option>
-                        </select>
+                <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8 content-start">
+                    <div class="space-y-5">
+                        <div><label>Volledige Naam</label><input type="text" id="pName" class="input-luxe font-black uppercase" required oninput="document.getElementById('dispName').innerText=this.value || 'NAAM'"></div>
+                        <div>
+                            <label>Rugnummer</label>
+                            <input type="number" id="pNumber" class="input-luxe font-black" oninput="checkDuplicate(this.value); document.getElementById('dispNumber').innerText=this.value || '--'">
+                            <p id="dupWarning" class="text-red-500 text-[9px] mt-1 hidden font-bold">⚠️ NUMMER BEZET IN DIT TEAM</p>
+                        </div>
+                        <div><label>Team</label><select id="pTeam" class="input-luxe font-bold" onchange="updateCardInfo(); checkDuplicate(document.getElementById('pNumber').value)"></select></div>
                     </div>
-                    <div><label>Foto URL (400x600)</label><input type="text" id="pPhotoUrl" class="input-luxe" oninput="document.getElementById('pPreviewImg').src=this.value"></div>
-                    <div><label>Beoordelingsperiode</label>
-                        <select id="pPeriod" class="input-luxe font-black">
-                            <option value="1e seizoenshelft">1e seizoenshelft</option>
-                            <option value="2e seizoenshelft">2e seizoenshelft</option>
-                            <option value="Eindbeoordeling">Eindbeoordeling</option>
-                        </select>
+                    <div class="space-y-5">
+                        <div><label>Positie</label>
+                            <select id="pPos" class="input-luxe font-bold" onchange="updateCardInfo()">
+                                <option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option>
+                            </select>
+                        </div>
+                        <div><label>Foto URL</label><input type="text" id="pPhotoUrl" class="input-luxe" oninput="document.getElementById('pPreviewImg').src=this.value"></div>
+                        <div><label>Periode</label>
+                            <select id="pPeriod" class="input-luxe font-bold text-white">
+                                <option>1e seizoenshelft</option><option>2e seizoenshelft</option><option>Eindbeoordeling</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="md:col-span-2 border-t border-white/5 pt-4">
-                         <div class="grid grid-cols-2 gap-8">
-                             <div><label>E-mail (notificatie)</label><input type="email" id="pEmail" class="input-luxe" placeholder="ouder@email.com"></div>
-                             <div><label>Systeem ID</label><input type="text" id="pId" class="input-luxe text-gray-500" placeholder="f_001"></div>
-                         </div>
+                    <div class="md:col-span-2 grid grid-cols-2 gap-8 pt-4 border-t border-white/5">
+                        <div><label>E-mail Ouders</label><input type="email" id="pEmail" class="input-luxe"></div>
+                        <div><label>Speler ID (Auto)</label><input type="text" id="pId" class="input-luxe text-gray-500 cursor-not-allowed" placeholder="Wordt gegenereerd..." readonly></div>
                     </div>
                 </div>
             </div>
@@ -170,43 +155,33 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 section-card border-l-4 border-yellow-600">
                     <div class="flex justify-between items-center mb-8">
-                        <h3>2. Technische & Tactische Analyse (1-10)</h3>
-                        <button type="button" onclick="generateAIFeedback()" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg text-[9px] font-black uppercase transition border border-white/10">✨ AI Suggesties</button>
+                        <h3>2. Technische & Tactische Analyse</h3>
+                        <button type="button" onclick="fillAI()" class="bg-white/5 text-white px-4 py-2 rounded-lg text-[9px] font-bold uppercase hover:bg-white/10">✨ AI Suggesties</button>
                     </div>
-                    <div id="skillContainer" class="space-y-6"></div>
+                    <div id="skillContainer" class="space-y-4"></div>
                 </div>
                 
                 <div class="section-card bg-black/40 flex flex-col items-center">
-                    <h3 class="w-full text-center">Data Radar</h3>
+                    <h3 class="w-full text-center">Skill Radar</h3>
                     <div class="radar-box"><canvas id="liveRadar"></canvas></div>
-                    <div class="mt-12 p-5 bg-black/60 rounded-2xl border border-white/5 w-full text-center">
-                        <p class="text-[9px] text-gray-500 font-black uppercase tracking-widest">Totaal Score</p>
-                        <div id="avgScoreDisp" class="text-4xl font-black text-white italic mt-2">0.0</div>
+                    <div class="mt-8 text-center">
+                        <span class="text-[10px] text-gray-500 font-bold uppercase block">Gemiddelde Score</span>
+                        <span id="avgScore" class="text-4xl font-black text-white italic">0.0</span>
                     </div>
                 </div>
             </div>
 
             <div class="section-card">
                 <h3>3. Ontwikkelplan (POP)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="space-y-4 bg-black/50 p-6 rounded-2xl border border-white/5">
-                        <label class="text-yellow-500">🎯 Ontwikkeldoel</label>
-                        <textarea id="g1" placeholder="Wat is de prioriteit?" class="input-luxe h-24 text-xs"></textarea>
-                    </div>
-                    <div class="space-y-4 bg-black/50 p-6 rounded-2xl border border-white/5">
-                        <label class="text-yellow-500">🎯 Actiepunten</label>
-                        <textarea id="a1" placeholder="Hoe gaan we dit trainen?" class="input-luxe h-24 text-xs"></textarea>
-                    </div>
-                    <div class="space-y-4 bg-black/50 p-6 rounded-2xl border border-white/5">
-                        <label class="text-yellow-500">📊 SWOT Analyse</label>
-                        <textarea id="pStrengths" placeholder="Sterke punten" class="input-luxe h-10 text-[10px] mb-2"></textarea>
-                        <textarea id="pGrowth" placeholder="Aandachtspunten" class="input-luxe h-10 text-[10px]"></textarea>
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-black/40 p-5 rounded-xl border border-white/5"><label class="text-yellow-500">Doelstelling</label><textarea id="g1" class="input-luxe h-24 text-xs" placeholder="Wat is het hoofddoel?"></textarea></div>
+                    <div class="bg-black/40 p-5 rounded-xl border border-white/5"><label class="text-yellow-500">Actieplan</label><textarea id="a1" class="input-luxe h-24 text-xs" placeholder="Hoe gaan we dit bereiken?"></textarea></div>
+                    <div class="bg-black/40 p-5 rounded-xl border border-white/5"><label class="text-yellow-500">Evaluatie</label><textarea id="pStrengths" class="input-luxe h-10 text-[10px] mb-2" placeholder="Sterke punten"></textarea><textarea id="pGrowth" class="input-luxe h-10 text-[10px]" placeholder="Verbeterpunten"></textarea></div>
                 </div>
             </div>
-            
-            <div class="flex justify-center gap-6 pb-12">
-                 <button type="button" onclick="window.print()" class="bg-white/5 hover:bg-white/10 text-white px-10 py-4 rounded-xl uppercase text-[10px] font-black border border-white/10 transition">PDF Rapportage</button>
+
+            <div class="flex justify-center pb-10">
+                 <button type="button" onclick="window.print()" class="bg-white/5 hover:bg-white/10 text-white px-10 py-3 rounded-xl uppercase text-[10px] font-black border border-white/10 transition">PDF Exporteren</button>
             </div>
         </form>
     </div>
@@ -214,14 +189,24 @@
     <script type="module">
         import DataProvider from './js/data_provider.js';
 
-        let radarChart, allPlayers = [], currentPlayer = null;
-        const skillMap = { 
-            'Techniek': ['bal', 'pas', 'aan', 'drib', 'schot'], 
-            'Tactiek': ['posi', 'vrij', 'sam', 'oms'], 
-            'Fysiek': ['sne', 'uit', 'kra', 'wen'], 
-            'Mentaal': ['inz', 'mot', 'coa', 'tea'] 
+        let radarChart, allPlayers = [];
+        const skillMap = { 'Techniek': ['bal','pas','aan','drib','schot'], 'Tactiek': ['posi','vrij','sam','oms'], 'Fysiek': ['sne','uit','kra','wen'], 'Mentaal': ['inz','mot','coa','tea'] };
+        const labels = { bal:'Balcontrole', pas:'Passen', aan:'Aanname', drib:'Dribbel', schot:'Schot', posi:'Positie', vrij:'Vrijlopen', sam:'Samenspel', oms:'Omschakeling', sne:'Snelheid', uit:'Conditie', kra:'Kracht', wen:'Wendbaar', inz:'Inzet', mot:'Motivatie', coa:'Coachbaar', tea:'Team' };
+        
+        // Laad token uit storage bij start
+        if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
+
+        window.triggerSubmit = () => document.getElementById('realSubmit').click();
+
+        window.resetForm = () => {
+            document.getElementById('proForm').reset();
+            document.getElementById('pId').value = "";
+            document.getElementById('dispName').innerText = "NAAM";
+            document.getElementById('dispNumber').innerText = "--";
+            document.getElementById('dispTeam').innerText = "TEAM • POSITIE";
+            document.getElementById('pPreviewImg').src = "https://via.placeholder.com/400x600/000000/FFFFFF?text=FOTO";
+            window.updateRadar();
         };
-        const labels = { bal: 'Balcontrole', pas: 'Passen', aan: 'Aanname', drib: 'Dribbel', schot: 'Schot', posi: 'Positie', vrij: 'Vrijlopen', sam: 'Samenspel', oms: 'Omschakeling', sne: 'Snelheid', uit: 'Conditie', kra: 'Kracht', wen: 'Wendbaar', inz: 'Inzet', mot: 'Motivatie', coa: 'Coachbaar', tea: 'Team' };
 
         window.updateCardInfo = () => {
             const team = document.getElementById('pTeam').value;
@@ -229,85 +214,125 @@
             document.getElementById('dispTeam').innerText = `${team} • ${pos}`;
         };
 
-        function generateSkillFields() {
-            const container = document.getElementById('skillContainer');
-            Object.keys(skillMap).forEach(cat => {
-                const h = document.createElement('h4');
-                h.className = "text-[9px] text-gray-500 uppercase font-black mt-10 mb-4 tracking-[2px] opacity-70";
-                h.innerText = cat;
-                container.appendChild(h);
-                skillMap[cat].forEach(key => {
-                    const row = document.createElement('div');
-                    row.className = "grid grid-cols-1 md:grid-cols-12 gap-6 items-center bg-black/30 p-4 rounded-xl border border-white/5 hover:border-yellow-600/20 transition";
-                    row.innerHTML = `
-                        <div class="md:col-span-3 flex justify-between items-center"><label class="mb-0 text-white font-bold">${labels[key]}</label><span id="v_${key}" class="score-display">5</span></div>
-                        <div class="md:col-span-4"><input type="range" id="s_${key}" min="1" max="10" value="5" class="slider-gold" oninput="v_${key}.innerText=this.value; updateRadar();"></div>
-                        <div class="md:col-span-5"><input type="text" id="o_${key}" placeholder="Observatie..." class="input-luxe py-2 text-[10px] border-none bg-transparent italic"></div>
-                    `;
-                    container.appendChild(row);
-                });
+        window.checkDuplicate = (num) => {
+            const team = document.getElementById('pTeam').value;
+            const id = document.getElementById('pId').value;
+            const isDup = allPlayers.some(p => p.bio.team === team && p.bio.number == num && p.id !== id);
+            const warn = document.getElementById('dupWarning');
+            const input = document.getElementById('pNumber');
+            if(isDup && num) { warn.classList.remove('hidden'); input.classList.add('input-error'); }
+            else { warn.classList.add('hidden'); input.classList.remove('input-error'); }
+        };
+
+        window.fillAI = () => {
+            Object.keys(labels).forEach(k => {
+                const val = parseInt(document.getElementById('s_'+k).value);
+                const field = document.getElementById('o_'+k);
+                if(val >= 8) field.value = "Elite niveau. Vasthouden.";
+                else if(val <= 5) field.value = "Prioriteit voor ontwikkeling.";
+                else field.value = "Stabiele basis, focus op details.";
             });
-        }
+        };
 
         window.updateRadar = () => {
-            const scores = [];
+            const values = [];
+            let total = 0; let count = 0;
             Object.values(skillMap).forEach(keys => {
-                const avg = keys.reduce((a, b) => a + parseInt(document.getElementById('s_'+b).value), 0) / keys.length;
-                scores.push(avg);
+                const avg = keys.reduce((a, b) => {
+                    const v = parseInt(document.getElementById('s_'+b).value || 5);
+                    total += v; count++;
+                    return a + v;
+                }, 0) / keys.length;
+                values.push(avg);
             });
-            radarChart.data.datasets[0].data = scores;
+            radarChart.data.datasets[0].data = values;
             radarChart.update();
-            
-            const totalAvg = scores.reduce((a,b) => a+b, 0) / scores.length;
-            document.getElementById('avgScoreDisp').innerText = totalAvg.toFixed(1);
-        }
+            document.getElementById('avgScore').innerText = (total / count).toFixed(1);
+        };
 
         async function init() {
-            generateSkillFields();
-            allPlayers = await DataProvider.getAllPlayers();
-            
-            const search = document.getElementById('assetSearch');
-            search.innerHTML = '<option value="">ZOEK SPELER...</option>' + allPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
-            
-            const teams = ["JO8-1","JO9-1","JO10-1","JO11-1","JO12-1","JO13-1","JO14-1","JO15-1","JO16-1","JO17-1","JO19-1","Senioren 1"];
-            document.getElementById('pTeam').innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
+            // UI Opbouw
+            const container = document.getElementById('skillContainer');
+            Object.keys(skillMap).forEach(cat => {
+                container.innerHTML += `<h4 class="text-[9px] text-gray-500 uppercase font-bold mt-6 mb-2 tracking-[2px]">${cat}</h4>`;
+                skillMap[cat].forEach(key => {
+                    container.innerHTML += `
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-black/30 p-3 rounded-lg border border-white/5 hover:border-yellow-600/30 transition">
+                            <div class="md:col-span-3 flex justify-between"><label class="text-white font-bold mb-0">${labels[key]}</label><span id="v_${key}" class="score-display text-xs">5</span></div>
+                            <div class="md:col-span-4"><input type="range" id="s_${key}" min="1" max="10" value="5" class="slider-gold" oninput="v_${key}.innerText=this.value; updateRadar();"></div>
+                            <div class="md:col-span-5"><input type="text" id="o_${key}" placeholder="Notitie..." class="input-luxe py-1 text-[10px] bg-transparent border-none italic"></div>
+                        </div>`;
+                });
+            });
 
+            // Teams vullen
+            const teams = [];
+            ["JO8","JO9","JO10","JO11","JO12","JO13","JO14","JO15","JO16","JO17","JO19","Senioren"].forEach(c => {
+                for(let i=1; i<=4; i++) teams.push(`${c}-${i}`);
+            });
+            document.getElementById('pTeam').innerHTML = teams.map(t => `<option>${t}</option>`).join('');
+
+            // Data ophalen
+            allPlayers = await DataProvider.getAllPlayers();
+            const search = document.getElementById('assetSearch');
+            search.innerHTML = '<option value="">ZOEK SPELER...</option>' + allPlayers.map(p => `<option value="${p.id}">${p.bio.name} (${p.bio.team})</option>`).join('');
+
+            // Chart
             const ctx = document.getElementById('liveRadar').getContext('2d');
             radarChart = new Chart(ctx, {
                 type: 'radar',
-                data: { labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'], datasets: [{ data: [5,5,5,5], backgroundColor: 'rgba(212, 175, 55, 0.2)', borderColor: '#D4AF37', borderWidth: 2, pointRadius: 4 }] },
-                options: { scales: { r: { min: 0, max: 10, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' }, angleLines: { color: 'rgba(255,255,255,0.1)' } } }, plugins: { legend: { display: false } } }
+                data: { labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'], datasets: [{ data: [5,5,5,5], backgroundColor: 'rgba(212, 175, 55, 0.25)', borderColor: '#D4AF37', borderWidth: 2, pointRadius: 3 }] },
+                options: { scales: { r: { min: 0, max: 10, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: false } } }
             });
 
+            // Load logic
             document.getElementById('loadBtn').onclick = (e) => {
                 e.preventDefault();
                 const p = allPlayers.find(x => x.id === search.value);
-                if (p) {
+                if(p) {
                     document.getElementById('pName').value = p.bio.name;
                     document.getElementById('pId').value = p.id;
-                    document.getElementById('pNumber').value = p.bio.number || "";
+                    document.getElementById('pNumber').value = p.bio.number;
+                    document.getElementById('pTeam').value = p.bio.team;
+                    document.getElementById('pPos').value = p.bio.role;
                     document.getElementById('pPhotoUrl').value = p.bio.photo;
                     document.getElementById('pPreviewImg').src = p.bio.photo;
-                    document.getElementById('pTeam').value = p.bio.team;
-                    document.getElementById('pPos').value = p.bio.role || "Middenvelder";
                     document.getElementById('dispName').innerText = p.bio.name;
-                    document.getElementById('dispNumber').innerText = p.bio.number || "--";
+                    document.getElementById('dispNumber').innerText = p.bio.number;
+                    document.getElementById('pEmail').value = p.bio.email || "";
+                    
                     updateCardInfo();
+                    
                     Object.keys(labels).forEach(k => {
-                        const val = p.ratings?.[k] || 5;
-                        document.getElementById('s_'+k).value = val;
-                        document.getElementById('v_'+k).innerText = val;
+                        document.getElementById('s_'+k).value = p.ratings?.[k] || 5;
+                        document.getElementById('v_'+k).innerText = p.ratings?.[k] || 5;
                         document.getElementById('o_'+k).value = p.comments?.[k] || "";
                     });
+                    
+                    if(p.pop) {
+                        document.getElementById('g1').value = p.pop.goal || "";
+                        document.getElementById('a1').value = p.pop.action || "";
+                        document.getElementById('pStrengths').value = p.pop.strengths || "";
+                        document.getElementById('pGrowth').value = p.pop.growth || "";
+                    }
                     updateRadar();
                 }
             };
 
+            // Save Logic
             document.getElementById('proForm').onsubmit = async (e) => {
                 e.preventDefault();
                 const token = document.getElementById('ghToken').value;
-                if(!token) return alert("GitHub Token ontbreekt in de header.");
+                if(!token) return alert("Voer eerst een GitHub Token in!");
                 
+                // Token opslaan voor volgende keer
+                localStorage.setItem('gh_token', token);
+                
+                const btn = document.getElementById('headerSaveBtn');
+                const originalText = btn.innerText;
+                btn.innerText = "BEZIG...";
+                btn.disabled = true;
+
                 const ratings = {}; const comments = {};
                 Object.keys(labels).forEach(k => {
                     ratings[k] = parseInt(document.getElementById('s_'+k).value);
@@ -316,14 +341,34 @@
 
                 const updatedData = {
                     id: document.getElementById('pId').value || "p_" + Date.now(),
-                    bio: { name: document.getElementById('pName').value, number: document.getElementById('pNumber').value, team: document.getElementById('pTeam').value, role: document.getElementById('pPos').value, photo: document.getElementById('pPhotoUrl').value },
-                    ratings, comments
+                    bio: {
+                        name: document.getElementById('pName').value,
+                        number: document.getElementById('pNumber').value,
+                        team: document.getElementById('pTeam').value,
+                        role: document.getElementById('pPos').value,
+                        photo: document.getElementById('pPhotoUrl').value,
+                        email: document.getElementById('pEmail').value
+                    },
+                    ratings, comments,
+                    pop: {
+                        goal: document.getElementById('g1').value,
+                        action: document.getElementById('a1').value,
+                        strengths: document.getElementById('pStrengths').value,
+                        growth: document.getElementById('pGrowth').value
+                    },
+                    lastUpdated: new Date().toISOString()
                 };
 
                 try {
                     await DataProvider.updatePlayer(updatedData, token);
-                    alert("Data succesvol gesynchroniseerd!");
-                } catch(err) { alert("Sync fout: " + err.message); }
+                    alert("✅ Gegevens succesvol opgeslagen in de Cloud!");
+                    window.location.reload();
+                } catch(err) {
+                    alert("❌ Fout: " + err.message);
+                } finally {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
             };
         }
         init();
