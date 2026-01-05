@@ -1,412 +1,469 @@
 <!DOCTYPE html>
-<html lang="nl" class="dark">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elite Pro | Performance Dashboard</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
-                    colors: {
-                        bg: '#09090b', // Zinc 950
-                        surface: '#18181b', // Zinc 900
-                        surfaceHighlight: '#27272a', // Zinc 800
-                        border: '#3f3f46', // Zinc 700
-                        gold: { DEFAULT: '#D4AF37', dim: '#b59326', light: '#faeab5' },
-                        accent: '#2563eb' // Professional Blue for non-gold actions
-                    }
-                }
-            }
-        }
-    </script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* BASE STYLES */
-        body { background-color: theme('colors.bg'); color: #e4e4e7; -webkit-font-smoothing: antialiased; }
-        
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: theme('colors.bg'); }
-        ::-webkit-scrollbar-thumb { background: theme('colors.surfaceHighlight'); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: theme('colors.border'); }
-
-        /* FORM ELEMENTS */
-        .input-pro {
-            background: theme('colors.surface');
-            border: 1px solid theme('colors.surfaceHighlight');
-            color: white;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 500;
-            padding: 0.6rem 0.8rem;
-            border-radius: 0.375rem;
-            width: 100%;
-            transition: all 0.2s ease;
+        :root { 
+            --bg-app: #09090b; 
+            --bg-panel: #18181b; 
+            --bg-input: #27272a;
+            --border: #3f3f46; 
+            --primary: #d4af37; 
+            --primary-dim: #a18322;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --danger: #ef4444;
+            --success: #10b981;
         }
-        .input-pro:focus { outline: none; border-color: theme('colors.gold.DEFAULT'); box-shadow: 0 0 0 1px theme('colors.gold.DEFAULT'); }
-        .input-pro:read-only { background: rgba(255,255,255,0.02); border-color: transparent; color: #a1a1aa; cursor: default; }
-        .input-pro:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        .label-pro { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: #71717a; margin-bottom: 0.25rem; display: block; }
-        
-        /* CARDS */
-        .card-pro {
-            background: theme('colors.surface');
-            border: 1px solid theme('colors.surfaceHighlight');
-            border-radius: 0.75rem;
-            padding: 1.5rem;
+        body { 
+            background-color: var(--bg-app); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            height: 100vh; 
+            overflow: hidden; /* App feel */
+            display: flex;
+        }
+
+        /* --- SIDEBAR --- */
+        aside {
+            width: 280px;
+            background-color: #0c0c0e;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            height: 100vh;
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: white;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .brand span { color: var(--primary); }
+
+        .sidebar-section { margin-bottom: 30px; }
+        .sidebar-label {
+            font-size: 10px; font-weight: 600; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+            background: var(--bg-app);
             position: relative;
         }
-        
-        /* PLAYER CARD VISUAL */
-        .id-card {
-            position: relative; width: 100%; aspect-ratio: 3/4;
-            border-radius: 1rem; overflow: hidden;
-            border: 1px solid theme('colors.surfaceHighlight');
-            background: #000;
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
-        }
-        .id-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: 0.5s; }
-        .id-card:hover img { opacity: 1; scale: 1.02; }
-        .id-overlay {
-            position: absolute; inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 50%, transparent 100%);
-            display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem;
-        }
-        
-        /* SLIDERS */
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%;
-            background: theme('colors.gold.DEFAULT'); cursor: pointer; margin-top: -5px;
-            box-shadow: 0 0 10px rgba(212,175,55,0.5);
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px; cursor: pointer;
-            background: theme('colors.surfaceHighlight'); border-radius: 2px;
+
+        .top-bar {
+            position: sticky; top: 0; z-index: 20;
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* PRINT STYLES (A4) */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+
+        /* --- PANELS & CARDS --- */
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        .panel-title { font-size: 14px; font-weight: 600; color: white; display: flex; align-items: center; gap: 8px; }
+        .panel-title::before { content:''; display:block; width:4px; height:14px; background:var(--primary); border-radius:2px;}
+
+        /* --- PLAYER HEADER PROFILE --- */
+        .profile-header {
+            display: grid; grid-template-columns: 100px 1fr auto; gap: 24px;
+            align-items: center;
+        }
+        .profile-avatar {
+            width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
+            border: 3px solid var(--bg-panel); outline: 2px solid var(--primary);
+            background: #000;
+        }
+        .profile-info h2 { font-size: 24px; font-weight: 700; color: white; margin-bottom: 4px; }
+        .profile-meta { display: flex; gap: 16px; font-size: 13px; color: var(--text-muted); }
+        .tag { 
+            background: rgba(212, 175, 55, 0.1); color: var(--primary); 
+            padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 11px; border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        /* --- INPUTS --- */
+        .form-group label {
+            display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px;
+        }
+        .input-std {
+            width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+            color: white; padding: 10px 12px; border-radius: 6px; font-size: 13px;
+            transition: all 0.2s; outline: none;
+        }
+        .input-std:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1); }
+        .input-std:read-only { background: transparent; border: 1px solid transparent; color: var(--text-main); font-weight: 600; padding-left: 0; }
+        .input-std:disabled { opacity: 0.5; cursor: not-allowed; }
+        textarea.input-std { resize: none; line-height: 1.5; }
+
+        /* --- SLIDERS & RADAR --- */
+        .skill-row {
+            display: grid; grid-template-columns: 120px 40px 1fr 1fr; gap: 16px; align-items: center;
+            padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .skill-row:last-child { border-bottom: none; }
+        
+        input[type=range] {
+            width: 100%; -webkit-appearance: none; background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
+            background: var(--primary); cursor: pointer; margin-top: -6px;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px; background: var(--border); border-radius: 2px;
+        }
+        .score-badge {
+            background: var(--bg-input); color: var(--primary); font-weight: 700;
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            border-radius: 6px; border: 1px solid var(--border); font-size: 13px;
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+            padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: 0.2s; border: none;
+        }
+        .btn-primary { background: var(--primary); color: #000; }
+        .btn-primary:hover { background: #e5c150; }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
+        .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-ghost:hover { border-color: var(--text-main); color: var(--text-main); }
+        .btn-sm { padding: 6px 12px; font-size: 10px; }
+
+        /* --- STATUS DOTS & MONITOR --- */
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .dot-green { background: var(--success); box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+        .dot-orange { background: orange; box-shadow: 0 0 8px rgba(255, 165, 0, 0.4); }
+        .dot-red { background: var(--danger); box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+        
+        .monitor-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 8px 12px; border-radius: 6px; margin-bottom: 4px; 
+            font-size: 12px; color: var(--text-muted); cursor: pointer;
+        }
+        .monitor-item:hover { background: rgba(255,255,255,0.05); color: white; }
+
+        /* --- PRINT CSS (A4) --- */
         @media print {
             @page { size: A4; margin: 0; }
             body { 
                 background: white !important; color: black !important; 
-                -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-                font-size: 10pt;
+                height: auto; overflow: visible; display: block;
             }
-            .no-print, header, .control-bar, button { display: none !important; }
+            aside, .no-print, .top-bar, .ai-btn { display: none !important; }
+            main { margin: 0; padding: 0; }
+            .content-container { max-width: 100%; padding: 15mm; }
             
-            .max-w-7xl { max-width: 100% !important; padding: 10mm !important; margin: 0 !important; }
-            
-            .card-pro {
-                border: 1px solid #ddd !important;
-                background: white !important;
-                color: black !important;
-                box-shadow: none !important;
-                padding: 10px !important;
-                margin-bottom: 15px !important;
-                break-inside: avoid;
+            .panel { 
+                border: 1px solid #ddd !important; 
+                background: white !important; color: black !important;
+                box-shadow: none !important; margin-bottom: 20px; page-break-inside: avoid;
             }
+            .panel-title { color: black !important; }
+            .profile-info h2 { color: black !important; }
+            .input-std { color: black !important; border: none !important; padding: 0 !important; background: transparent !important; }
+            .tag { border: 1px solid #000; color: #000; background: transparent; }
             
-            /* High Contrast for Print */
-            .input-pro { color: black !important; border: none !important; padding: 0 !important; background: transparent !important; font-weight: bold; }
-            .label-pro { color: #555 !important; }
-            h3 { color: black !important; border-color: black !important; }
+            /* Radar Print fix */
+            .radar-box { height: 300px !important; width: 300px !important; margin: 0 auto; }
+            canvas { max-width: 100% !important; }
             
-            /* Player Card adjustments */
-            .id-card { border: 1px solid black !important; height: 200px; width: 150px; }
-            .id-overlay { color: white !important; text-shadow: 0 1px 3px black; }
+            /* Sliders verbergen, scores tonen */
+            input[type=range] { display: none; }
+            .score-badge { border: 1px solid #000; color: #000; background: transparent; }
+            .skill-row { border-bottom: 1px solid #eee; grid-template-columns: 150px 40px 1fr; }
             
-            /* Radar Height */
-            .radar-box { height: 200px !important; width: 200px !important; margin: 0 auto; }
-            
-            /* Grid resets */
-            .lg\:grid-cols-12 { display: flex; flex-direction: column; gap: 20px; }
-            .lg\:col-span-4, .lg\:col-span-8 { width: 100%; }
+            /* Forceer graphics */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
-        
-        /* UTILS */
-        .glass-header { background: rgba(9, 9, 11, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
 
-    <header class="glass-header sticky top-0 z-50 py-3 px-6 flex justify-between items-center no-print">
-        <div class="flex items-center gap-4">
-            <div class="h-8 w-1 bg-gold rounded-full"></div>
-            <div>
-                <h1 class="text-xl font-black italic tracking-tighter text-white uppercase leading-none">Elite<span class="text-gold">Pro</span></h1>
-                <p class="text-[9px] text-zinc-500 font-mono tracking-widest uppercase">Performance Management System</p>
-            </div>
+    <aside class="no-print">
+        <div class="brand">
+            <div class="w-8 h-8 bg-yellow-600 rounded flex items-center justify-center text-black font-black text-xs">EP</div>
+            <div>ELITE<span>PRO</span></div>
         </div>
 
-        <div class="flex items-center gap-3">
-            <div class="flex items-center bg-surface border border-surfaceHighlight rounded-md px-2 py-1">
-                <span class="text-zinc-500 text-xs mr-2">🔍</span>
-                <select id="assetSearch" class="bg-transparent text-xs font-bold text-white outline-none w-48 py-1 uppercase cursor-pointer"></select>
-                <button id="loadBtn" class="text-[10px] font-bold bg-white/10 hover:bg-white/20 px-2 py-1 rounded ml-2 transition">OPEN</button>
-            </div>
-            
-            <button onclick="document.getElementById('tcPanel').classList.toggle('hidden'); refreshTCMonitor();" class="text-zinc-400 hover:text-white transition">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-            </button>
+        <div class="sidebar-section">
+            <div class="sidebar-label">Selectie</div>
+            <select id="assetSearch" class="input-std mb-2" style="background: var(--bg-app);">
+                <option value="">Zoek speler...</option>
+            </select>
+            <button id="loadBtn" class="btn btn-primary w-full btn-sm">Dossier Laden</button>
         </div>
-    </header>
 
-    <div id="tcPanel" class="hidden no-print border-b border-surfaceHighlight bg-surface py-4 px-8 animate-in slide-in-from-top-2">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex justify-between items-end mb-4">
-                <h3 class="text-gold font-bold uppercase text-xs tracking-widest">Team Monitor Status</h3>
-                <div class="flex gap-4 text-[10px] font-mono">
-                    <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-green-500"></div> LOCKED</span>
-                    <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-orange-500"></div> DRAFT</span>
-                    <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-red-500"></div> OPEN</span>
+        <div class="sidebar-section" style="flex: 1; overflow-y: auto;">
+            <div class="sidebar-label">Team Monitor</div>
+            <div id="tcTeamList">
                 </div>
-            </div>
-            <div id="tcTeamList" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 text-xs"></div>
-        </div>
-    </div>
-
-    <main class="flex-grow p-6 md:p-10 max-w-7xl mx-auto w-full">
-        
-        <div class="flex justify-between items-center mb-8 no-print">
-            <div class="flex items-center gap-2">
-                <input type="password" id="ghToken" placeholder="AUTH TOKEN" class="input-pro w-32 text-center font-mono text-[10px] h-9">
-                <div id="statusIndicator" class="text-[10px] font-mono text-zinc-500 uppercase px-3">Status: <span id="currentStatus">Geen bestand</span></div>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="savePlayer('draft')" id="btnDraft" class="h-9 px-4 rounded-md bg-surface border border-surfaceHighlight hover:border-gold text-zinc-300 hover:text-white text-xs font-bold uppercase transition">
-                    Concept Opslaan
-                </button>
-                <button onclick="if(confirm('Weet u het zeker?')) savePlayer('locked')" id="btnFinal" class="h-9 px-4 rounded-md bg-gradient-to-r from-red-900 to-red-700 hover:from-red-800 hover:to-red-600 text-white text-xs font-bold uppercase shadow-lg transition flex items-center gap-2">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    Definitief
-                </button>
-            </div>
         </div>
 
-        <form id="proForm">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="sidebar-section mt-auto">
+            <div class="sidebar-label">Systeem</div>
+            <input type="password" id="ghToken" placeholder="GitHub Token" class="input-std mb-2 text-xs">
+            <div class="text-[10px] text-gray-500">Versie 2.4.0 (Ent)</div>
+        </div>
+    </aside>
+
+    <main>
+        <div class="top-bar no-print">
+            <div class="flex items-center gap-4">
+                <select id="pPeriod" class="input-std" style="width: 200px;" onchange="loadPeriodData()">
+                    <option value="1e seizoenshelft">1e seizoenshelft</option>
+                    <option value="2e seizoenshelft">2e seizoenshelft</option>
+                    <option value="Eindbeoordeling">Eindbeoordeling</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="savePlayer('draft')" id="btnDraft" class="btn btn-ghost">Concept Opslaan</button>
+                <button type="button" onclick="if(confirm('Weet u het zeker? Hierna is het dossier vergrendeld.')) savePlayer('locked')" id="btnFinal" class="btn btn-danger">🔒 Definitief</button>
+                <button type="button" onclick="window.print()" class="btn btn-primary">🖨️ PDF</button>
+            </div>
+        </div>
+
+        <div class="content-container">
+            <form id="proForm">
                 
-                <div class="lg:col-span-4 space-y-6">
-                    <div class="card-pro p-0 overflow-hidden border-0">
-                        <div class="id-card">
-                            <img id="pPreviewImg" src="https://via.placeholder.com/400x600/111/333?text=SELECTEER+SPELER" alt="Player">
-                            <div class="id-overlay">
-                                <div id="dispNumber" class="text-6xl font-black text-white/20 absolute top-4 right-4 font-mono">--</div>
-                                <div>
-                                    <div id="dispName" class="text-2xl font-black italic uppercase text-white leading-none mb-1">NAAM</div>
-                                    <div id="dispTeam" class="text-[10px] font-bold text-gold uppercase tracking-[0.2em]">TEAM • POSITIE</div>
+                <div class="panel">
+                    <div id="lockBadge" class="hidden bg-red-500/10 text-red-500 border border-red-500/20 px-3 py-1 rounded text-xs font-bold w-fit mb-4">🔒 DOSSIER VERGRENDELD</div>
+                    
+                    <div class="profile-header">
+                        <img id="pPreviewImg" class="profile-avatar" src="https://via.placeholder.com/150" alt="Profile">
+                        
+                        <div class="profile-info">
+                            <h2 id="dispName">SELECTEER SPELER</h2>
+                            <div class="profile-meta">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-gray-500">Team:</span>
+                                    <span class="tag" id="dispTeam">--</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-gray-500">Positie:</span>
+                                    <span class="text-white font-medium" id="dispRole">--</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-gray-500">Rugnummer:</span>
+                                    <span class="text-white font-medium" id="dispNumber">--</span>
                                 </div>
                             </div>
+                            
+                            <div class="hidden">
+                                <input type="text" id="pName" readonly>
+                                <input type="number" id="pNumber" readonly>
+                                <input type="text" id="pTeam" readonly>
+                                <input type="text" id="pPos" readonly>
+                                <input type="text" id="pPhotoUrl" readonly>
+                                <input type="text" id="pEmail" readonly>
+                                <input type="text" id="pId" readonly>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="card-pro space-y-4">
-                        <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4 border-b border-surfaceHighlight pb-2">Biometrische Data</h4>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div><label class="label-pro">Naam</label><input type="text" id="pName" class="input-pro font-bold" readonly></div>
-                            <div><label class="label-pro">Nummer</label><input type="number" id="pNumber" class="input-pro font-mono" readonly></div>
-                            <div><label class="label-pro">Team</label><input type="text" id="pTeam" class="input-pro" readonly></div>
-                            <div><label class="label-pro">Positie</label><input type="text" id="pPos" class="input-pro" readonly></div>
+                        <div class="text-right">
+                             <div class="text-xs text-gray-500 uppercase font-bold tracking-widest mb-1">Performance Score</div>
+                             <div id="avgScore" class="text-4xl font-black text-white">0.0</div>
                         </div>
-                        <div><label class="label-pro">E-mail Ouders</label><input type="email" id="pEmail" class="input-pro text-xs text-zinc-400" readonly></div>
-                        <input type="text" id="pPhotoUrl" class="hidden" readonly>
-                        <input type="text" id="pId" class="hidden" readonly>
-                    </div>
-
-                    <div class="card-pro bg-gradient-to-br from-surface to-surfaceHighlight border-gold/20">
-                        <label class="label-pro text-gold">Beoordelingsperiode</label>
-                        <select id="pPeriod" class="input-pro bg-black/20 border-gold/30 text-gold font-bold uppercase cursor-pointer" onchange="loadPeriodData()">
-                            <option value="1e seizoenshelft">1e seizoenshelft</option>
-                            <option value="2e seizoenshelft">2e seizoenshelft</option>
-                            <option value="Eindbeoordeling">Eindbeoordeling</option>
-                        </select>
                     </div>
                 </div>
 
-                <div class="lg:col-span-8 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     
-                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6" id="cardAssessment">
-                        <div class="lock-badge hidden absolute z-50 bg-red-500/10 backdrop-blur-sm border border-red-500 text-red-500 font-bold px-4 py-2 rounded top-4 right-4 text-xs uppercase">🔒 Locked</div>
-
-                        <div class="card-pro">
-                            <div class="flex justify-between items-center mb-6">
-                                <h3 class="text-sm font-black uppercase text-white border-l-2 border-gold pl-3">Performance Data</h3>
-                                <button type="button" onclick="fillAI()" class="ai-btn text-[9px] font-bold text-gold border border-gold/20 px-2 py-1 rounded hover:bg-gold hover:text-black transition">✨ AI FILL</button>
-                            </div>
-                            <div id="skillContainer" class="space-y-6 overflow-y-auto max-h-[500px] pr-2 custom-scroll">
-                                </div>
+                    <div id="cardAssessment" class="lg:col-span-2 panel">
+                        <div class="panel-header">
+                            <div class="panel-title">Technische & Tactische Analyse</div>
+                            <button type="button" onclick="fillAI()" class="btn btn-ghost btn-sm ai-btn">✨ AI Auto-Fill</button>
                         </div>
+                        <div id="skillContainer">
+                            </div>
+                    </div>
 
-                        <div class="card-pro flex flex-col items-center justify-center bg-black/40">
-                            <h3 class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">Radar Analysis</h3>
-                            <div class="radar-box relative w-full h-[300px] flex items-center justify-center">
+                    <div class="flex flex-col gap-6">
+                        <div class="panel flex flex-col items-center justify-center">
+                            <div class="panel-title w-full mb-4">Competentie Radar</div>
+                            <div class="radar-box relative w-full aspect-square max-w-[300px]">
                                 <canvas id="liveRadar"></canvas>
                             </div>
-                            <div class="mt-6 text-center">
-                                <div class="text-[9px] font-mono text-zinc-500 uppercase">Total Score</div>
-                                <div id="avgScore" class="text-5xl font-black text-white tracking-tighter">0.0</div>
-                            </div>
                         </div>
-                    </div>
 
-                    <div id="cardPop" class="card-pro relative">
-                        <div class="lock-badge hidden absolute z-50 bg-red-500/10 backdrop-blur-sm border border-red-500 text-red-500 font-bold px-4 py-2 rounded top-4 right-4 text-xs uppercase">🔒 Locked</div>
-                        
-                        <h3 class="text-sm font-black uppercase text-white border-l-2 border-gold pl-3 mb-6">Persoonlijk Ontwikkel Plan (POP)</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div id="cardPop" class="panel flex-1">
+                            <div class="panel-header"><div class="panel-title">Ontwikkelplan (POP)</div></div>
                             <div class="space-y-4">
-                                <div>
-                                    <label class="label-pro text-gold">Hoofddoelstelling</label>
-                                    <textarea id="g1" class="input-pro h-24 text-xs leading-relaxed resize-none focus:bg-surfaceHighlight" placeholder="Wat wil de speler bereiken?"></textarea>
+                                <div class="form-group">
+                                    <label>Doelstelling</label>
+                                    <textarea id="g1" class="input-std" rows="3" placeholder="Hoofddoel..."></textarea>
                                 </div>
-                                <div>
-                                    <label class="label-pro text-gold">Actieplan</label>
-                                    <textarea id="a1" class="input-pro h-24 text-xs leading-relaxed resize-none focus:bg-surfaceHighlight" placeholder="Concrete stappen..."></textarea>
+                                <div class="form-group">
+                                    <label>Actieplan</label>
+                                    <textarea id="a1" class="input-std" rows="3" placeholder="Actiepunten..."></textarea>
                                 </div>
-                            </div>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="label-pro text-green-500">Sterke Punten (Top 3)</label>
-                                    <textarea id="pStrengths" class="input-pro h-24 text-xs leading-relaxed resize-none focus:bg-surfaceHighlight" placeholder="1. ..."></textarea>
-                                </div>
-                                <div>
-                                    <label class="label-pro text-red-500">Ontwikkelpunten (Top 3)</label>
-                                    <textarea id="pGrowth" class="input-pro h-24 text-xs leading-relaxed resize-none focus:bg-surfaceHighlight" placeholder="1. ..."></textarea>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="form-group">
+                                        <label>Sterktes</label>
+                                        <textarea id="pStrengths" class="input-std" rows="2"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Verbeterpunten</label>
+                                        <textarea id="pGrowth" class="input-std" rows="2"></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="flex justify-end pt-4 no-print">
-                        <button type="button" onclick="exportToPDF()" class="bg-zinc-100 hover:bg-white text-black px-6 py-3 rounded font-black text-xs uppercase tracking-widest transition flex items-center gap-2">
-                            <span>🖨️</span> PDF Genereren
-                        </button>
-                    </div>
-
                 </div>
-            </div>
-        </form>
+
+            </form>
+        </div>
     </main>
 
     <script type="module">
         import DataProvider from './js/data_provider.js';
 
-        // --- CONFIG & STATE ---
         let radarChart, allPlayers = [], currentPlayer = null;
         const skillMap = { 'Techniek': ['bal','pas','aan','drib','schot'], 'Tactiek': ['posi','vrij','sam','oms'], 'Fysiek': ['sne','uit','kra','wen'], 'Mentaal': ['inz','mot','coa','tea'] };
         const labels = { bal:'Balcontrole', pas:'Passen', aan:'Aanname', drib:'Dribbel', schot:'Schot', posi:'Positie', vrij:'Vrijlopen', sam:'Samenspel', oms:'Omschakeling', sne:'Snelheid', uit:'Conditie', kra:'Kracht', wen:'Wendbaar', inz:'Inzet', mot:'Motivatie', coa:'Coachbaar', tea:'Team' };
         
-        // Restore Token
         if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
 
-        // --- LOGIC: LOCKING ---
-        function setLockState(isLocked) {
-            const stateText = isLocked ? "LOCKED (Read Only)" : "OPEN (Editable)";
-            document.getElementById('currentStatus').innerText = stateText;
-            document.getElementById('currentStatus').className = isLocked ? "text-red-500 font-bold" : "text-green-500 font-bold";
-
-            const containers = ['cardAssessment', 'cardPop'];
-            containers.forEach(id => {
-                const el = document.getElementById(id);
-                const badge = el.querySelector('.lock-badge');
-                if(isLocked) {
-                    el.classList.add('opacity-80');
-                    if(badge) badge.style.display = 'block';
-                    el.querySelectorAll('input, textarea, button.ai-btn').forEach(i => i.disabled = true);
-                } else {
-                    el.classList.remove('opacity-80');
-                    if(badge) badge.style.display = 'none';
-                    el.querySelectorAll('input, textarea, button.ai-btn').forEach(i => i.disabled = false);
-                }
-            });
-
-            // Button states
-            const btnFinal = document.getElementById('btnFinal');
-            const btnDraft = document.getElementById('btnDraft');
+        // UI Logic
+        function lockUI() {
+            document.getElementById('lockBadge').classList.remove('hidden');
+            const formElements = document.querySelectorAll('#cardAssessment input, #cardAssessment button.ai-btn, #cardPop textarea');
+            formElements.forEach(el => el.disabled = true);
             
-            if(isLocked) {
-                btnDraft.style.display = 'none';
-                btnFinal.innerHTML = '🔒 Dossier Gesloten';
-                btnFinal.disabled = true;
-                btnFinal.classList.replace('from-red-900', 'from-zinc-700');
-            } else {
-                btnDraft.style.display = 'inline-block';
-                btnFinal.innerHTML = '🔒 Definitief';
-                btnFinal.disabled = false;
-                btnFinal.classList.replace('from-zinc-700', 'from-red-900');
-            }
+            const btnDraft = document.getElementById('btnDraft');
+            const btnFinal = document.getElementById('btnFinal');
+            
+            btnDraft.style.display = 'none';
+            btnFinal.innerText = "Grendel actief";
+            btnFinal.disabled = true;
+            btnFinal.classList.add('opacity-50', 'cursor-not-allowed');
         }
 
-        // --- DATA HANDLING ---
+        function unlockUI() {
+            document.getElementById('lockBadge').classList.add('hidden');
+            const formElements = document.querySelectorAll('#cardAssessment input, #cardAssessment button.ai-btn, #cardPop textarea');
+            formElements.forEach(el => el.disabled = false);
+            
+            const btnDraft = document.getElementById('btnDraft');
+            const btnFinal = document.getElementById('btnFinal');
+            
+            btnDraft.style.display = 'inline-flex';
+            btnFinal.innerText = "🔒 Definitief";
+            btnFinal.disabled = false;
+            btnFinal.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
         window.loadPeriodData = () => {
             if(!currentPlayer) return;
             const period = document.getElementById('pPeriod').value;
             const history = currentPlayer.history?.[period];
 
             if(history) {
-                // Load Skills
                 Object.keys(labels).forEach(k => {
                     document.getElementById('s_'+k).value = history.ratings?.[k] || 5;
                     document.getElementById('v_'+k).innerText = history.ratings?.[k] || 5;
                     document.getElementById('o_'+k).value = history.comments?.[k] || "";
                 });
-                // Load POP
                 document.getElementById('g1').value = history.pop?.goal || "";
                 document.getElementById('a1').value = history.pop?.action || "";
                 document.getElementById('pStrengths').value = history.pop?.strengths || "";
                 document.getElementById('pGrowth').value = history.pop?.growth || "";
-                
-                setLockState(history.status === 'locked');
+                if(history.status === 'locked') lockUI(); else unlockUI();
             } else {
-                // Reset to defaults
+                // Reset fields
                 document.querySelectorAll('#skillContainer input[type=range]').forEach(i => i.value = 5);
-                document.querySelectorAll('#skillContainer .score-val').forEach(s => s.innerText = "5");
-                document.querySelectorAll('#skillContainer input[type=text]').forEach(t => t.value = "");
+                document.querySelectorAll('#skillContainer input[type=text]').forEach(i => i.value = "");
+                document.querySelectorAll('.score-badge').forEach(s => s.innerText = "5");
                 document.querySelectorAll('#cardPop textarea').forEach(t => t.value = "");
-                setLockState(false);
-                document.getElementById('currentStatus').innerText = "Nieuw Concept";
+                unlockUI();
             }
             window.updateRadar();
         };
 
+        window.refreshTCMonitor = () => {
+            const period = document.getElementById('pPeriod').value;
+            const container = document.getElementById('tcTeamList');
+            container.innerHTML = "";
+            const teams = [...new Set(allPlayers.map(p => p.bio.team))].sort();
+            
+            teams.forEach(team => {
+                const teamPlayers = allPlayers.filter(p => p.bio.team === team);
+                let html = `<div class="mb-4"><div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">${team}</div>`;
+                
+                teamPlayers.forEach(p => {
+                    const status = p.history?.[period]?.status || 'missing';
+                    let dotClass = status === 'locked' ? 'dot-green' : (status === 'draft' ? 'dot-orange' : 'dot-red');
+                    html += `<div class="monitor-item" onclick="document.getElementById('assetSearch').value='${p.id}'; document.getElementById('loadBtn').click();">
+                                <span>${p.bio.name}</span>
+                                <span class="status-dot ${dotClass}"></span>
+                             </div>`;
+                });
+                html += `</div>`;
+                container.innerHTML += html;
+            });
+        };
+
         window.savePlayer = async (status) => {
             const token = document.getElementById('ghToken').value;
-            if(!token) return alert("GitHub Token vereist.");
-            if(!currentPlayer) return alert("Selecteer eerst een speler.");
+            if(!token) return alert("GitHub Token vereist!");
+            if(!currentPlayer) return alert("Selecteer eerst een speler!");
             
-            localStorage.setItem('gh_token', token);
             const period = document.getElementById('pPeriod').value;
-
-            // Gather Data
             const ratings = {}; const comments = {};
             Object.keys(labels).forEach(k => {
                 ratings[k] = parseInt(document.getElementById('s_'+k).value);
                 comments[k] = document.getElementById('o_'+k).value;
             });
 
-            // Clone & Update History
             const playerData = { ...currentPlayer };
             if(!playerData.history) playerData.history = {};
             
             playerData.history[period] = {
                 status: status,
                 lastUpdated: new Date().toISOString(),
-                ratings, comments,
+                ratings: ratings,
+                comments: comments,
                 pop: {
                     goal: document.getElementById('g1').value,
                     action: document.getElementById('a1').value,
@@ -415,172 +472,104 @@
                 }
             };
 
-            // Send
             try {
                 await DataProvider.updatePlayer(playerData, token);
-                alert(status === 'locked' ? "✅ Opgeslagen & Vergrendeld!" : "💾 Concept opgeslagen.");
-                
-                // Refresh local state
-                allPlayers = await DataProvider.getAllPlayers();
+                alert(status === 'locked' ? "✅ Dossier definitief vergrendeld!" : "💾 Concept opgeslagen.");
+                allPlayers = await DataProvider.getAllPlayers(); 
                 currentPlayer = allPlayers.find(p => p.id === playerData.id);
                 loadPeriodData();
-            } catch(e) { alert("Error: " + e.message); }
+                refreshTCMonitor();
+            } catch(err) { alert("❌ Fout: " + err.message); }
         };
 
-        // --- UI HELPERS ---
         window.fillAI = () => {
             Object.keys(labels).forEach(k => {
                 const val = parseInt(document.getElementById('s_'+k).value);
                 const field = document.getElementById('o_'+k);
-                if(val >= 8) field.value = "Uitzonderlijke beheersing. Blijven uitdagen.";
-                else if(val <= 5) field.value = "Aandachtspunt voor komende periode.";
-                else field.value = "Voldoende basisniveau, focus op consistentie.";
+                if(val >= 8) field.value = "Elite performance. Handhaven.";
+                else if(val <= 5) field.value = "Aandachtspunt voor ontwikkeling.";
+                else field.value = "Stabiel niveau, focus op details.";
             });
         };
 
         window.updateRadar = () => {
             const values = [];
             let total = 0, count = 0;
-            
             Object.values(skillMap).forEach(keys => {
-                const avg = keys.reduce((acc, key) => {
-                    const v = parseInt(document.getElementById('s_'+key).value || 5);
+                const avg = keys.reduce((a, b) => {
+                    const v = parseInt(document.getElementById('s_'+b).value || 5);
                     total += v; count++;
-                    return acc + v;
+                    return a + v;
                 }, 0) / keys.length;
                 values.push(avg);
             });
-
             radarChart.data.datasets[0].data = values;
             radarChart.update();
             document.getElementById('avgScore').innerText = (total / count).toFixed(1);
         };
-        
-        // Export logic
-        window.exportToPDF = window.print;
 
-        window.refreshTCMonitor = () => {
-            const period = document.getElementById('pPeriod').value;
-            const container = document.getElementById('tcTeamList');
-            container.innerHTML = "";
-            const teams = [...new Set(allPlayers.map(p => p.bio.team))].sort();
-
-            teams.forEach(team => {
-                const players = allPlayers.filter(p => p.bio.team === team);
-                let html = `<div class="bg-surfaceHighlight/50 p-3 rounded border border-surfaceHighlight">
-                    <div class="font-bold text-zinc-400 mb-2 border-b border-zinc-700 pb-1">${team}</div>
-                    <ul class="space-y-1">`;
-                
-                players.forEach(p => {
-                    const st = p.history?.[period]?.status || 'open';
-                    let color = 'bg-red-500';
-                    if(st === 'draft') color = 'bg-orange-500';
-                    if(st === 'locked') color = 'bg-green-500';
-                    
-                    html += `<li class="flex justify-between items-center text-zinc-300">
-                        <span class="truncate">${p.bio.name}</span>
-                        <div class="w-1.5 h-1.5 rounded-full ${color}"></div>
-                    </li>`;
-                });
-                html += `</ul></div>`;
-                container.innerHTML += html;
-            });
-        };
-
-        // --- INITIALIZATION ---
         async function init() {
-            // 1. Build Form Inputs
+            // Build Skills UI
             const container = document.getElementById('skillContainer');
-            Object.keys(skillMap).forEach(category => {
-                container.innerHTML += `<h5 class="text-[10px] font-black text-zinc-600 uppercase mt-4 mb-2 tracking-widest">${category}</h5>`;
-                
-                skillMap[category].forEach(key => {
+            Object.keys(skillMap).forEach(cat => {
+                container.innerHTML += `<div class="text-xs font-bold text-yellow-600 uppercase tracking-widest mt-6 mb-3 border-b border-white/5 pb-1">${cat}</div>`;
+                skillMap[cat].forEach(key => {
                     container.innerHTML += `
-                        <div class="grid grid-cols-12 gap-2 items-center group">
-                            <div class="col-span-3 text-[10px] font-bold text-zinc-400 uppercase group-hover:text-white transition">${labels[key]}</div>
-                            <div class="col-span-1 text-center font-mono font-bold text-gold text-sm score-val" id="v_${key}">5</div>
-                            <div class="col-span-4">
-                                <input type="range" id="s_${key}" min="1" max="10" value="5" oninput="document.getElementById('v_${key}').innerText=this.value; window.updateRadar()">
-                            </div>
-                            <div class="col-span-4">
-                                <input type="text" id="o_${key}" class="input-pro py-1 text-[10px]" placeholder="Opmerking...">
-                            </div>
+                        <div class="skill-row">
+                            <label class="text-gray-300 font-medium text-xs">${labels[key]}</label>
+                            <span id="v_${key}" class="score-badge">5</span>
+                            <input type="range" id="s_${key}" min="1" max="10" value="5" oninput="v_${key}.innerText=this.value; updateRadar();">
+                            <input type="text" id="o_${key}" placeholder="Notitie..." class="input-std text-xs">
                         </div>`;
                 });
             });
 
-            // 2. Setup Chart
+            // Init Data
+            allPlayers = await DataProvider.getAllPlayers();
+            document.getElementById('assetSearch').innerHTML = '<option value="">Zoek speler...</option>' + allPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
+
+            // Init Chart
             const ctx = document.getElementById('liveRadar').getContext('2d');
             radarChart = new Chart(ctx, {
                 type: 'radar',
-                data: {
-                    labels: ['TECH', 'TACT', 'FYS', 'MENT'],
-                    datasets: [{
-                        data: [5,5,5,5],
-                        backgroundColor: 'rgba(212, 175, 55, 0.15)',
-                        borderColor: '#D4AF37',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#D4AF37'
-                    }]
-                },
-                options: {
-                    scales: {
-                        r: {
-                            min: 0, max: 10,
-                            ticks: { display: false },
-                            grid: { color: '#333' },
-                            angleLines: { color: '#333' },
-                            pointLabels: { color: '#888', font: { size: 9, weight: 'bold' } }
-                        }
-                    },
+                data: { labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'], datasets: [{ data: [5,5,5,5], backgroundColor: 'rgba(212, 175, 55, 0.2)', borderColor: '#D4AF37', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#fff' }] },
+                options: { 
+                    scales: { r: { min: 0, max: 10, ticks: { display: false }, grid: { color: '#333' }, angleLines: { color: '#333' }, pointLabels: { color: '#888', font: { size: 10, weight: 'bold' } } } }, 
                     plugins: { legend: { display: false } },
                     maintainAspectRatio: false
                 }
             });
 
-            // 3. Load Players
-            try {
-                allPlayers = await DataProvider.getAllPlayers();
-                const search = document.getElementById('assetSearch');
-                search.innerHTML = '<option value="">-- SELECT PLAYER --</option>' + 
-                    allPlayers.map(p => `<option value="${p.id}">${p.bio.name} | ${p.bio.team}</option>`).join('');
+            // Handlers
+            document.getElementById('loadBtn').onclick = (e) => {
+                const pId = document.getElementById('assetSearch').value;
+                if(!pId) return;
+                
+                const p = allPlayers.find(x => x.id === pId);
+                if(p) {
+                    currentPlayer = p;
+                    // Populate Hidden & UI fields
+                    document.getElementById('pName').value = p.bio.name;
+                    document.getElementById('pId').value = p.id;
+                    document.getElementById('pNumber').value = p.bio.number;
+                    document.getElementById('pTeam').value = p.bio.team;
+                    document.getElementById('pPos').value = p.bio.role;
+                    document.getElementById('pPhotoUrl').value = p.bio.photo;
+                    document.getElementById('pEmail').value = p.bio.email || "";
 
-                // 4. Load Event
-                document.getElementById('loadBtn').onclick = (e) => {
-                    e.preventDefault();
-                    const pId = search.value;
-                    const p = allPlayers.find(x => x.id === pId);
-                    if(p) {
-                        currentPlayer = p;
-                        // Fill Identity (Readonly)
-                        document.getElementById('pName').value = p.bio.name;
-                        document.getElementById('pNumber').value = p.bio.number;
-                        document.getElementById('pTeam').value = p.bio.team;
-                        document.getElementById('pPos').value = p.bio.role;
-                        document.getElementById('pEmail').value = p.bio.email || "-";
-                        document.getElementById('pPhotoUrl').value = p.bio.photo;
-                        document.getElementById('pId').value = p.id;
-
-                        // Visuals
-                        document.getElementById('pPreviewImg').src = p.bio.photo || "https://via.placeholder.com/400x600?text=No+Img";
-                        document.getElementById('dispName').innerText = p.bio.name;
-                        document.getElementById('dispNumber').innerText = p.bio.number || "--";
-                        document.getElementById('dispTeam').innerText = `${p.bio.team} • ${p.bio.role}`;
-
-                        loadPeriodData();
-                    }
-                };
-            } catch(e) { console.error("Load Error", e); }
+                    // Update UI Header
+                    document.getElementById('dispName').innerText = p.bio.name;
+                    document.getElementById('dispNumber').innerText = `#${p.bio.number}`;
+                    document.getElementById('dispTeam').innerText = p.bio.team;
+                    document.getElementById('dispRole').innerText = p.bio.role;
+                    document.getElementById('pPreviewImg').src = p.bio.photo || "https://via.placeholder.com/150";
+                    
+                    loadPeriodData();
+                }
+            };
+            
+            refreshTCMonitor();
         }
-
-        // Expose global functions needed for HTML inline events
-        window.savePlayer = savePlayer;
-        window.loadPeriodData = loadPeriodData;
-        window.refreshTCMonitor = refreshTCMonitor;
-        window.fillAI = fillAI;
-        window.updateRadar = updateRadar;
-
         init();
     </script>
 </body>
