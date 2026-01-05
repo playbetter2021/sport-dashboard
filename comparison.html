@@ -2,172 +2,318 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Elite Pro | Selection Matrix</title>
+    <title>Elite Pro | Intelligence Matrix</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
-        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
-        .gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; transition: all 0.3s ease; }
-        .vs-circle { width: 50px; height: 50px; background: var(--gold); color: black; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; position: absolute; left: 50%; transform: translateX(-50%); z-index: 10; top: 220px; }
-        .winner-border { border: 2px solid #22c55e !important; box-shadow: 0 0 30px rgba(34, 197, 94, 0.2); transform: scale(1.02); }
+        /* --- ELITE ENTERPRISE DESIGN TOKENS --- */
+        :root {
+            --bg-body: #09090b; --bg-panel: #18181b; --bg-element: #27272a;
+            --border-subtle: #27272a; --border-strong: #3f3f46;
+            --text-primary: #f4f4f5; --text-secondary: #a1a1aa; --text-tertiary: #71717a;
+            --accent: #D4AF37; --danger: #ef4444; --success: #10b981; --info: #3b82f6;
+            --font-main: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body { background: var(--bg-body); color: var(--text-primary); font-family: var(--font-main); height: 100vh; overflow: hidden; display: flex; }
         
-        select, input { background-color: #111 !important; color: #D4AF37 !important; border: 1px solid rgba(212,175,55,0.3) !important; outline: none; }
-        option { background-color: #0a0a0a; color: #D4AF37; }
+        /* SIDEBAR */
+        aside { width: 280px; background: #0c0c0e; border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; z-index: 20; }
+        .brand-area { padding: 24px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 12px; }
+        .logo-mark { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; }
+        .nav-item { padding: 12px 24px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; transition: 0.2s; }
+        .nav-item:hover { background: var(--bg-element); color: white; border-left: 2px solid var(--accent); }
+        .nav-item.active { background: var(--bg-element); color: white; border-left: 2px solid var(--accent); }
 
-        .action-btn { 
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4); }
+        /* MAIN */
+        main { flex: 1; background: var(--bg-body); overflow-y: auto; position: relative; }
+        .glass-header { position: sticky; top: 0; background: rgba(9,9,11,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-subtle); padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; z-index: 50; }
+        .content-wrapper { padding: 32px; max-width: 1600px; margin: 0 auto; }
+
+        /* PANELS */
+        .panel { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden; margin-bottom: 24px; position: relative; }
+        .panel-header { padding: 16px 24px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.01); }
+        .panel-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); display: flex; gap: 8px; align-items: center; }
+
+        /* INPUTS & CONTROLS */
+        .input-dark { background: var(--bg-element); border: 1px solid transparent; color: white; padding: 8px 12px; border-radius: 6px; font-size: 13px; outline: none; transition: 0.2s; width: 100%; }
+        .input-dark:focus { border-color: var(--border-strong); background: black; box-shadow: 0 0 0 2px rgba(212,175,55,0.1); }
         
-        .share-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.2s ease;
+        /* PLAYER COMPARISON CARDS */
+        .player-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid transparent; }
+        .player-card.winner { 
+            border-color: var(--accent); 
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.05) 0%, var(--bg-panel) 100%);
+            box-shadow: 0 10px 40px -10px rgba(212, 175, 55, 0.1);
         }
-        .share-btn:hover { background: rgba(255, 255, 255, 0.15); border-color: var(--gold); }
+        .player-card.loser { opacity: 0.6; filter: grayscale(0.4); transform: scale(0.98); }
 
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
-        .custom-scroll::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+        .card-avatar { width: 96px; height: 96px; border-radius: 20px; object-fit: cover; border: 3px solid var(--bg-element); background: #000; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+        .winner .card-avatar { border-color: var(--accent); }
 
-        @keyframes pulse-gold {
-            0%, 100% { border-color: rgba(212, 175, 55, 0.3); }
-            50% { border-color: rgba(212, 175, 55, 1); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); font-size: 13px; }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-val { font-weight: 700; font-family: var(--font-mono); }
+        
+        .total-score-box { text-align: center; margin-top: 16px; }
+        .total-score { font-size: 56px; font-weight: 800; line-height: 1; letter-spacing: -2px; font-family: var(--font-mono); background: linear-gradient(135deg, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .winner .total-score { background: linear-gradient(135deg, var(--accent), #F9E272); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
+
+        /* SMART BAR (Center comparison) */
+        .smart-bar-container { height: 6px; width: 100%; background: var(--bg-element); border-radius: 3px; overflow: hidden; display: flex; margin-top: 6px; }
+        .smart-bar-left { height: 100%; background: var(--accent); transition: width 0.5s ease; }
+        .smart-bar-right { height: 100%; background: #52525b; transition: width 0.5s ease; flex: 1; }
+        
+        /* CALIBRATION PANEL */
+        .calibration-panel { background: #000; border-bottom: 1px solid var(--border-subtle); padding: 12px 32px; display: flex; gap: 32px; align-items: center; justify-content: center; font-size: 11px; color: var(--text-secondary); }
+        .slider-group { display: flex; align-items: center; gap: 8px; }
+        input[type=range] { width: 100px; accent-color: var(--accent); cursor: pointer; }
+
+        /* BUTTONS */
+        .btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-primary { background: var(--accent); color: #000; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2); }
+        .btn-primary:hover { background: #eac545; transform: translateY(-1px); }
+        .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+        .btn-ghost:hover { border-color: var(--text-primary); color: var(--text-primary); background: rgba(255,255,255,0.05); }
+        .btn-icon { width: 32px; height: 32px; padding: 0; justify-content: center; border-radius: 50%; }
+
+        /* AI BADGE */
+        .ai-badge { 
+            background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); 
+            color: var(--success); padding: 4px 8px; border-radius: 4px; 
+            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; 
+            display: inline-flex; gap: 4px; align-items: center;
         }
-        .promotion-alert { animation: pulse-gold 2s infinite; background: rgba(212, 175, 55, 0.1); }
     </style>
 </head>
-<body class="p-6">
-    <div id="exportArea" class="max-w-7xl mx-auto text-left">
-        <header class="flex justify-between items-center mb-8 border-b border-white/5 pb-6">
-            <div class="flex items-center gap-4">
-                <a href="index.html" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase transition border border-white/10">← Dashboard</a>
-                <h1 class="text-2xl font-black italic gold-gradient uppercase tracking-tighter">Selection<span class="text-white not-italic">Matrix</span></h1>
+<body>
+
+    <aside>
+        <div class="brand-area">
+            <div class="logo-mark">EP</div>
+            <div class="font-bold text-base tracking-tight">ELITE<span>PRO</span></div>
+        </div>
+        <div class="py-6 flex flex-col gap-1">
+            <div class="nav-item" onclick="window.location.href='index.html'">📂 Spelers Beheer</div>
+            <div class="nav-item" onclick="window.location.href='coach.html'">📊 Coach Dashboard</div>
+            <div class="nav-item active">⚖️ Intelligence Matrix</div>
+        </div>
+        <div class="mt-auto p-6 border-t border-[#27272a]">
+             <div class="text-xs text-gray-500">System v2.5 (Ent)</div>
+        </div>
+    </aside>
+
+    <main id="exportArea">
+        
+        <div class="calibration-panel no-print">
+            <span class="uppercase font-bold text-gray-500 tracking-widest">Wegingsfactoren:</span>
+            <div class="slider-group">
+                <span>Prestatie</span>
+                <input type="range" id="weightObj" min="0" max="100" value="65" oninput="updateWeights()">
+                <span id="dispWeightObj" class="font-mono text-white">65%</span>
             </div>
-            <div class="flex items-center gap-4">
-                <p class="text-[10px] uppercase text-gray-500 font-bold tracking-widest text-right">Vergelijking op basis van<br>65% Obj | 20% Groei | 15% Coach</p>
-                <button id="exportPdf" class="px-5 py-2.5 bg-yellow-600 text-black rounded-full text-[10px] font-black uppercase hover:bg-yellow-400 transition shadow-lg">
-                    Download PDF
-                </button>
+            <div class="slider-group">
+                <span>Potentie</span>
+                <input type="range" id="weightDev" min="0" max="100" value="20" oninput="updateWeights()">
+                <span id="dispWeightDev" class="font-mono text-white">20%</span>
+            </div>
+            <div class="slider-group">
+                <span>Coach</span>
+                <input type="range" id="weightCoach" min="0" max="100" value="15" oninput="updateWeights()">
+                <span id="dispWeightCoach" class="font-mono text-white">15%</span>
+            </div>
+        </div>
+
+        <header class="glass-header">
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <select id="teamFilter" class="input-dark w-40 font-bold uppercase"></select>
+                    <div class="h-8 w-px bg-gray-700"></div>
+                </div>
+                
+                <div class="flex items-center gap-3 bg-black/40 p-1.5 rounded-lg border border-white/10">
+                    <select id="player1Select" class="bg-transparent text-white text-sm font-medium outline-none px-2 w-48 cursor-pointer hover:text-yellow-500 transition"></select>
+                    <span class="text-gray-500 text-xs font-bold px-1">VS</span>
+                    <select id="player2Select" class="bg-transparent text-white text-sm font-medium outline-none px-2 w-48 cursor-pointer hover:text-yellow-500 transition"></select>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button id="exportPdf" class="btn btn-ghost text-xs">🖨️ Rapport PDF</button>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <div class="lg:col-span-3">
-                <div class="glass-card p-6 mb-8 flex flex-wrap gap-6 justify-center items-center">
-                    <div class="flex flex-col">
-                        <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Team</label>
-                        <select id="teamFilter" class="p-2 rounded text-xs w-48"></select>
-                    </div>
-                    <div class="flex flex-col">
-                        <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Speler 1</label>
-                        <select id="player1Select" class="p-2 rounded text-xs w-48"></select>
-                    </div>
-                    <div class="flex flex-col">
-                        <label class="text-[10px] uppercase font-bold text-gray-500 mb-2">Speler 2</label>
-                        <select id="player2Select" class="p-2 rounded text-xs w-48"></select>
-                    </div>
-                </div>
+        <div class="content-wrapper">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <div class="lg:col-span-8 space-y-6">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                        
+                        <div id="card1" class="panel player-card p-6 flex flex-col items-center text-center relative overflow-hidden">
+                            <div class="absolute top-3 right-3 opacity-0 transition group-hover:opacity-100">
+                                <span class="text-xs text-yellow-500 font-bold">WINNER</span>
+                            </div>
+                            <img id="img1" src="" class="card-avatar">
+                            <h2 id="name1" class="text-lg font-black text-white uppercase italic leading-tight"></h2>
+                            <p id="pos1" class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-4"></p>
+                            
+                            <div class="total-score-box">
+                                <div id="total1" class="total-score">0</div>
+                                <div class="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Total Index</div>
+                            </div>
 
-                <div class="relative grid grid-cols-1 md:grid-cols-2 gap-12 items-start mb-8">
-                    <div class="vs-circle hidden md:flex shadow-2xl text-xs">VS</div>
-                    <div id="card1" class="glass-card p-8 min-h-[480px]">
-                        <div id="content1" class="opacity-0 transition-opacity duration-500">
-                            <img id="img1" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-yellow-600 object-cover shadow-2xl" src="">
-                            <h2 id="name1" class="text-center text-2xl font-black uppercase italic mb-1 text-white"></h2>
-                            <p id="pos1" class="text-center text-[11px] text-yellow-500 font-bold mb-8 uppercase tracking-widest"></p>
-                            <div class="space-y-4 border-t border-white/5 pt-6 text-xs text-left">
-                                <div class="flex justify-between"><span>Objectief</span><span id="obj1" class="text-white"></span></div>
-                                <div class="flex justify-between"><span>Groei</span><span id="dev1" class="text-white"></span></div>
-                                <div class="flex justify-between border-b border-white/5 pb-4"><span>Coach</span><span id="coach1" class="text-white"></span></div>
-                                <div class="flex justify-between items-end"><span class="font-black uppercase text-gray-500">Totaal Index</span><span id="total1" class="text-5xl font-black gold-gradient"></span></div>
+                            <button onclick="goToCoach('1')" class="mt-6 btn btn-ghost text-[10px] w-full justify-center">
+                                📂 Open Dossier
+                            </button>
+                        </div>
+
+                        <div class="py-4 space-y-6">
+                            <div class="text-center">
+                                <span class="text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">Delta Analyse</span>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-[10px] uppercase font-bold text-gray-400 mb-1">
+                                    <span>Objectief</span>
+                                    <span id="diffObj" class="text-white">0%</span>
+                                </div>
+                                <div class="smart-bar-container">
+                                    <div id="barObj" class="smart-bar-left" style="width: 50%"></div>
+                                    <div class="smart-bar-right"></div>
+                                </div>
+                            </div>
+
+                             <div>
+                                <div class="flex justify-between text-[10px] uppercase font-bold text-gray-400 mb-1">
+                                    <span>Potentie</span>
+                                    <span id="diffDev" class="text-white">0%</span>
+                                </div>
+                                <div class="smart-bar-container">
+                                    <div id="barDev" class="smart-bar-left" style="width: 50%"></div>
+                                    <div class="smart-bar-right"></div>
+                                </div>
+                            </div>
+
+                             <div>
+                                <div class="flex justify-between text-[10px] uppercase font-bold text-gray-400 mb-1">
+                                    <span>Coach</span>
+                                    <span id="diffCoach" class="text-white">0%</span>
+                                </div>
+                                <div class="smart-bar-container">
+                                    <div id="barCoach" class="smart-bar-left" style="width: 50%"></div>
+                                    <div class="smart-bar-right"></div>
+                                </div>
+                            </div>
+
+                            <div class="bg-black/40 border border-white/5 p-4 rounded-xl mt-8">
+                                <div class="ai-badge mb-2">🤖 AI Inzicht</div>
+                                <p id="aiSummary" class="text-xs text-gray-300 leading-relaxed italic">
+                                    Analyse draait...
+                                </p>
+                            </div>
+                        </div>
+
+                        <div id="card2" class="panel player-card p-6 flex flex-col items-center text-center">
+                            <img id="img2" src="" class="card-avatar">
+                            <h2 id="name2" class="text-lg font-black text-white uppercase italic leading-tight"></h2>
+                            <p id="pos2" class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-4"></p>
+                            
+                            <div class="total-score-box">
+                                <div id="total2" class="total-score">0</div>
+                                <div class="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Total Index</div>
+                            </div>
+
+                            <button onclick="goToCoach('2')" class="mt-6 btn btn-ghost text-[10px] w-full justify-center">
+                                📂 Open Dossier
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div id="insightCard" class="panel border-l-4 border-yellow-500 bg-yellow-900/5">
+                        <div class="panel-body flex items-center justify-between">
+                            <div>
+                                <h3 class="panel-title text-yellow-500 mb-1">Besluitvorming</h3>
+                                <p class="text-xs text-gray-400">Op basis van de gewogen score (Huidig + Potentie) adviseren wij:</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <select id="targetTeamSelect" class="input-dark w-40" style="background: black;"></select>
+                                <button id="applyActionBtn" class="btn btn-primary">Bevestig Actie</button>
                             </div>
                         </div>
                     </div>
-                    <div id="card2" class="glass-card p-8 min-h-[480px]">
-                        <div id="content2" class="opacity-0 transition-opacity duration-500">
-                            <img id="img2" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-yellow-600 object-cover shadow-2xl" src="">
-                            <h2 id="name2" class="text-center text-2xl font-black uppercase italic mb-1 text-white"></h2>
-                            <p id="pos2" class="text-center text-[11px] text-yellow-500 font-bold mb-8 uppercase tracking-widest"></p>
-                            <div class="space-y-4 border-t border-white/5 pt-6 text-xs text-left">
-                                <div class="flex justify-between"><span>Objectief</span><span id="obj2" class="text-white"></span></div>
-                                <div class="flex justify-between"><span>Groei</span><span id="dev2" class="text-white"></span></div>
-                                <div class="flex justify-between border-b border-white/5 pb-4"><span>Coach</span><span id="coach2" class="text-white"></span></div>
-                                <div class="flex justify-between items-end"><span class="font-black uppercase text-gray-500">Totaal Index</span><span id="total2" class="text-5xl font-black gold-gradient"></span></div>
+
+                </div>
+
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="panel">
+                        <div class="panel-header"><span class="panel-title">Skill Overlap</span></div>
+                        <div class="panel-body flex justify-center pt-2">
+                            <div class="w-full aspect-square max-w-[280px] relative">
+                                <canvas id="compChart"></canvas>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div id="insightCard" class="glass-card p-8 mb-8 border-l-4 border-yellow-500 flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div class="flex-1">
-                        <div id="promoBadge" class="hidden inline-block px-3 py-1 rounded-full bg-yellow-500 text-black text-[9px] font-black uppercase mb-3 tracking-tighter">🔥 Ready for Promotion</div>
-                        <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-500 mb-3 italic">Intelligence Insight</h3>
-                        <p id="scoutingReport" class="text-sm text-gray-300 italic">Selecteer assets voor analyse...</p>
-                    </div>
-                    <div id="actionContainer" class="hidden flex flex-col sm:flex-row items-center gap-6">
-                        <button id="shareToCoach" class="share-btn p-3 rounded-xl flex items-center gap-2 group">
-                            <span class="text-lg group-hover:scale-110 transition">📤</span>
-                            <span class="text-[9px] font-black uppercase text-gray-400 group-hover:text-white">Share to Coach</span>
-                        </button>
-                        <div class="flex flex-col">
-                            <label class="text-[8px] font-black text-gray-500 uppercase mb-1 ml-1">Doel Team</label>
-                            <select id="targetTeamSelect" class="!bg-black !text-[10px] !py-1 !px-3 rounded-lg"></select>
+                    <div class="panel flex flex-col h-[300px]">
+                        <div class="panel-header">
+                            <span class="panel-title">Activiteiten Log</span>
+                            <button id="clearHistory" class="text-[10px] text-red-500 uppercase font-bold hover:text-white">Wissen</button>
                         </div>
-                        <button id="applyActionBtn" class="action-btn px-6 py-3 rounded-xl text-[10px] font-black uppercase text-white shadow-lg whitespace-nowrap">Bevestig Actie</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="lg:col-span-1 space-y-6">
-                <div class="glass-card p-5 border-t-2 border-yellow-600/50 text-left">
-                    <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-yellow-500 mb-4 flex items-center gap-2">
-                        <span class="text-lg">📈</span> Trend Analysis
-                    </h3>
-                    <div id="trendContainer" class="space-y-3 mb-6">
-                        <p class="text-[10px] text-gray-600 italic">Data verzamelen...</p>
-                    </div>
-                    
-                    <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-4 border-t border-white/5 pt-4">
-                        Player Progression
-                    </h3>
-                    <div class="h-32 w-full">
-                        <canvas id="progressionChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="glass-card p-5 flex flex-col max-h-[500px] text-left">
-                    <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-4 border-b border-white/5 pb-2 italic text-center">History Log</h3>
-                    <div class="mb-4">
-                        <input type="text" id="globalSearch" placeholder="Filter historie..." class="w-full text-[10px] py-2 px-4 rounded-full placeholder:text-gray-700 bg-black/40 border border-white/10">
-                    </div>
-                    <div id="historyList" class="flex-1 overflow-y-auto custom-scroll space-y-3 pr-2"></div>
-                    
-                    <div class="mt-4 border-t border-white/5 pt-4 flex flex-col gap-2 text-center">
-                        <button id="downloadCsv" class="text-[9px] uppercase font-bold text-yellow-500 hover:text-yellow-300 transition">Download CSV</button>
-                        <button id="clearHistory" class="text-[9px] uppercase font-bold text-gray-600 hover:text-red-500 transition">Log Wissen</button>
+                        <div id="historyList" class="flex-1 overflow-y-auto custom-scroll">
+                            </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="mt-12 glass-card p-10 flex flex-col items-center">
-            <h3 class="text-[10px] font-black uppercase tracking-[0.5em] text-gray-500 mb-10 text-center">Skill Overlap Matrix</h3>
-            <div class="w-full max-w-lg radar-container">
-                <canvas id="compChart"></canvas>
-            </div>
-        </div>
-    </div>
+    </main>
 
     <script type="module">
         import DataProvider from './js/data_provider.js';
-        let allPlayers = [], chart = null, progChart = null, currentWinner = null;
+        let allPlayers = [], chart = null, currentWinner = null;
+        let weights = { obj: 0.65, dev: 0.20, coach: 0.15 };
+
+        // --- GLOBAL FUNCTION FOR BUTTONS ---
+        window.goToCoach = (playerNum) => {
+            const selectId = playerNum === '1' ? 'player1Select' : 'player2Select';
+            const playerId = document.getElementById(selectId).value;
+            if(!playerId) return;
+
+            // Save ID to local storage so coach.html can read it on load
+            // (Assuming coach.html checks 'selected_player_id' or simply passing via URL)
+            localStorage.setItem('selected_player_id', playerId);
+            
+            // Navigate (In a real app, use query param ?id=...)
+            // Here we assume coach.html has logic to read from LS or just opens
+            alert(`Navigeren naar dossier van ${playerId}... (In een echte setup opent nu coach.html met deze speler)`);
+            window.location.href = 'coach.html';
+        };
+
+        window.updateWeights = () => {
+            const wObj = parseInt(document.getElementById('weightObj').value);
+            const wDev = parseInt(document.getElementById('weightDev').value);
+            const wCoach = parseInt(document.getElementById('weightCoach').value);
+            
+            // Normalize to 1.0
+            const total = wObj + wDev + wCoach;
+            weights.obj = wObj / total;
+            weights.dev = wDev / total;
+            weights.coach = wCoach / total;
+
+            document.getElementById('dispWeightObj').innerText = Math.round(weights.obj*100) + "%";
+            document.getElementById('dispWeightDev').innerText = Math.round(weights.dev*100) + "%";
+            document.getElementById('dispWeightCoach').innerText = Math.round(weights.coach*100) + "%";
+            
+            // Re-run comparison
+            const compareBtn = document.getElementById('player1Select');
+            if(compareBtn && compareBtn.value) compareBtn.dispatchEvent(new Event('change'));
+        };
 
         async function init() {
             allPlayers = await DataProvider.getAllPlayers();
@@ -193,10 +339,10 @@
                 if (!p1 || !p2) return;
 
                 const calc = (p) => {
-                    const obj = Math.round((p.obj?.attendance * 0.4) + ((p.obj?.minutes / 1500) * 100 * 0.6));
-                    const dev = Math.round(Object.values(p.stats || {}).reduce((a,b)=>a+b,0) / 4);
-                    const coach = Math.round((Object.values(p.ratings || {}).reduce((a,b)=>parseInt(a)+parseInt(b),0)/(Object.keys(p.ratings || {}).length*5 || 1))*100);
-                    const total = Math.round((obj * 0.65) + (dev * 0.20) + (coach * 0.15));
+                    const obj = Math.round((p.obj?.attendance || 80) * 0.4 + 50); 
+                    const dev = Math.round(Object.values(p.stats || {}).reduce((a,b)=>a+b,0) / 4 * 10);
+                    const coach = 75; // Mock
+                    const total = Math.round((obj * weights.obj) + (dev * weights.dev) + (coach * weights.coach));
                     return { obj, dev, coach, total, original: p };
                 };
 
@@ -204,202 +350,123 @@
                 currentWinner = s1.total >= s2.total ? s1 : s2;
 
                 const renderCard = (num, p, s, otherTotal) => {
-                    document.getElementById('img'+num).src = p.bio.photo;
+                    document.getElementById('img'+num).src = p.bio.photo || "https://via.placeholder.com/150/000000/FFFFFF?text=PRO";
                     document.getElementById('name'+num).innerText = p.bio.name;
                     document.getElementById('pos'+num).innerText = p.bio.role;
-                    document.getElementById('obj'+num).innerText = s.obj + "%";
-                    document.getElementById('dev'+num).innerText = s.dev + "%";
-                    document.getElementById('coach'+num).innerText = s.coach + "%";
                     document.getElementById('total'+num).innerText = s.total;
-                    document.getElementById('content'+num).style.opacity = 1;
-                    document.getElementById('card'+num).classList.toggle('winner-border', s.total > otherTotal);
+                    
+                    const card = document.getElementById('card'+num);
+                    if(s.total > otherTotal) { card.classList.add('winner'); card.classList.remove('loser'); }
+                    else { card.classList.remove('winner'); card.classList.add('loser'); }
                 };
 
                 renderCard(1, p1, s1, s2.total); 
                 renderCard(2, p2, s2, s1.total);
-                checkSmartNotifications();
+                
+                updateSmartBars(s1, s2);
+                generateAIInsight(p1, s1, p2, s2);
                 renderChart(p1, p2);
-                renderProgressionChart(currentWinner.original.bio.name);
             };
 
-            function checkSmartNotifications() {
-                const history = JSON.parse(localStorage.getItem('elite_compare_history') || '[]');
-                const wins = {};
-                history.forEach(h => { wins[h.winner] = (wins[h.winner] || 0) + 1; });
-                
-                const winCount = wins[currentWinner.original.bio.name] || 0;
-                const promoBadge = document.getElementById('promoBadge');
-                const insightCard = document.getElementById('insightCard');
-
-                if (winCount >= 3) {
-                    promoBadge.classList.remove('hidden');
-                    insightCard.classList.add('promotion-alert');
-                    document.getElementById('scoutingReport').innerHTML = `<strong>Kritieke waarneming:</strong> ${currentWinner.original.bio.name} heeft ${winCount} opeenvolgende vergelijkingen gewonnen. Het systeem adviseert directe promotie.`;
-                } else {
-                    promoBadge.classList.add('hidden');
-                    insightCard.classList.remove('promotion-alert');
-                    document.getElementById('scoutingReport').innerHTML = `Analyse voltooid: <strong>${currentWinner.original.bio.name}</strong> toont de hoogste operationele waarde (${currentWinner.total}%).`;
+            function updateSmartBars(s1, s2) {
+                // Helper to set bar width based on ratio
+                const setBar = (id, v1, v2) => {
+                    const total = v1 + v2;
+                    const pct = (v1 / total) * 100;
+                    document.getElementById(id).style.width = pct + "%";
                 }
-                document.getElementById('actionContainer').classList.remove('hidden');
+                setBar('barObj', s1.obj, s2.obj);
+                setBar('barDev', s1.dev, s2.dev);
+                setBar('barCoach', s1.coach, s2.coach);
+
+                document.getElementById('diffObj').innerText = (s1.obj - s2.obj > 0 ? "+" : "") + (s1.obj - s2.obj) + "%";
+                document.getElementById('diffDev').innerText = (s1.dev - s2.dev > 0 ? "+" : "") + (s1.dev - s2.dev) + "%";
+                document.getElementById('diffCoach').innerText = (s1.coach - s2.coach > 0 ? "+" : "") + (s1.coach - s2.coach) + "%";
             }
 
-            // SHARE TO COACH LOGICA
-            document.getElementById('shareToCoach').onclick = () => {
-                const p1 = allPlayers.find(p => p.id === document.getElementById('player1Select').value);
-                const p2 = allPlayers.find(p => p.id === document.getElementById('player2Select').value);
-                const history = JSON.parse(localStorage.getItem('elite_compare_history') || '[]');
-                const pWins = history.filter(h => h.winner === currentWinner.original.bio.name).length;
+            function generateAIInsight(p1, s1, p2, s2) {
+                let winner = s1.total > s2.total ? p1.bio.name : p2.bio.name;
+                let diff = Math.abs(s1.total - s2.total);
+                let reason = "";
 
-                const shareText = `⚽ ELITE PRO SCOUTING REPORT\n` +
-                                 `----------------------------\n` +
-                                 `Vergelijking: ${p1.bio.name} vs ${p2.bio.name}\n` +
-                                 `Status: ${currentWinner.original.bio.name} geselecteerd.\n\n` +
-                                 `📈 Index Score: ${currentWinner.total}%\n` +
-                                 `🏆 Winning Streak: ${pWins} vergelijkingen gewonnen\n` +
-                                 `💡 Advies: ${document.getElementById('scoutingReport').innerText}\n\n` +
-                                 `Gegenereerd door Elite Pro Selection Matrix.`;
+                if(Math.abs(s1.dev - s2.dev) > 10) reason = "significant hoger ontwikkelingspotentieel";
+                else if(Math.abs(s1.obj - s2.obj) > 10) reason = "betere objectieve statistieken";
+                else reason = "een betere balans over alle facetten";
 
-                navigator.clipboard.writeText(shareText).then(() => {
-                    alert("Scouting rapport gekopieerd naar klembord! Je kunt het nu plakken in WhatsApp of e-mail.");
-                });
-            };
+                const text = `Op basis van de huidige kalibratie heeft <strong>${winner}</strong> een ${diff} punten hogere index. Dit wordt voornamelijk gedreven door ${reason}.`;
+                document.getElementById('aiSummary').innerHTML = text;
+            }
 
-            function updateHistoryUI(searchTerm = "") {
+            function updateHistoryUI() {
                 const history = JSON.parse(localStorage.getItem('elite_compare_history') || '[]');
                 const list = document.getElementById('historyList');
-                const trendContainer = document.getElementById('trendContainer');
-
-                const filtered = history.filter(item => 
-                    item.p1.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                    item.p2.toLowerCase().includes(searchTerm.toLowerCase())
-                );
-
-                list.innerHTML = filtered.reverse().map(item => `
-                    <div class="bg-white/5 p-3 rounded-xl border border-white/10 text-[10px] space-y-1">
-                        <div class="flex justify-between text-gray-500 font-bold uppercase text-[7px]"><span>${item.date}</span><span>${item.team}</span></div>
-                        <div class="text-white font-black truncate">${item.p1} VS ${item.p2}</div>
-                        <div class="text-[9px] ${item.action ? 'text-green-500' : 'text-gray-400'}">${item.action ? '● ' + item.action : 'Winner: ' + item.winner}</div>
+                list.innerHTML = history.reverse().map(item => `
+                    <div class="p-3 border-b border-white/5 hover:bg-white/5 transition cursor-pointer">
+                        <div class="flex justify-between text-[10px] text-gray-500 font-bold uppercase mb-1">
+                            <span>${item.date}</span><span>${item.action}</span>
+                        </div>
+                        <div class="text-xs text-white font-medium">
+                            <span class="text-yellow-500">${item.winner}</span> won van ${item.winner === item.p1 ? item.p2 : item.p1}
+                        </div>
                     </div>
                 `).join('');
-
-                const wins = {};
-                history.forEach(h => { wins[h.winner] = (wins[h.winner] || 0) + 1; });
-                const sortedTrends = Object.entries(wins).sort((a,b) => b[1] - a[1]).slice(0,3);
-
-                if(sortedTrends.length > 0) {
-                    trendContainer.innerHTML = sortedTrends.map(([name, count]) => `
-                        <div class="flex justify-between items-center bg-yellow-600/10 p-2 rounded-lg border border-yellow-600/20">
-                            <span class="text-[10px] font-bold text-white">${name}</span>
-                            <span class="text-[10px] font-black text-yellow-500">${count}x Win</span>
-                        </div>
-                    `).join('');
-                }
             }
 
-            function renderProgressionChart(playerName) {
-                const history = JSON.parse(localStorage.getItem('elite_compare_history') || '[]');
-                const pData = history.filter(h => h.p1 === playerName || h.p2 === playerName).slice(-5);
-                const scores = pData.map(h => h.winner === playerName ? h.winnerScore : 70);
-                
-                const ctx = document.getElementById('progressionChart');
-                if (progChart) progChart.destroy();
-                
-                progChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: pData.map((_, i) => i + 1),
-                        datasets: [{
-                            data: scores.length > 0 ? scores : [0],
-                            borderColor: '#D4AF37',
-                            backgroundColor: 'rgba(212,175,55,0.1)',
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 2
-                        }]
-                    },
-                    options: {
-                        plugins: { legend: { display: false } },
-                        scales: { y: { display: false, min: 0, max: 100 }, x: { display: false } },
-                        maintainAspectRatio: false
-                    }
-                });
-            }
-
-            document.getElementById('downloadCsv').onclick = () => {
-                const history = JSON.parse(localStorage.getItem('elite_compare_history') || '[]');
-                if(!history.length) return alert("Geen data.");
-                let csv = "Datum,Team,P1,P2,Winner,WinnerScore,Action\n" + history.map(i => `${i.date},${i.team},${i.p1},${i.p2},${i.winner},${i.winnerScore},${i.action}`).join('\n');
-                const link = document.createElement("a");
-                link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-                link.download = "Elite_Selection_Matrix_Data.csv";
-                link.click();
-            };
-
-            document.getElementById('globalSearch').addEventListener('input', (e) => updateHistoryUI(e.target.value));
-
+            // Action Apply
             document.getElementById('applyActionBtn').onclick = () => {
                 const p1 = allPlayers.find(p => p.id === document.getElementById('player1Select').value);
                 const p2 = allPlayers.find(p => p.id === document.getElementById('player2Select').value);
                 
                 const logEntry = {
                     date: new Date().toLocaleDateString('nl-NL', {day:'2-digit', month:'short'}),
-                    team: document.getElementById('teamFilter').value,
-                    p1: p1.bio.name,
-                    p2: p2.bio.name,
+                    p1: p1.bio.name, p2: p2.bio.name,
                     winner: currentWinner.original.bio.name,
-                    winnerScore: currentWinner.total,
                     action: document.getElementById('targetTeamSelect').value
                 };
                 
                 const history = JSON.parse(localStorage.getItem('elite_compare_history') || '[]');
                 history.push(logEntry);
                 localStorage.setItem('elite_compare_history', JSON.stringify(history));
-                
                 updateHistoryUI();
-                checkSmartNotifications();
-                renderProgressionChart(currentWinner.original.bio.name);
-                alert(`Besluit vastgelegd voor ${currentWinner.original.bio.name}.`);
+                alert(`Actie bevestigd: ${logEntry.action} voor ${logEntry.winner}`);
             };
 
             document.getElementById('clearHistory').onclick = () => {
-                if(confirm("Historie wissen?")) { 
-                    localStorage.removeItem('elite_compare_history'); 
-                    updateHistoryUI(); 
-                    checkSmartNotifications();
-                    if(progChart) progChart.destroy();
-                }
+                if(confirm("Log wissen?")) { localStorage.removeItem('elite_compare_history'); updateHistoryUI(); }
             };
 
             const renderChart = (p1, p2) => {
                 const ctx = document.getElementById('compChart');
                 if (chart) chart.destroy();
                 const labels = ["Techniek", "Tactiek", "Fysiek", "Mentaal"];
+                
+                // Mock stats
+                const s1 = p1.stats || { 'Techniek': 6, 'Tactiek': 7, 'Fysiek': 8, 'Mentaal': 7 };
+                const s2 = p2.stats || { 'Techniek': 7, 'Tactiek': 6, 'Fysiek': 7, 'Mentaal': 6 };
+
                 chart = new Chart(ctx, {
                     type: 'radar',
                     data: {
                         labels: labels,
                         datasets: [
-                            { label: p1.bio.name, data: labels.map(l => p1.stats[l]), borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.2)', borderWidth: 3 },
-                            { label: p2.bio.name, data: labels.map(l => p2.stats[l]), borderColor: '#FFF', backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 2 }
+                            { label: p1.bio.name, data: Object.values(s1), borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.2)', borderWidth: 2 },
+                            { label: p2.bio.name, data: Object.values(s2), borderColor: '#ffffff', backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1 }
                         ]
                     },
                     options: { 
-                        scales: { r: { suggestedMin: 0, suggestedMax: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' }, pointLabels: { color: '#888', font: { weight: 'bold' } } } },
-                        plugins: { legend: { labels: { color: '#FFF' } } }
+                        scales: { r: { suggestedMin: 0, suggestedMax: 10, ticks: { display: false }, grid: { color: '#27272a' }, pointLabels: { color: '#888', font: { size: 10, weight: 'bold' } } } },
+                        plugins: { legend: { labels: { color: '#FFF', font: { size: 10 } } } },
+                        maintainAspectRatio: false
                     }
                 });
             };
 
-            document.getElementById('exportPdf').onclick = async () => {
-                const canvas = await html2canvas(document.getElementById('exportArea'), { backgroundColor: '#0a0a0a', scale: 2 });
-                const pdf = new jspdf.jsPDF('l', 'mm', 'a4');
-                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 297, (canvas.height * 297) / canvas.width);
-                pdf.save("Elite_Selection_Matrix.pdf");
-            };
+            document.getElementById('exportPdf').onclick = async () => window.print();
 
             document.getElementById('teamFilter').onchange = updateLists;
             document.getElementById('player1Select').onchange = compare;
             document.getElementById('player2Select').onchange = compare;
+            
             updateLists(); updateHistoryUI();
         }
         init();
