@@ -2,218 +2,314 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Elite Pro | Performance Dashboard</title>
+    <title>Elite Pro | Performance Analytics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { 
-            --bg-app: #09090b; 
-            --bg-panel: #18181b; 
-            --bg-input: #27272a;
-            --border: #3f3f46; 
-            --primary: #d4af37; 
-            --primary-dim: #a18322;
-            --text-main: #f4f4f5;
-            --text-muted: #a1a1aa;
+        /* --- DESIGN SYSTEM TOKENS --- */
+        :root {
+            --bg-body: #09090b;       /* Zinc 950 */
+            --bg-surface: #121215;    /* Custom Dark */
+            --bg-panel: #18181b;      /* Zinc 900 */
+            --bg-element: #27272a;    /* Zinc 800 */
+            
+            --border-subtle: #27272a;
+            --border-strong: #3f3f46;
+            
+            --text-primary: #f4f4f5;  /* Zinc 100 */
+            --text-secondary: #a1a1aa; /* Zinc 400 */
+            --text-tertiary: #52525b;  /* Zinc 600 */
+            
+            --accent: #D4AF37;        /* Elite Gold */
+            --accent-glow: rgba(212, 175, 55, 0.15);
+            
             --danger: #ef4444;
             --success: #10b981;
-        }
-        
-        body { 
-            background-color: var(--bg-app); 
-            color: var(--text-main); 
-            font-family: 'Inter', sans-serif; 
-            height: 100vh; 
-            overflow: hidden; /* App feel */
-            display: flex;
+            
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
-        /* --- SIDEBAR --- */
+        /* --- GLOBAL RESET & BASE --- */
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            height: 100vh;
+            overflow: hidden; /* App-like structure */
+            display: flex;
+            margin: 0;
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--bg-element); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+        /* --- SIDEBAR (Navigation) --- */
         aside {
             width: 280px;
-            background-color: #0c0c0e;
-            border-right: 1px solid var(--border);
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-subtle);
             display: flex;
             flex-direction: column;
+            height: 100%;
+            flex-shrink: 0;
+            z-index: 20;
+        }
+
+        .brand-area {
             padding: 24px;
-            height: 100vh;
-            z-index: 10;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .logo-mark {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--accent), #b8860b);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; color: #000; font-size: 14px;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        .brand-text { font-weight: 700; font-size: 16px; letter-spacing: -0.5px; }
+        .brand-text span { color: var(--accent); }
+
+        .nav-section { padding: 24px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
+        .nav-label {
+            font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-tertiary); margin-bottom: 12px; display: block;
         }
 
-        .brand {
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            color: white;
-            margin-bottom: 32px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; gap: 10px;
+        .search-wrapper { position: relative; }
+        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-tertiary); font-size: 12px; }
+        
+        .monitor-list { display: flex; flex-direction: column; gap: 2px; }
+        .team-group { margin-bottom: 16px; }
+        .team-title { 
+            font-size: 10px; font-weight: 700; color: var(--text-tertiary); 
+            padding: 0 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.03); margin-bottom: 4px;
         }
-        .brand span { color: var(--primary); }
+        .monitor-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px; border-radius: 6px; cursor: pointer;
+            transition: all 0.2s; font-size: 13px; color: var(--text-secondary);
+        }
+        .monitor-item:hover { background: rgba(255,255,255,0.03); color: var(--text-primary); }
+        .monitor-item.active { background: var(--bg-element); color: white; border-left: 2px solid var(--accent); }
 
-        .sidebar-section { margin-bottom: 30px; }
-        .sidebar-label {
-            font-size: 10px; font-weight: 600; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+        .dot-green { background: var(--success); box-shadow: 0 0 5px rgba(16,185,129,0.3); }
+        .dot-orange { background: orange; box-shadow: 0 0 5px rgba(255,165,0,0.3); }
+        .dot-red { background: var(--danger); box-shadow: 0 0 5px rgba(239,68,68,0.3); }
+
+        .system-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-subtle);
+            background: #0c0c0e;
         }
 
-        /* --- MAIN CONTENT --- */
+        /* --- MAIN STAGE --- */
         main {
             flex: 1;
-            overflow-y: auto;
-            padding: 0;
-            background: var(--bg-app);
             position: relative;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, rgba(212,175,55,0.03), transparent 40%), var(--bg-body);
         }
 
-        .top-bar {
-            position: sticky; top: 0; z-index: 20;
-            background: rgba(9, 9, 11, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
+        /* Glass Header */
+        .glass-header {
+            position: sticky; top: 0; left: 0; right: 0; z-index: 50;
+            background: rgba(9, 9, 11, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
             padding: 16px 32px;
             display: flex; justify-content: space-between; align-items: center;
         }
 
-        .content-container {
-            max-width: 1200px;
+        .content-wrapper {
+            max-width: 1100px;
             margin: 0 auto;
             padding: 32px;
         }
 
-        /* --- PANELS & CARDS --- */
+        /* --- COMPONENTS & PANELS --- */
         .panel {
             background: var(--bg-panel);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-subtle);
             border-radius: 12px;
-            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            padding: 0; /* padding handled inside sections */
             margin-bottom: 24px;
+            overflow: hidden;
+            position: relative;
         }
-        
         .panel-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-subtle);
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; padding-bottom: 15px;
-            border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,0.01);
         }
-        .panel-title { font-size: 14px; font-weight: 600; color: white; display: flex; align-items: center; gap: 8px; }
-        .panel-title::before { content:''; display:block; width:4px; height:14px; background:var(--primary); border-radius:2px;}
+        .panel-title { font-size: 14px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+        .panel-icon { color: var(--accent); }
+        .panel-body { padding: 24px; }
 
-        /* --- PLAYER HEADER PROFILE --- */
-        .profile-header {
-            display: grid; grid-template-columns: 100px 1fr auto; gap: 24px;
-            align-items: center;
+        /* Inputs */
+        .input-dark {
+            background: var(--bg-element);
+            border: 1px solid transparent;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            width: 100%;
+            transition: 0.2s;
+            outline: none;
+            font-family: var(--font-main);
         }
-        .profile-avatar {
-            width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
-            border: 3px solid var(--bg-panel); outline: 2px solid var(--primary);
+        .input-dark:focus {
+            background: #000;
+            border-color: var(--border-strong);
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+        .input-dark:disabled { opacity: 0.5; cursor: not-allowed; }
+        /* Select specific style */
+        select.input-dark { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23a1a1aa%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; padding-right: 30px; }
+
+        /* Buttons */
+        .btn {
+            height: 36px; padding: 0 16px; border-radius: 8px;
+            font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+            display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+            cursor: pointer; transition: 0.2s; border: 1px solid transparent;
+        }
+        .btn-primary { 
+            background: var(--accent); color: #000; 
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(212, 175, 55, 0.3); background: #eac545; }
+        
+        .btn-secondary { background: var(--bg-element); color: var(--text-primary); border-color: var(--border-subtle); }
+        .btn-secondary:hover { border-color: var(--text-secondary); background: #333; }
+        
+        .btn-danger { background: rgba(239,68,68,0.1); color: var(--danger); border-color: rgba(239,68,68,0.2); }
+        .btn-danger:hover { background: rgba(239,68,68,0.2); }
+
+        .btn-ghost { background: transparent; color: var(--text-secondary); }
+        .btn-ghost:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+
+        /* --- HERO PROFILE SECTION --- */
+        .hero-profile {
+            display: grid; grid-template-columns: auto 1fr auto; gap: 24px;
+            align-items: center; padding: 32px;
+            background: linear-gradient(to right, var(--bg-panel), rgba(24, 24, 27, 0.8));
+        }
+        .avatar-frame {
+            position: relative; width: 80px; height: 80px;
+        }
+        .avatar-img {
+            width: 100%; height: 100%; border-radius: 16px; object-fit: cover;
+            border: 2px solid var(--border-strong);
             background: #000;
         }
-        .profile-info h2 { font-size: 24px; font-weight: 700; color: white; margin-bottom: 4px; }
-        .profile-meta { display: flex; gap: 16px; font-size: 13px; color: var(--text-muted); }
-        .tag { 
-            background: rgba(212, 175, 55, 0.1); color: var(--primary); 
-            padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 11px; border: 1px solid rgba(212, 175, 55, 0.2);
+        .hero-info h1 {
+            font-size: 28px; font-weight: 700; color: white; margin: 0 0 8px 0; letter-spacing: -0.5px;
         }
+        .meta-tags { display: flex; gap: 12px; }
+        .meta-tag {
+            font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+            background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 4px;
+            color: var(--text-secondary); border: 1px solid var(--border-subtle);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .meta-tag strong { color: var(--accent); }
 
-        /* --- INPUTS --- */
-        .form-group label {
-            display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px;
+        .score-box {
+            text-align: right;
         }
-        .input-std {
-            width: 100%; background: var(--bg-input); border: 1px solid var(--border);
-            color: white; padding: 10px 12px; border-radius: 6px; font-size: 13px;
-            transition: all 0.2s; outline: none;
-        }
-        .input-std:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1); }
-        .input-std:read-only { background: transparent; border: 1px solid transparent; color: var(--text-main); font-weight: 600; padding-left: 0; }
-        .input-std:disabled { opacity: 0.5; cursor: not-allowed; }
-        textarea.input-std { resize: none; line-height: 1.5; }
+        .score-label { font-size: 10px; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; letter-spacing: 1px; }
+        .score-value { font-size: 36px; font-weight: 800; color: var(--text-primary); line-height: 1; margin-top: 4px; font-family: var(--font-mono); }
 
-        /* --- SLIDERS & RADAR --- */
+        /* --- ASSESSMENT GRID --- */
+        .skill-grid { display: flex; flex-direction: column; }
         .skill-row {
-            display: grid; grid-template-columns: 120px 40px 1fr 1fr; gap: 16px; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+            display: grid; grid-template-columns: 140px 48px 1fr 200px; gap: 20px;
+            align-items: center; padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
         }
         .skill-row:last-child { border-bottom: none; }
         
+        .skill-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+        .skill-score-box {
+            width: 36px; height: 36px; border-radius: 8px;
+            background: #000; border: 1px solid var(--border-strong);
+            color: var(--accent); font-weight: 700; font-family: var(--font-mono);
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        /* Custom Slider */
         input[type=range] {
-            width: 100%; -webkit-appearance: none; background: transparent;
+            -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer;
         }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
-            background: var(--primary); cursor: pointer; margin-top: -6px;
+            background: var(--text-primary); border: 2px solid var(--bg-panel);
+            margin-top: -6px; box-shadow: 0 2px 6px rgba(0,0,0,0.5); transition: 0.2s;
         }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); background: var(--accent); }
         input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px; background: var(--border); border-radius: 2px;
-        }
-        .score-badge {
-            background: var(--bg-input); color: var(--primary); font-weight: 700;
-            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-            border-radius: 6px; border: 1px solid var(--border); font-size: 13px;
+            width: 100%; height: 4px; background: var(--border-strong); border-radius: 2px;
         }
 
-        /* --- BUTTONS --- */
-        .btn {
-            display: inline-flex; align-items: center; gap: 8px; justify-content: center;
-            padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: 0.2s; border: none;
-        }
-        .btn-primary { background: var(--primary); color: #000; }
-        .btn-primary:hover { background: #e5c150; }
-        .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
-        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
-        .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
-        .btn-ghost:hover { border-color: var(--text-main); color: var(--text-main); }
-        .btn-sm { padding: 6px 12px; font-size: 10px; }
+        /* --- POP GRID --- */
+        .pop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .form-label { display: block; font-size: 11px; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 8px; }
 
-        /* --- STATUS DOTS & MONITOR --- */
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-        .dot-green { background: var(--success); box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
-        .dot-orange { background: orange; box-shadow: 0 0 8px rgba(255, 165, 0, 0.4); }
-        .dot-red { background: var(--danger); box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
-        
-        .monitor-item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 8px 12px; border-radius: 6px; margin-bottom: 4px; 
-            font-size: 12px; color: var(--text-muted); cursor: pointer;
+        /* --- LOCK OVERLAY --- */
+        .locked-overlay {
+            position: absolute; inset: 0; background: rgba(9,9,11,0.6); backdrop-filter: blur(2px);
+            z-index: 10; display: flex; align-items: center; justify-content: center;
+            border-radius: 12px;
         }
-        .monitor-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .lock-msg {
+            background: #000; border: 1px solid var(--danger); color: var(--danger);
+            padding: 8px 16px; border-radius: 50px; font-weight: 700; font-size: 12px;
+            text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
 
-        /* --- PRINT CSS (A4) --- */
+        /* --- PRINT STYLES (Clean Document) --- */
         @media print {
-            @page { size: A4; margin: 0; }
-            body { 
-                background: white !important; color: black !important; 
-                height: auto; overflow: visible; display: block;
-            }
-            aside, .no-print, .top-bar, .ai-btn { display: none !important; }
-            main { margin: 0; padding: 0; }
-            .content-container { max-width: 100%; padding: 15mm; }
+            body { background: white !important; color: black !important; display: block; overflow: visible; height: auto; }
+            aside, .glass-header, .no-print { display: none !important; }
+            main { margin: 0 !important; background: white !important; }
+            .content-wrapper { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
             
             .panel { 
-                border: 1px solid #ddd !important; 
-                background: white !important; color: black !important;
-                box-shadow: none !important; margin-bottom: 20px; page-break-inside: avoid;
+                box-shadow: none !important; border: 1px solid #ddd !important; 
+                background: white !important; color: black !important; margin-bottom: 20px; page-break-inside: avoid;
             }
-            .panel-title { color: black !important; }
-            .profile-info h2 { color: black !important; }
-            .input-std { color: black !important; border: none !important; padding: 0 !important; background: transparent !important; }
-            .tag { border: 1px solid #000; color: #000; background: transparent; }
+            .hero-profile { background: #f4f4f5 !important; color: black !important; border: 1px solid #ddd; }
+            .hero-info h1 { color: black !important; }
+            .meta-tag { border-color: #ccc !important; color: black !important; background: white !important; }
+            .meta-tag strong { color: black !important; }
             
-            /* Radar Print fix */
+            .input-dark, .input-std { 
+                background: transparent !important; border: none !important; 
+                color: black !important; padding: 0 !important; 
+            }
+            .skill-score-box { border: 2px solid #000 !important; color: #000 !important; background: transparent !important; }
+            input[type=range] { display: none !important; }
+            .skill-row { grid-template-columns: 150px 40px 1fr; border-bottom: 1px solid #eee !important; }
+            
             .radar-box { height: 300px !important; width: 300px !important; margin: 0 auto; }
-            canvas { max-width: 100% !important; }
             
-            /* Sliders verbergen, scores tonen */
-            input[type=range] { display: none; }
-            .score-badge { border: 1px solid #000; color: #000; background: transparent; }
-            .skill-row { border-bottom: 1px solid #eee; grid-template-columns: 150px 40px 1fr; }
-            
-            /* Forceer graphics */
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
     </style>
@@ -221,135 +317,166 @@
 <body>
 
     <aside class="no-print">
-        <div class="brand">
-            <div class="w-8 h-8 bg-yellow-600 rounded flex items-center justify-center text-black font-black text-xs">EP</div>
-            <div>ELITE<span>PRO</span></div>
+        <div class="brand-area">
+            <div class="logo-mark">EP</div>
+            <div class="brand-text">ELITE<span>PRO</span></div>
         </div>
 
-        <div class="sidebar-section">
-            <div class="sidebar-label">Selectie</div>
-            <select id="assetSearch" class="input-std mb-2" style="background: var(--bg-app);">
-                <option value="">Zoek speler...</option>
-            </select>
-            <button id="loadBtn" class="btn btn-primary w-full btn-sm">Dossier Laden</button>
-        </div>
-
-        <div class="sidebar-section" style="flex: 1; overflow-y: auto;">
-            <div class="sidebar-label">Team Monitor</div>
-            <div id="tcTeamList">
+        <div class="nav-section">
+            <div>
+                <span class="nav-label">Speler Selectie</span>
+                <div class="search-wrapper mb-3">
+                    <select id="assetSearch" class="input-dark">
+                        <option value="">Zoek speler...</option>
+                    </select>
                 </div>
+                <button id="loadBtn" class="btn btn-primary" style="width: 100%;">
+                    <span>Open Dossier</span>
+                </button>
+            </div>
+
+            <div>
+                <span class="nav-label">Team Monitor</span>
+                <div id="tcTeamList" class="monitor-list">
+                    </div>
+            </div>
         </div>
 
-        <div class="sidebar-section mt-auto">
-            <div class="sidebar-label">Systeem</div>
-            <input type="password" id="ghToken" placeholder="GitHub Token" class="input-std mb-2 text-xs">
-            <div class="text-[10px] text-gray-500">Versie 2.4.0 (Ent)</div>
+        <div class="system-footer">
+            <span class="nav-label">Systeem Authenticatie</span>
+            <input type="password" id="ghToken" placeholder="GitHub Token" class="input-dark" style="font-size: 11px;">
         </div>
     </aside>
 
     <main>
-        <div class="top-bar no-print">
+        <header class="glass-header no-print">
             <div class="flex items-center gap-4">
-                <select id="pPeriod" class="input-std" style="width: 200px;" onchange="loadPeriodData()">
-                    <option value="1e seizoenshelft">1e seizoenshelft</option>
-                    <option value="2e seizoenshelft">2e seizoenshelft</option>
-                    <option value="Eindbeoordeling">Eindbeoordeling</option>
-                </select>
+                <div class="flex items-center gap-2 text-sm font-medium text-gray-400">
+                    <span>Periode:</span>
+                    <select id="pPeriod" class="input-dark" style="width: 180px; padding: 6px 12px;" onchange="loadPeriodData()">
+                        <option value="1e seizoenshelft">1e seizoenshelft</option>
+                        <option value="2e seizoenshelft">2e seizoenshelft</option>
+                        <option value="Eindbeoordeling">Eindbeoordeling</option>
+                    </select>
+                </div>
             </div>
+            
             <div class="flex items-center gap-3">
-                <button type="button" onclick="savePlayer('draft')" id="btnDraft" class="btn btn-ghost">Concept Opslaan</button>
-                <button type="button" onclick="if(confirm('Weet u het zeker? Hierna is het dossier vergrendeld.')) savePlayer('locked')" id="btnFinal" class="btn btn-danger">🔒 Definitief</button>
-                <button type="button" onclick="window.print()" class="btn btn-primary">🖨️ PDF</button>
+                <button type="button" onclick="savePlayer('draft')" id="btnDraft" class="btn btn-secondary">
+                    <span>💾 Concept</span>
+                </button>
+                <button type="button" onclick="if(confirm('Weet u het zeker? Hierna is het dossier vergrendeld.')) savePlayer('locked')" id="btnFinal" class="btn btn-danger">
+                    <span>🔒 Definitief</span>
+                </button>
+                <div class="w-px h-6 bg-gray-700 mx-2"></div>
+                <button type="button" onclick="window.print()" class="btn btn-secondary">
+                    <span>🖨️ PDF</span>
+                </button>
             </div>
-        </div>
+        </header>
 
-        <div class="content-container">
+        <div class="content-wrapper">
             <form id="proForm">
                 
-                <div class="panel">
-                    <div id="lockBadge" class="hidden bg-red-500/10 text-red-500 border border-red-500/20 px-3 py-1 rounded text-xs font-bold w-fit mb-4">🔒 DOSSIER VERGRENDELD</div>
+                <div class="panel hero-profile mb-8">
+                    <div id="lockBadge" class="hidden locked-overlay" style="z-index: 5;">
+                        <div class="lock-msg">🔒 Dit dossier is vergrendeld</div>
+                    </div>
+
+                    <div class="avatar-frame">
+                        <img id="pPreviewImg" class="avatar-img" src="https://via.placeholder.com/150/000000/FFFFFF?text=PRO" alt="Profile">
+                    </div>
                     
-                    <div class="profile-header">
-                        <img id="pPreviewImg" class="profile-avatar" src="https://via.placeholder.com/150" alt="Profile">
-                        
-                        <div class="profile-info">
-                            <h2 id="dispName">SELECTEER SPELER</h2>
-                            <div class="profile-meta">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-gray-500">Team:</span>
-                                    <span class="tag" id="dispTeam">--</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-gray-500">Positie:</span>
-                                    <span class="text-white font-medium" id="dispRole">--</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-gray-500">Rugnummer:</span>
-                                    <span class="text-white font-medium" id="dispNumber">--</span>
-                                </div>
-                            </div>
-                            
-                            <div class="hidden">
-                                <input type="text" id="pName" readonly>
-                                <input type="number" id="pNumber" readonly>
-                                <input type="text" id="pTeam" readonly>
-                                <input type="text" id="pPos" readonly>
-                                <input type="text" id="pPhotoUrl" readonly>
-                                <input type="text" id="pEmail" readonly>
-                                <input type="text" id="pId" readonly>
-                            </div>
+                    <div class="hero-info">
+                        <h1 id="dispName">Selecteer Speler</h1>
+                        <div class="meta-tags">
+                            <div class="meta-tag">Team: <strong id="dispTeam">--</strong></div>
+                            <div class="meta-tag">Positie: <strong id="dispRole">--</strong></div>
+                            <div class="meta-tag">Nr: <strong id="dispNumber">--</strong></div>
                         </div>
 
-                        <div class="text-right">
-                             <div class="text-xs text-gray-500 uppercase font-bold tracking-widest mb-1">Performance Score</div>
-                             <div id="avgScore" class="text-4xl font-black text-white">0.0</div>
+                        <div class="hidden">
+                            <input type="text" id="pName" readonly>
+                            <input type="number" id="pNumber" readonly>
+                            <input type="text" id="pTeam" readonly>
+                            <input type="text" id="pPos" readonly>
+                            <input type="text" id="pPhotoUrl" readonly>
+                            <input type="text" id="pEmail" readonly>
+                            <input type="text" id="pId" readonly>
                         </div>
+                    </div>
+
+                    <div class="score-box">
+                        <div class="score-label">Performance</div>
+                        <div id="avgScore" class="score-value">0.0</div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     
-                    <div id="cardAssessment" class="lg:col-span-2 panel">
-                        <div class="panel-header">
-                            <div class="panel-title">Technische & Tactische Analyse</div>
-                            <button type="button" onclick="fillAI()" class="btn btn-ghost btn-sm ai-btn">✨ AI Auto-Fill</button>
-                        </div>
-                        <div id="skillContainer">
+                    <div class="lg:col-span-8 flex flex-col gap-6">
+                        <div id="cardAssessment" class="panel">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <span class="panel-icon">⚡</span> Technische & Tactische Analyse
+                                </div>
+                                <button type="button" onclick="fillAI()" class="btn btn-ghost" style="height: 28px; font-size: 10px;">✨ AI Auto-Fill</button>
                             </div>
-                    </div>
-
-                    <div class="flex flex-col gap-6">
-                        <div class="panel flex flex-col items-center justify-center">
-                            <div class="panel-title w-full mb-4">Competentie Radar</div>
-                            <div class="radar-box relative w-full aspect-square max-w-[300px]">
-                                <canvas id="liveRadar"></canvas>
+                            <div class="panel-body">
+                                <div id="skillContainer" class="skill-grid">
+                                    </div>
                             </div>
                         </div>
 
-                        <div id="cardPop" class="panel flex-1">
-                            <div class="panel-header"><div class="panel-title">Ontwikkelplan (POP)</div></div>
-                            <div class="space-y-4">
-                                <div class="form-group">
-                                    <label>Doelstelling</label>
-                                    <textarea id="g1" class="input-std" rows="3" placeholder="Hoofddoel..."></textarea>
+                        <div id="cardPop" class="panel">
+                            <div class="panel-header">
+                                <div class="panel-title"><span class="panel-icon">📈</span> Persoonlijk Ontwikkelingsplan (POP)</div>
+                            </div>
+                            <div class="panel-body space-y-6">
+                                <div>
+                                    <label class="form-label">Hoofddoelstelling</label>
+                                    <textarea id="g1" class="input-dark" rows="2" placeholder="Wat wil de speler bereiken?"></textarea>
                                 </div>
-                                <div class="form-group">
-                                    <label>Actieplan</label>
-                                    <textarea id="a1" class="input-std" rows="3" placeholder="Actiepunten..."></textarea>
+                                <div>
+                                    <label class="form-label">Actieplan</label>
+                                    <textarea id="a1" class="input-dark" rows="2" placeholder="Concrete stappen..."></textarea>
                                 </div>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div class="form-group">
-                                        <label>Sterktes</label>
-                                        <textarea id="pStrengths" class="input-std" rows="2"></textarea>
+                                <div class="pop-grid">
+                                    <div>
+                                        <label class="form-label text-green-500">Kwaliteiten (Top)</label>
+                                        <textarea id="pStrengths" class="input-dark" rows="3"></textarea>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Verbeterpunten</label>
-                                        <textarea id="pGrowth" class="input-std" rows="2"></textarea>
+                                    <div>
+                                        <label class="form-label text-yellow-500">Verbeterpunten (Tips)</label>
+                                        <textarea id="pGrowth" class="input-dark" rows="3"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="lg:col-span-4 flex flex-col gap-6">
+                        <div class="panel flex flex-col items-center">
+                            <div class="panel-header w-full">
+                                <div class="panel-title">Competentie Profiel</div>
+                            </div>
+                            <div class="panel-body w-full flex justify-center">
+                                <div class="radar-box relative w-full aspect-square max-w-[320px]">
+                                    <canvas id="liveRadar"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="panel bg-gradient-to-br from-[#18181b] to-[#121212]">
+                            <div class="panel-body text-center">
+                                <div class="text-xs text-gray-500 uppercase mb-2">Huidige Status</div>
+                                <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10 text-xs font-bold text-white">
+                                    <span id="statusIndicatorText">Concept</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </form>
@@ -360,38 +487,50 @@
         import DataProvider from './js/data_provider.js';
 
         let radarChart, allPlayers = [], currentPlayer = null;
-        const skillMap = { 'Techniek': ['bal','pas','aan','drib','schot'], 'Tactiek': ['posi','vrij','sam','oms'], 'Fysiek': ['sne','uit','kra','wen'], 'Mentaal': ['inz','mot','coa','tea'] };
-        const labels = { bal:'Balcontrole', pas:'Passen', aan:'Aanname', drib:'Dribbel', schot:'Schot', posi:'Positie', vrij:'Vrijlopen', sam:'Samenspel', oms:'Omschakeling', sne:'Snelheid', uit:'Conditie', kra:'Kracht', wen:'Wendbaar', inz:'Inzet', mot:'Motivatie', coa:'Coachbaar', tea:'Team' };
+        const skillMap = { 
+            'Techniek': ['bal','pas','aan','drib','schot'], 
+            'Tactiek': ['posi','vrij','sam','oms'], 
+            'Fysiek': ['sne','uit','kra','wen'], 
+            'Mentaal': ['inz','mot','coa','tea'] 
+        };
+        const labels = { 
+            bal:'Balcontrole', pas:'Passen', aan:'Aanname', drib:'Dribbel', schot:'Schot', 
+            posi:'Positie Kiezen', vrij:'Vrijlopen', sam:'Samenspel', oms:'Omschakeling', 
+            sne:'Snelheid', uit:'Uithoudingsvermogen', kra:'Fysieke Kracht', wen:'Wendbaarheid', 
+            inz:'Inzet & Werklust', mot:'Motivatie', coa:'Coachbaarheid', tea:'Teamgedrag' 
+        };
         
         if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
 
-        // UI Logic
-        function lockUI() {
-            document.getElementById('lockBadge').classList.remove('hidden');
-            const formElements = document.querySelectorAll('#cardAssessment input, #cardAssessment button.ai-btn, #cardPop textarea');
-            formElements.forEach(el => el.disabled = true);
-            
+        // --- UI LOGIC ---
+        function setLockState(isLocked) {
+            const overlay = document.getElementById('lockBadge');
             const btnDraft = document.getElementById('btnDraft');
             const btnFinal = document.getElementById('btnFinal');
-            
-            btnDraft.style.display = 'none';
-            btnFinal.innerText = "Grendel actief";
-            btnFinal.disabled = true;
-            btnFinal.classList.add('opacity-50', 'cursor-not-allowed');
-        }
+            const formInputs = document.querySelectorAll('#cardAssessment input, #cardAssessment button.ai-btn, #cardPop textarea');
+            const statusText = document.getElementById('statusIndicatorText');
 
-        function unlockUI() {
-            document.getElementById('lockBadge').classList.add('hidden');
-            const formElements = document.querySelectorAll('#cardAssessment input, #cardAssessment button.ai-btn, #cardPop textarea');
-            formElements.forEach(el => el.disabled = false);
-            
-            const btnDraft = document.getElementById('btnDraft');
-            const btnFinal = document.getElementById('btnFinal');
-            
-            btnDraft.style.display = 'inline-flex';
-            btnFinal.innerText = "🔒 Definitief";
-            btnFinal.disabled = false;
-            btnFinal.classList.remove('opacity-50', 'cursor-not-allowed');
+            if (isLocked) {
+                overlay.classList.remove('hidden');
+                formInputs.forEach(el => el.disabled = true);
+                
+                btnDraft.style.display = 'none';
+                btnFinal.innerHTML = '<span>🔒 Vergrendeld</span>';
+                btnFinal.disabled = true;
+                btnFinal.classList.add('opacity-50', 'cursor-not-allowed');
+                statusText.innerText = "Definitief";
+                statusText.className = "text-green-500";
+            } else {
+                overlay.classList.add('hidden');
+                formInputs.forEach(el => el.disabled = false);
+                
+                btnDraft.style.display = 'inline-flex';
+                btnFinal.innerHTML = '<span>🔒 Definitief</span>';
+                btnFinal.disabled = false;
+                btnFinal.classList.remove('opacity-50', 'cursor-not-allowed');
+                statusText.innerText = "Concept / Open";
+                statusText.className = "text-yellow-500";
+            }
         }
 
         window.loadPeriodData = () => {
@@ -409,14 +548,15 @@
                 document.getElementById('a1').value = history.pop?.action || "";
                 document.getElementById('pStrengths').value = history.pop?.strengths || "";
                 document.getElementById('pGrowth').value = history.pop?.growth || "";
-                if(history.status === 'locked') lockUI(); else unlockUI();
+                
+                setLockState(history.status === 'locked');
             } else {
                 // Reset fields
                 document.querySelectorAll('#skillContainer input[type=range]').forEach(i => i.value = 5);
                 document.querySelectorAll('#skillContainer input[type=text]').forEach(i => i.value = "");
-                document.querySelectorAll('.score-badge').forEach(s => s.innerText = "5");
+                document.querySelectorAll('.skill-score-box').forEach(s => s.innerText = "5");
                 document.querySelectorAll('#cardPop textarea').forEach(t => t.value = "");
-                unlockUI();
+                setLockState(false);
             }
             window.updateRadar();
         };
@@ -429,17 +569,18 @@
             
             teams.forEach(team => {
                 const teamPlayers = allPlayers.filter(p => p.bio.team === team);
-                let html = `<div class="mb-4"><div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">${team}</div>`;
+                let html = `<div class="team-group"><div class="team-title">${team}</div><div class="monitor-list">`;
                 
                 teamPlayers.forEach(p => {
                     const status = p.history?.[period]?.status || 'missing';
                     let dotClass = status === 'locked' ? 'dot-green' : (status === 'draft' ? 'dot-orange' : 'dot-red');
+                    
                     html += `<div class="monitor-item" onclick="document.getElementById('assetSearch').value='${p.id}'; document.getElementById('loadBtn').click();">
                                 <span>${p.bio.name}</span>
                                 <span class="status-dot ${dotClass}"></span>
                              </div>`;
                 });
-                html += `</div>`;
+                html += `</div></div>`;
                 container.innerHTML += html;
             });
         };
@@ -474,7 +615,7 @@
 
             try {
                 await DataProvider.updatePlayer(playerData, token);
-                alert(status === 'locked' ? "✅ Dossier definitief vergrendeld!" : "💾 Concept opgeslagen.");
+                alert(status === 'locked' ? "✅ Opgeslagen & Vergrendeld" : "💾 Opgeslagen");
                 allPlayers = await DataProvider.getAllPlayers(); 
                 currentPlayer = allPlayers.find(p => p.id === playerData.id);
                 loadPeriodData();
@@ -486,9 +627,9 @@
             Object.keys(labels).forEach(k => {
                 const val = parseInt(document.getElementById('s_'+k).value);
                 const field = document.getElementById('o_'+k);
-                if(val >= 8) field.value = "Elite performance. Handhaven.";
-                else if(val <= 5) field.value = "Aandachtspunt voor ontwikkeling.";
-                else field.value = "Stabiel niveau, focus op details.";
+                if(val >= 8) field.value = "Uitmuntend niveau. Blijven uitdagen.";
+                else if(val <= 5) field.value = "Aandachtspunt in training.";
+                else field.value = "Voldoende basisniveau.";
             });
         };
 
@@ -512,14 +653,16 @@
             // Build Skills UI
             const container = document.getElementById('skillContainer');
             Object.keys(skillMap).forEach(cat => {
-                container.innerHTML += `<div class="text-xs font-bold text-yellow-600 uppercase tracking-widest mt-6 mb-3 border-b border-white/5 pb-1">${cat}</div>`;
+                container.innerHTML += `<div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-6 mb-3 px-2 border-b border-white/5 pb-1">${cat}</div>`;
                 skillMap[cat].forEach(key => {
                     container.innerHTML += `
                         <div class="skill-row">
-                            <label class="text-gray-300 font-medium text-xs">${labels[key]}</label>
-                            <span id="v_${key}" class="score-badge">5</span>
-                            <input type="range" id="s_${key}" min="1" max="10" value="5" oninput="v_${key}.innerText=this.value; updateRadar();">
-                            <input type="text" id="o_${key}" placeholder="Notitie..." class="input-std text-xs">
+                            <label class="skill-label">${labels[key]}</label>
+                            <div id="v_${key}" class="skill-score-box">5</div>
+                            <div class="flex items-center px-2">
+                                <input type="range" id="s_${key}" min="1" max="10" value="5" oninput="v_${key}.innerText=this.value; updateRadar();">
+                            </div>
+                            <input type="text" id="o_${key}" placeholder="Notitie..." class="input-dark text-xs">
                         </div>`;
                 });
             });
@@ -528,13 +671,34 @@
             allPlayers = await DataProvider.getAllPlayers();
             document.getElementById('assetSearch').innerHTML = '<option value="">Zoek speler...</option>' + allPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
 
-            // Init Chart
+            // Init Chart (Modern Config)
             const ctx = document.getElementById('liveRadar').getContext('2d');
+            Chart.defaults.color = '#71717a';
+            Chart.defaults.font.family = 'Inter';
             radarChart = new Chart(ctx, {
                 type: 'radar',
-                data: { labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'], datasets: [{ data: [5,5,5,5], backgroundColor: 'rgba(212, 175, 55, 0.2)', borderColor: '#D4AF37', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#fff' }] },
+                data: { 
+                    labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'], 
+                    datasets: [{ 
+                        data: [5,5,5,5], 
+                        backgroundColor: 'rgba(212, 175, 55, 0.15)', 
+                        borderColor: '#D4AF37', 
+                        borderWidth: 2, 
+                        pointBackgroundColor: '#18181b',
+                        pointBorderColor: '#D4AF37',
+                        pointHoverBackgroundColor: '#fff'
+                    }] 
+                },
                 options: { 
-                    scales: { r: { min: 0, max: 10, ticks: { display: false }, grid: { color: '#333' }, angleLines: { color: '#333' }, pointLabels: { color: '#888', font: { size: 10, weight: 'bold' } } } }, 
+                    scales: { 
+                        r: { 
+                            min: 0, max: 10, 
+                            ticks: { display: false, stepSize: 2 }, 
+                            grid: { color: '#27272a' }, 
+                            angleLines: { color: '#27272a' }, 
+                            pointLabels: { color: '#d4d4d8', font: { size: 11, weight: '600' } } 
+                        } 
+                    }, 
                     plugins: { legend: { display: false } },
                     maintainAspectRatio: false
                 }
@@ -548,7 +712,7 @@
                 const p = allPlayers.find(x => x.id === pId);
                 if(p) {
                     currentPlayer = p;
-                    // Populate Hidden & UI fields
+                    // Map Data
                     document.getElementById('pName').value = p.bio.name;
                     document.getElementById('pId').value = p.id;
                     document.getElementById('pNumber').value = p.bio.number;
@@ -557,12 +721,12 @@
                     document.getElementById('pPhotoUrl').value = p.bio.photo;
                     document.getElementById('pEmail').value = p.bio.email || "";
 
-                    // Update UI Header
+                    // Update Hero
                     document.getElementById('dispName').innerText = p.bio.name;
                     document.getElementById('dispNumber').innerText = `#${p.bio.number}`;
                     document.getElementById('dispTeam').innerText = p.bio.team;
                     document.getElementById('dispRole').innerText = p.bio.role;
-                    document.getElementById('pPreviewImg').src = p.bio.photo || "https://via.placeholder.com/150";
+                    document.getElementById('pPreviewImg').src = p.bio.photo || "https://via.placeholder.com/150/000000/FFFFFF?text=PRO";
                     
                     loadPeriodData();
                 }
