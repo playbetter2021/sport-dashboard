@@ -816,11 +816,51 @@
     },
     "history": {
       "1e seizoenshelft": {
-        "stats": {
-          "Techniek": 40
-        },
+        "status": "locked",
+        "lastUpdated": "2026-01-05T15:12:36.066Z",
         "ratings": {
-          "bal": "2"
+          "bal": 5,
+          "pas": 6,
+          "aan": 5,
+          "drib": 8,
+          "schot": 5,
+          "posi": 5,
+          "vrij": 8,
+          "sam": 7,
+          "oms": 5,
+          "sne": 5,
+          "uit": 5,
+          "kra": 5,
+          "wen": 5,
+          "inz": 5,
+          "mot": 5,
+          "coa": 5,
+          "tea": 5
+        },
+        "comments": {
+          "bal": "",
+          "pas": "",
+          "aan": "",
+          "drib": "",
+          "schot": "",
+          "posi": "",
+          "vrij": "",
+          "sam": "",
+          "oms": "",
+          "sne": "",
+          "uit": "",
+          "kra": "",
+          "wen": "",
+          "inz": "",
+          "mot": "",
+          "coa": "",
+          "tea": ""
+        },
+        "pop": {
+          "goal": "",
+          "action": "",
+          "strengths": "",
+          "growth": ""
         }
       }
     }
