@@ -44,13 +44,18 @@
         .tab-btn { padding: 10px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); border-bottom: 2px solid transparent; cursor: pointer; }
         .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
+        /* FILTER TABS (Micro) */
+        .filter-chip { font-size: 9px; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer; text-transform: uppercase; font-weight: 700; }
+        .filter-chip.active { background: var(--accent); color: black; border-color: var(--accent); }
+
         /* TEAM BADGES */
         .team-badge { 
-            font-size: 10px; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); 
+            font-size: 9px; padding: 6px 4px; border-radius: 4px; background: rgba(255,255,255,0.03); 
             border: 1px solid var(--border-subtle); cursor: pointer; transition: 0.2s; text-align: center;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .team-badge:hover { border-color: var(--accent); }
-        .team-badge.selected { background: var(--accent); color: black; border-color: var(--accent); font-weight: 800; }
+        .team-badge:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
+        .team-badge.selected { background: rgba(212, 175, 55, 0.2); color: var(--accent); border-color: var(--accent); font-weight: 800; }
 
         /* PLAYER CARD PREVIEW (Mini) */
         .card-preview {
@@ -70,6 +75,10 @@
         .btn-primary { background: var(--accent); color: #000; }
         .btn-ghost { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); }
         .btn-danger { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+        
+        /* SCROLLBAR */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
     </style>
 </head>
 <body>
@@ -161,8 +170,12 @@
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Team Toegang</label>
-                                <div id="teamGrid" class="grid grid-cols-5 gap-2 max-h-[120px] overflow-y-auto custom-scroll border border-white/10 p-2 rounded">
+                                <div class="flex justify-between items-end mb-2">
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase">Team Toegang</label>
+                                    <div class="flex gap-1" id="teamFilters">
+                                        </div>
+                                </div>
+                                <div id="teamGrid" class="grid grid-cols-5 gap-2 h-[140px] overflow-y-auto custom-scroll border border-white/10 p-2 rounded bg-black/20">
                                     </div>
                             </div>
                             
@@ -251,7 +264,6 @@
     </main>
 
     <script type="module">
-        // 1. DATA PROVIDER SIMULATION (DIRECT FETCH FOR ADMIN)
         const loadJSON = async (file) => {
             try { const r = await fetch(`./data/${file}`); return await r.json(); } 
             catch(e) { console.error(e); return []; }
@@ -260,13 +272,40 @@
         let allUsers = [];
         let allPlayers = [];
         let selectedTeams = new Set();
-        const teams = ["JO8-1","JO9-1","JO10-1","JO11-1","JO12-1","JO13-1","JO14-1","JO15-1","JO16-1","JO17-1","JO19-1","Sen 1"];
+        let currentFilter = 'ALL';
+
+        // --- 1. DYNAMIC TEAM GENERATION CONFIG ---
+        // Generates full club structure: JO7-1 to JO7-4, up to JO19, plus MO and Sen
+        const generateTeamList = () => {
+            const list = [];
+            
+            // Functie helper
+            const add = (prefix, start, end, amount) => {
+                for(let i=start; i<=end; i++) {
+                    for(let t=1; t<=amount; t++) {
+                        list.push(`${prefix}${i}-${t}`);
+                    }
+                }
+            };
+
+            // Onderbouw (JO7 - JO12) - Veel teams
+            add("JO", 7, 12, 4); 
+            // Bovenbouw (JO13 - JO19) - Minder teams
+            add("JO", 13, 19, 3);
+            // Meiden (MO13 - MO20)
+            add("MO", 13, 20, 2);
+            // Senioren
+            for(let i=1; i<=8; i++) list.push(`Sen ${i}`);
+            
+            return list;
+        };
+
+        const allTeams = generateTeamList();
 
         // 2. AUTH CHECK
         const sessionUser = JSON.parse(sessionStorage.getItem('elite_user'));
         if (!sessionUser || sessionUser.role !== 'admin') window.location.href = 'login.html';
         
-        // Add log entry
         const log = (msg) => {
             const box = document.getElementById('auditLog');
             const time = new Date().toLocaleTimeString('nl-NL');
@@ -279,7 +318,6 @@
             log("Admin Console Initialized...");
             log("Verbinding maken met database...");
             
-            // Load Data
             const uData = await loadJSON('users.json');
             allUsers = uData.users || [];
             allPlayers = await loadJSON('players.json');
@@ -288,14 +326,72 @@
             log(`Data geladen: ${allUsers.length} gebruikers, ${allPlayers.length} spelers.`);
             
             renderUserTable();
-            renderTeamGrid();
+            renderTeamFilters();
+            renderTeamGrid(); // Renders default ALL
             populateDropdowns();
-
-            // Set default card preview
             updateCard();
         }
 
-        // 4. SMART UI FUNCTIONS
+        // 4. SMART UI: TEAM FILTERS & GRID
+        function renderTeamFilters() {
+            const filters = [
+                { id: 'ALL', label: 'Alles' },
+                { id: 'JO7-JO12', label: 'Onderbouw' },
+                { id: 'JO13-JO19', label: 'Bovenbouw' },
+                { id: 'MO', label: 'Meiden' },
+                { id: 'Sen', label: 'Senioren' }
+            ];
+            
+            const container = document.getElementById('teamFilters');
+            container.innerHTML = filters.map(f => `
+                <div class="filter-chip ${f.id === 'ALL' ? 'active' : ''}" onclick="applyTeamFilter('${f.id}', this)">${f.label}</div>
+            `).join('');
+        }
+
+        window.applyTeamFilter = (filter, el) => {
+            currentFilter = filter;
+            // Update active state visuals
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            renderTeamGrid();
+        };
+
+        function renderTeamGrid() {
+            const grid = document.getElementById('teamGrid');
+            
+            // Filter Logic
+            const visibleTeams = allTeams.filter(t => {
+                if(currentFilter === 'ALL') return true;
+                if(currentFilter === 'Sen') return t.startsWith('Sen');
+                if(currentFilter === 'MO') return t.startsWith('MO');
+                
+                // Parse numbers for JO ranges
+                if(t.startsWith('JO')) {
+                    const age = parseInt(t.split('-')[0].replace('JO', ''));
+                    if(currentFilter === 'JO7-JO12') return age <= 12;
+                    if(currentFilter === 'JO13-JO19') return age >= 13;
+                }
+                return false;
+            });
+
+            grid.innerHTML = visibleTeams.map(t => {
+                const isSelected = selectedTeams.has(t) ? 'selected' : '';
+                return `<div class="team-badge ${isSelected}" data-team="${t}" onclick="toggleTeam('${t}', this)">${t}</div>`;
+            }).join('');
+        }
+
+        window.toggleTeam = (t, el) => {
+            selectedTeams.has(t) ? selectedTeams.delete(t) : selectedTeams.add(t);
+            el.classList.toggle('selected');
+        };
+
+        function populateDropdowns() {
+            const sel = document.getElementById('pTeamSelect');
+            // For player dropdown, just list all teams sorted nicely
+            sel.innerHTML = allTeams.map(t => `<option value="${t}">${t}</option>`).join('');
+        }
+
+        // 5. OTHER LOGIC
         window.switchTab = (tab) => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`tab-${tab}`).classList.add('active');
@@ -314,7 +410,6 @@
         window.autoGenerateCreds = () => {
             const name = document.getElementById('uName').value;
             if(name.length > 3) {
-                // Smart Username: First letter + Last name
                 const parts = name.toLowerCase().split(' ');
                 const user = parts.length > 1 ? `${parts[0][0]}.${parts[parts.length-1]}` : parts[0];
                 document.getElementById('uUsername').value = user;
@@ -341,22 +436,6 @@
             document.getElementById('dispNumber').innerText = num;
             if(img) document.getElementById('pPreviewImg').src = img;
         };
-
-        // 5. RENDER FUNCTIONS
-        function renderTeamGrid() {
-            const grid = document.getElementById('teamGrid');
-            grid.innerHTML = teams.map(t => `<div class="team-badge" data-team="${t}" onclick="toggleTeam('${t}', this)">${t}</div>`).join('');
-        }
-
-        window.toggleTeam = (t, el) => {
-            selectedTeams.has(t) ? selectedTeams.delete(t) : selectedTeams.add(t);
-            el.classList.toggle('selected');
-        };
-
-        function populateDropdowns() {
-            const sel = document.getElementById('pTeamSelect');
-            sel.innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
-        }
 
         function renderUserTable() {
             const tbody = document.getElementById('userTableBody');
@@ -389,10 +468,9 @@
             document.getElementById('uUsername').value = '';
             document.getElementById('uPassword').value = '';
             selectedTeams.clear();
-            document.querySelectorAll('.team-badge').forEach(b => b.classList.remove('selected'));
+            renderTeamGrid(); // Refresh grid selection visuals
         };
 
-        // 6. ACTION HANDLERS (GITHUB SYNC)
         window.handleMainSubmit = async () => {
             const token = document.getElementById('ghToken').value;
             if(!token) { log("ERROR: Geen token ingevoerd."); return alert("GitHub Token vereist"); }
@@ -400,7 +478,6 @@
             const isCoach = document.getElementById('tab-coach').classList.contains('active');
 
             if(isCoach) {
-                // Add User
                 const newUser = {
                     name: document.getElementById('uName').value,
                     username: document.getElementById('uUsername').value,
@@ -411,8 +488,6 @@
                 };
                 
                 if(!newUser.username) return;
-
-                // Check update or create
                 const idx = allUsers.findIndex(u => u.username === newUser.username);
                 if(idx !== -1) allUsers[idx] = newUser; 
                 else allUsers.push(newUser);
@@ -423,7 +498,6 @@
                 resetForm();
 
             } else {
-                // Add Player
                 const newPlayer = {
                     id: "p_" + Date.now(),
                     bio: {
@@ -440,7 +514,6 @@
                 log(`Syncing Players DB... (${allPlayers.length} records)`);
                 await syncGithub(token, 'players.json', allPlayers, `New Player: ${newPlayer.bio.name}`);
                 
-                // Clear Player Form
                 document.getElementById('pName').value = '';
                 updateCard();
             }
@@ -449,12 +522,10 @@
         async function syncGithub(token, file, content, msg) {
             const url = `https://api.github.com/repos/playbetter2021/sport-dashboard/contents/data/${file}`;
             try {
-                // Get SHA
                 const get = await fetch(url, { headers: { "Authorization": `token ${token}` } });
                 const json = await get.json();
                 const sha = json.sha;
 
-                // Push
                 const put = await fetch(url, {
                     method: "PUT",
                     headers: { "Authorization": `token ${token}` },
