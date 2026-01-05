@@ -1,9 +1,12 @@
+<!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
     <title>Elite Pro | TC & Coach Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #D4AF37; --gold-light: #f1d592; --obsidian: #050505; --glass: rgba(255, 255, 255, 0.03); --glass-border: rgba(255, 255, 255, 0.1); --red: #ef4444; --green: #10b981; }
@@ -38,6 +41,12 @@
         }
         .input-luxe:focus { border-color: var(--gold); background: rgba(0,0,0,0.8); }
         .input-luxe:disabled { opacity: 0.5; cursor: not-allowed; border-color: transparent; }
+        
+        .input-luxe:read-only { 
+            background: rgba(255, 255, 255, 0.02); border-color: transparent; 
+            cursor: default; color: #aaa; 
+        }
+
         .input-error { border-color: var(--red) !important; background: rgba(239, 68, 68, 0.1) !important; }
 
         label { color: #888; font-size: 10px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 6px; display: block; }
@@ -90,6 +99,56 @@
         .dot-red { background-color: var(--red); box-shadow: 0 0 5px var(--red); }
         
         .no-print { display: flex; }
+
+        /* --- PRINT PDF STYLING (A4 OPTIMIZED) --- */
+        @media print {
+            @page { size: A4; margin: 10mm; }
+            body { 
+                background-color: #050505 !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important;
+                zoom: 0.85; /* Iets verkleinen om breedte goed te laten passen */
+            }
+            
+            /* Verberg UI elementen */
+            .no-print, header, #tcPanel, button, .lock-badge, .ai-btn { 
+                display: none !important; 
+            }
+
+            /* Container aanpassingen */
+            .max-w-7xl { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            .p-4, .md\:p-8 { padding: 0 !important; }
+
+            /* Card styling voor print */
+            .section-card {
+                break-inside: avoid; 
+                page-break-inside: avoid;
+                background-color: rgba(20, 20, 20, 1) !important;
+                box-shadow: none !important;
+                margin-bottom: 20px !important;
+                border: 1px solid #333 !important;
+            }
+
+            /* Inputs eruit laten zien als tekst */
+            input, select, textarea {
+                background: transparent !important;
+                border: none !important;
+                color: #fff !important;
+                padding: 0 !important;
+                resize: none;
+                font-weight: bold;
+            }
+            
+            /* Slider verbergen, alleen score tonen */
+            .slider-gold { display: none !important; }
+            .score-display { border: 1px solid #444; }
+
+            /* Radar chart fix */
+            .radar-box { height: 250px !important; }
+            
+            /* Zorg dat titels zichtbaar zijn */
+            h3 { color: #D4AF37 !important; border-left-color: #D4AF37 !important; }
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -98,9 +157,6 @@
             <div class="flex items-center gap-6">
                 <h1 class="text-4xl font-black italic text-white uppercase tracking-tighter leading-none">ELITE<span class="text-yellow-500">TERMINAL</span></h1>
                 <nav class="flex gap-3">
-                    <button type="button" onclick="resetForm()" class="bg-white/5 hover:bg-white/10 text-white px-5 py-2 rounded-xl text-[10px] font-black uppercase border border-white/10 transition">
-                        + Nieuw Dossier
-                    </button>
                     <button type="button" onclick="document.getElementById('tcPanel').classList.toggle('hidden'); refreshTCMonitor();" class="bg-yellow-600/10 hover:bg-yellow-600/20 text-yellow-500 px-5 py-2 rounded-xl text-[10px] font-black uppercase border border-yellow-600/20 transition">
                         📊 TC Monitor
                     </button>
@@ -110,14 +166,8 @@
             <div class="flex flex-col md:flex-row items-center gap-4">
                 <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-2">
                     <input type="password" id="ghToken" placeholder="GitHub Token" class="bg-transparent text-white text-[11px] px-2 outline-none w-24">
-                    
-                    <button type="button" onclick="savePlayer('draft')" id="btnDraft" class="btn-gold" title="Opslaan als concept, later aanpasbaar">
-                        💾 Concept
-                    </button>
-                    
-                    <button type="button" onclick="if(confirm('Weet u het zeker? Hierna is het dossier vergrendeld voor deze periode!')) savePlayer('locked')" id="btnFinal" class="btn-lock" title="Definitief maken en vergrendelen">
-                        🔒 Definitief
-                    </button>
+                    <button type="button" onclick="savePlayer('draft')" id="btnDraft" class="btn-gold" title="Opslaan als concept">💾 Concept</button>
+                    <button type="button" onclick="if(confirm('Weet u het zeker? Hierna is het dossier vergrendeld voor deze periode!')) savePlayer('locked')" id="btnFinal" class="btn-lock" title="Definitief maken en vergrendelen">🔒 Definitief</button>
                 </div>
 
                 <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-2">
@@ -127,7 +177,7 @@
             </div>
         </header>
 
-        <div id="tcPanel" class="hidden mb-12 p-6 bg-black/80 border border-yellow-600/30 rounded-2xl animate-fade-in backdrop-blur-xl">
+        <div id="tcPanel" class="hidden mb-12 p-6 bg-black/80 border border-yellow-600/30 rounded-2xl animate-fade-in backdrop-blur-xl no-print">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-yellow-500 mb-0 border-none pl-0">TC Monitoring Bureau</h3>
                 <div class="flex gap-4 text-[10px] font-bold uppercase">
@@ -155,21 +205,17 @@
                 
                 <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8 content-start">
                     <div class="space-y-5">
-                        <div><label>Volledige Naam</label><input type="text" id="pName" class="input-luxe font-black uppercase" required oninput="document.getElementById('dispName').innerText=this.value || 'NAAM'"></div>
+                        <div><label>Volledige Naam</label><input type="text" id="pName" class="input-luxe font-black uppercase" readonly></div>
                         <div>
                             <label>Rugnummer</label>
-                            <input type="number" id="pNumber" class="input-luxe font-black" oninput="checkDuplicate(this.value); document.getElementById('dispNumber').innerText=this.value || '--'">
+                            <input type="number" id="pNumber" class="input-luxe font-black" readonly>
                             <p id="dupWarning" class="text-red-500 text-[9px] mt-1 hidden font-bold">⚠️ NUMMER BEZET IN DIT TEAM</p>
                         </div>
-                        <div><label>Team</label><select id="pTeam" class="input-luxe font-bold" onchange="updateCardInfo(); checkDuplicate(document.getElementById('pNumber').value)"></select></div>
+                        <div><label>Team</label><input type="text" id="pTeam" class="input-luxe font-bold" readonly></div>
                     </div>
                     <div class="space-y-5">
-                        <div><label>Positie</label>
-                            <select id="pPos" class="input-luxe font-bold" onchange="updateCardInfo()">
-                                <option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option>
-                            </select>
-                        </div>
-                        <div><label>Foto URL</label><input type="text" id="pPhotoUrl" class="input-luxe" oninput="document.getElementById('pPreviewImg').src=this.value"></div>
+                        <div><label>Positie</label><input type="text" id="pPos" class="input-luxe font-bold" readonly></div>
+                        <div><label>Foto URL</label><input type="text" id="pPhotoUrl" class="input-luxe" readonly></div>
                         <div><label class="text-yellow-500">Beoordelingsperiode (Selecteer eerst)</label>
                             <select id="pPeriod" class="input-luxe font-black text-white bg-yellow-900/20" onchange="loadPeriodData()">
                                 <option value="1e seizoenshelft">1e seizoenshelft</option>
@@ -179,7 +225,7 @@
                         </div>
                     </div>
                     <div class="md:col-span-2 grid grid-cols-2 gap-8 pt-4 border-t border-white/5">
-                        <div><label>E-mail Ouders</label><input type="email" id="pEmail" class="input-luxe"></div>
+                        <div><label>E-mail Ouders</label><input type="email" id="pEmail" class="input-luxe" readonly></div>
                         <div><label>Speler ID (Auto)</label><input type="text" id="pId" class="input-luxe text-gray-500 cursor-not-allowed" readonly></div>
                     </div>
                 </div>
@@ -197,7 +243,7 @@
                 
                 <div class="section-card bg-black/40 flex flex-col items-center">
                     <h3 class="w-full text-center">Skill Radar</h3>
-                    <div class="radar-box"><canvas id="liveRadar"></canvas></div>
+                    <div class="radar-box"><canvas id="liveRadar" id="radarChart"></canvas></div>
                     <div class="mt-8 text-center">
                         <span class="text-[10px] text-gray-500 font-bold uppercase block">Gemiddelde Score</span>
                         <span id="avgScore" class="text-4xl font-black text-white italic">0.0</span>
@@ -215,8 +261,8 @@
                 </div>
             </div>
 
-            <div class="flex justify-center pb-10">
-                 <button type="button" onclick="window.print()" class="bg-white/5 hover:bg-white/10 text-white px-10 py-3 rounded-xl uppercase text-[10px] font-black border border-white/10 transition">PDF Exporteren</button>
+            <div class="flex justify-center pb-10 no-print">
+                 <button type="button" onclick="window.print()" class="bg-white/5 hover:bg-white/10 text-white px-10 py-3 rounded-xl uppercase text-[10px] font-black border border-white/10 transition">PDF Exporteren / Printen</button>
             </div>
         </form>
     </div>
@@ -228,42 +274,13 @@
         const skillMap = { 'Techniek': ['bal','pas','aan','drib','schot'], 'Tactiek': ['posi','vrij','sam','oms'], 'Fysiek': ['sne','uit','kra','wen'], 'Mentaal': ['inz','mot','coa','tea'] };
         const labels = { bal:'Balcontrole', pas:'Passen', aan:'Aanname', drib:'Dribbel', schot:'Schot', posi:'Positie', vrij:'Vrijlopen', sam:'Samenspel', oms:'Omschakeling', sne:'Snelheid', uit:'Conditie', kra:'Kracht', wen:'Wendbaar', inz:'Inzet', mot:'Motivatie', coa:'Coachbaar', tea:'Team' };
         
-        // Laad token
         if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
 
-        window.resetForm = () => {
-            document.getElementById('proForm').reset();
-            document.getElementById('pId').value = "";
-            document.getElementById('dispName').innerText = "NAAM";
-            document.getElementById('dispNumber').innerText = "--";
-            currentPlayer = null;
-            unlockUI(); // Zorg dat formulier open is voor nieuwe speler
-            window.updateRadar();
-        };
-
-        window.updateCardInfo = () => {
-            const team = document.getElementById('pTeam').value;
-            const pos = document.getElementById('pPos').value;
-            document.getElementById('dispTeam').innerText = `${team} • ${pos}`;
-        };
-
-        window.checkDuplicate = (num) => {
-            const team = document.getElementById('pTeam').value;
-            const id = document.getElementById('pId').value;
-            const isDup = allPlayers.some(p => p.bio.team === team && p.bio.number == num && p.id !== id);
-            const warn = document.getElementById('dupWarning');
-            const input = document.getElementById('pNumber');
-            if(isDup && num) { warn.classList.remove('hidden'); input.classList.add('input-error'); }
-            else { warn.classList.add('hidden'); input.classList.remove('input-error'); }
-        };
-
-        // --- VERGRENDELING LOGICA ---
         function lockUI() {
             ['cardAssessment', 'cardPop'].forEach(id => {
                 document.getElementById(id).classList.add('locked');
                 document.getElementById(id).querySelector('.lock-badge').style.display = 'block';
             });
-            // Disable inputs in locked areas
             document.querySelectorAll('#cardAssessment input, #cardAssessment button.ai-btn, #cardPop textarea').forEach(el => el.disabled = true);
             document.getElementById('btnDraft').style.display = 'none';
             document.getElementById('btnFinal').innerText = "🔒 Dossier Gesloten";
@@ -284,12 +301,9 @@
         window.loadPeriodData = () => {
             if(!currentPlayer) return;
             const period = document.getElementById('pPeriod').value;
-            
-            // Check of deze periode data heeft
             const history = currentPlayer.history?.[period];
 
             if(history) {
-                // Vul velden
                 Object.keys(labels).forEach(k => {
                     document.getElementById('s_'+k).value = history.ratings?.[k] || 5;
                     document.getElementById('v_'+k).innerText = history.ratings?.[k] || 5;
@@ -299,14 +313,8 @@
                 document.getElementById('a1').value = history.pop?.action || "";
                 document.getElementById('pStrengths').value = history.pop?.strengths || "";
                 document.getElementById('pGrowth').value = history.pop?.growth || "";
-                
-                // CHECK STATUS: LOCKED OF DRAFT?
-                if(history.status === 'locked') lockUI();
-                else unlockUI();
-
+                if(history.status === 'locked') lockUI(); else unlockUI();
             } else {
-                // Geen data voor deze periode? Reset velden en unlock
-                // (Behoud wel bio data)
                 document.querySelectorAll('#skillContainer input').forEach(i => i.value = (i.type === 'range' ? 5 : ""));
                 document.querySelectorAll('#skillContainer span.score-display').forEach(s => s.innerText = "5");
                 document.querySelectorAll('#cardPop textarea').forEach(t => t.value = "");
@@ -315,43 +323,29 @@
             window.updateRadar();
         };
 
-        // --- TC MONITOR ---
         window.refreshTCMonitor = () => {
-            const period = document.getElementById('pPeriod').value; // Gebruik geselecteerde periode
+            const period = document.getElementById('pPeriod').value;
             const container = document.getElementById('tcTeamList');
             container.innerHTML = "";
-            
-            // Groepeer per team
             const teams = [...new Set(allPlayers.map(p => p.bio.team))].sort();
-            
             teams.forEach(team => {
                 const teamPlayers = allPlayers.filter(p => p.bio.team === team);
                 let html = `<div class="bg-white/5 p-4 rounded-xl border border-white/5"><h4 class="text-white font-bold text-xs mb-3 border-b border-white/10 pb-2">${team}</h4><ul class="space-y-2">`;
-                
                 teamPlayers.forEach(p => {
                     const status = p.history?.[period]?.status || 'missing';
-                    let dotClass = 'dot-red';
-                    let statusText = 'Open';
-                    
-                    if(status === 'draft') { dotClass = 'dot-orange'; statusText = 'Concept'; }
-                    if(status === 'locked') { dotClass = 'dot-green'; statusText = 'Definitief'; }
-                    
-                    html += `<li class="flex justify-between items-center text-[10px] text-gray-300">
-                        <span>${p.bio.name}</span>
-                        <span class="flex items-center" title="${statusText}"><span class="status-dot ${dotClass}"></span></span>
-                    </li>`;
+                    let dotClass = status === 'locked' ? 'dot-green' : (status === 'draft' ? 'dot-orange' : 'dot-red');
+                    html += `<li class="flex justify-between items-center text-[10px] text-gray-300"><span>${p.bio.name}</span><span class="status-dot ${dotClass}"></span></li>`;
                 });
                 html += `</ul></div>`;
                 container.innerHTML += html;
             });
         };
 
-        // --- OPSLAAN LOGICA ---
         window.savePlayer = async (status) => {
             const token = document.getElementById('ghToken').value;
-            if(!token) return alert("Voer eerst een GitHub Token in!");
-            localStorage.setItem('gh_token', token);
-
+            if(!token) return alert("GitHub Token vereist!");
+            if(!currentPlayer) return alert("Selecteer eerst een speler!");
+            
             const period = document.getElementById('pPeriod').value;
             const ratings = {}; const comments = {};
             Object.keys(labels).forEach(k => {
@@ -359,26 +353,12 @@
                 comments[k] = document.getElementById('o_'+k).value;
             });
 
-            // Bouw object op. We slaan data op PER periode in de history.
-            // Bio data is globaal, ratings/pop zijn periode-specifiek.
-            const playerData = currentPlayer || { id: document.getElementById('pId').value || "p_" + Date.now(), bio: {}, history: {} };
+            // Clone de huidige speler data zodat we alleen de history updaten
+            const playerData = { ...currentPlayer };
             
-            // Update Bio (altijd actueel)
-            playerData.bio = {
-                name: document.getElementById('pName').value,
-                number: document.getElementById('pNumber').value,
-                team: document.getElementById('pTeam').value,
-                role: document.getElementById('pPos').value,
-                photo: document.getElementById('pPhotoUrl').value,
-                email: document.getElementById('pEmail').value
-            };
-
-            // Zorg dat history object bestaat
             if(!playerData.history) playerData.history = {};
-
-            // Update specifieke periode
             playerData.history[period] = {
-                status: status, // 'draft' of 'locked'
+                status: status,
                 lastUpdated: new Date().toISOString(),
                 ratings: ratings,
                 comments: comments,
@@ -393,17 +373,11 @@
             try {
                 await DataProvider.updatePlayer(playerData, token);
                 alert(status === 'locked' ? "✅ Dossier definitief vergrendeld!" : "💾 Concept opgeslagen.");
-                
-                // Herlaad alles om UI te updaten
                 allPlayers = await DataProvider.getAllPlayers(); 
-                // update current player ref
                 currentPlayer = allPlayers.find(p => p.id === playerData.id);
-                loadPeriodData(); // Reset UI lock state based on new status
+                loadPeriodData();
                 refreshTCMonitor();
-
-            } catch(err) {
-                alert("❌ Fout: " + err.message);
-            }
+            } catch(err) { alert("❌ Fout: " + err.message); }
         };
 
         window.fillAI = () => {
@@ -418,7 +392,7 @@
 
         window.updateRadar = () => {
             const values = [];
-            let total = 0; let count = 0;
+            let total = 0, count = 0;
             Object.values(skillMap).forEach(keys => {
                 const avg = keys.reduce((a, b) => {
                     const v = parseInt(document.getElementById('s_'+b).value || 5);
@@ -437,27 +411,18 @@
             Object.keys(skillMap).forEach(cat => {
                 container.innerHTML += `<h4 class="text-[9px] text-gray-500 uppercase font-bold mt-6 mb-2 tracking-[2px]">${cat}</h4>`;
                 skillMap[cat].forEach(key => {
-                    container.innerHTML += `
-                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-black/30 p-3 rounded-lg border border-white/5 hover:border-yellow-600/30 transition">
-                            <div class="md:col-span-3 flex justify-between"><label class="text-white font-bold mb-0">${labels[key]}</label><span id="v_${key}" class="score-display text-xs">5</span></div>
-                            <div class="md:col-span-4"><input type="range" id="s_${key}" min="1" max="10" value="5" class="slider-gold" oninput="v_${key}.innerText=this.value; updateRadar();"></div>
-                            <div class="md:col-span-5"><input type="text" id="o_${key}" placeholder="Notitie..." class="input-luxe py-1 text-[10px] bg-transparent border-none italic"></div>
-                        </div>`;
+                    container.innerHTML += `<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-black/30 p-3 rounded-lg border border-white/5 hover:border-yellow-600/30 transition">
+                        <div class="md:col-span-3 flex justify-between"><label class="text-white font-bold mb-0">${labels[key]}</label><span id="v_${key}" class="score-display text-xs">5</span></div>
+                        <div class="md:col-span-4"><input type="range" id="s_${key}" min="1" max="10" value="5" class="slider-gold" oninput="v_${key}.innerText=this.value; updateRadar();"></div>
+                        <div class="md:col-span-5"><input type="text" id="o_${key}" placeholder="Notitie..." class="input-luxe py-1 text-[10px] bg-transparent border-none italic"></div>
+                    </div>`;
                 });
             });
 
-            const teams = [];
-            ["JO8","JO9","JO10","JO11","JO12","JO13","JO14","JO15","JO16","JO17","JO19","Senioren"].forEach(c => {
-                for(let i=1; i<=4; i++) teams.push(`${c}-${i}`);
-            });
-            document.getElementById('pTeam').innerHTML = teams.map(t => `<option>${t}</option>`).join('');
-
             allPlayers = await DataProvider.getAllPlayers();
-            const search = document.getElementById('assetSearch');
-            search.innerHTML = '<option value="">ZOEK SPELER...</option>' + allPlayers.map(p => `<option value="${p.id}">${p.bio.name} (${p.bio.team})</option>`).join('');
+            document.getElementById('assetSearch').innerHTML = '<option value="">ZOEK SPELER...</option>' + allPlayers.map(p => `<option value="${p.id}">${p.bio.name} (${p.bio.team})</option>`).join('');
 
-            const ctx = document.getElementById('liveRadar').getContext('2d');
-            radarChart = new Chart(ctx, {
+            radarChart = new Chart(document.getElementById('liveRadar').getContext('2d'), {
                 type: 'radar',
                 data: { labels: ['Techniek', 'Tactiek', 'Fysiek', 'Mentaal'], datasets: [{ data: [5,5,5,5], backgroundColor: 'rgba(212, 175, 55, 0.25)', borderColor: '#D4AF37', borderWidth: 2, pointRadius: 3 }] },
                 options: { scales: { r: { min: 0, max: 10, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' }, angleLines: { color: 'rgba(255,255,255,0.1)' } } }, plugins: { legend: { display: false } } }
@@ -465,26 +430,24 @@
 
             document.getElementById('loadBtn').onclick = (e) => {
                 e.preventDefault();
-                const p = allPlayers.find(x => x.id === search.value);
+                const p = allPlayers.find(x => x.id === document.getElementById('assetSearch').value);
                 if(p) {
-                    currentPlayer = p; // SET GLOBAL REFERENCE
+                    currentPlayer = p;
                     document.getElementById('pName').value = p.bio.name;
                     document.getElementById('pId').value = p.id;
                     document.getElementById('pNumber').value = p.bio.number;
+                    // Deze velden zijn nu inputs, geen selects meer
                     document.getElementById('pTeam').value = p.bio.team;
                     document.getElementById('pPos').value = p.bio.role;
                     document.getElementById('pPhotoUrl').value = p.bio.photo;
                     document.getElementById('pPreviewImg').src = p.bio.photo;
+                    document.getElementById('pEmail').value = p.bio.email || "";
                     document.getElementById('dispName').innerText = p.bio.name;
                     document.getElementById('dispNumber').innerText = p.bio.number;
-                    document.getElementById('pEmail').value = p.bio.email || "";
-                    
-                    updateCardInfo();
-                    loadPeriodData(); // Loads ratings based on selected period and LOCKS if needed
+                    document.getElementById('dispTeam').innerText = `${p.bio.team} • ${p.bio.role}`;
+                    loadPeriodData();
                 }
             };
-            
-            refreshTCMonitor(); // Init monitor
         }
         init();
     </script>
