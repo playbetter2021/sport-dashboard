@@ -48,6 +48,19 @@
         "JO8-2",
         "JO8-3"
       ]
+    },
+    {
+      "name": "Mark van bommel",
+      "username": "m.bommel",
+      "password": "EP-UWXQH2",
+      "role": "coach",
+      "photo": "",
+      "teams": [
+        "JO7-1",
+        "JO7-2",
+        "JO7-3",
+        "JO7-4"
+      ]
     }
   ]
 }
