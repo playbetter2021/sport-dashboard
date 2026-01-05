@@ -5,7 +5,6 @@
     <title>Elite Pro | Admin Console</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
@@ -40,11 +39,9 @@
         .input-dark { background: var(--bg-element); border: 1px solid var(--border-subtle); color: white; padding: 10px 12px; border-radius: 6px; font-size: 13px; width: 100%; outline: none; transition: 0.2s; }
         .input-dark:focus { border-color: var(--accent); background: #000; }
         
-        /* TABS */
+        /* TABS & FILTERS */
         .tab-btn { padding: 10px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); border-bottom: 2px solid transparent; cursor: pointer; }
         .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-        /* FILTER TABS (Micro) */
         .filter-chip { font-size: 9px; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer; text-transform: uppercase; font-weight: 700; }
         .filter-chip.active { background: var(--accent); color: black; border-color: var(--accent); }
 
@@ -57,15 +54,10 @@
         .team-badge:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
         .team-badge.selected { background: rgba(212, 175, 55, 0.2); color: var(--accent); border-color: var(--accent); font-weight: 800; }
 
-        /* PLAYER CARD PREVIEW (Mini) */
-        .card-preview {
-            width: 140px; height: 200px; border-radius: 12px; background: #000; border: 1px solid var(--accent);
-            position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: 0 auto;
-        }
+        /* PREVIEW & LOGS */
+        .card-preview { width: 140px; height: 200px; border-radius: 12px; background: #000; border: 1px solid var(--accent); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: 0 auto; }
         .card-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
         .card-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(to top, black, transparent); }
-        
-        /* LOG CONSOLE */
         .log-console { font-family: var(--font-mono); font-size: 10px; color: var(--success); height: 150px; overflow-y: auto; background: #050505; padding: 12px; border-radius: 8px; border: 1px solid var(--border-subtle); }
         .log-entry { margin-bottom: 4px; display: flex; gap: 8px; }
         .log-time { color: var(--text-tertiary); }
@@ -74,9 +66,6 @@
         .btn { padding: 8px 16px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; }
         .btn-primary { background: var(--accent); color: #000; }
         .btn-ghost { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); }
-        .btn-danger { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
-        
-        /* SCROLLBAR */
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
     </style>
@@ -119,11 +108,9 @@
         </header>
 
         <div class="content-wrapper">
-            
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
                 <div class="lg:col-span-7 space-y-6">
-                    
                     <div class="flex border-b border-white/10 mb-2">
                         <button onclick="switchTab('coach')" id="tab-coach" class="tab-btn active">Coach Manager</button>
                         <button onclick="switchTab('player')" id="tab-player" class="tab-btn">Speler Database</button>
@@ -131,8 +118,8 @@
 
                     <div id="coachFormContainer" class="panel">
                         <div class="panel-header">
-                            <div class="panel-title">Nieuwe Gebruiker</div>
-                            <button onclick="resetForm()" class="text-[10px] text-gray-500 hover:text-white uppercase font-bold">Reset</button>
+                            <div class="panel-title">Gebruiker Beheren</div>
+                            <button onclick="resetForm()" class="text-[10px] text-gray-500 hover:text-white uppercase font-bold">Nieuw / Reset</button>
                         </div>
                         <div class="p-6 space-y-4">
                             <div class="grid grid-cols-2 gap-4">
@@ -141,7 +128,7 @@
                                     <input type="text" id="uName" class="input-dark" placeholder="Bijv. Mark van Bommel" oninput="autoGenerateCreds()">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Username (Auto)</label>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Username (Uniek)</label>
                                     <input type="text" id="uUsername" class="input-dark font-mono text-yellow-500" readonly>
                                 </div>
                             </div>
@@ -172,8 +159,7 @@
                             <div>
                                 <div class="flex justify-between items-end mb-2">
                                     <label class="block text-[10px] font-bold text-gray-500 uppercase">Team Toegang</label>
-                                    <div class="flex gap-1" id="teamFilters">
-                                        </div>
+                                    <div class="flex gap-1" id="teamFilters"></div>
                                 </div>
                                 <div id="teamGrid" class="grid grid-cols-5 gap-2 h-[140px] overflow-y-auto custom-scroll border border-white/10 p-2 rounded bg-black/20">
                                     </div>
@@ -193,7 +179,7 @@
                     <div id="playerFormContainer" class="panel hidden">
                         <div class="panel-header">
                             <div class="panel-title">Nieuwe Speler</div>
-                            <div class="text-[10px] text-yellow-500 font-bold uppercase">Live Preview Active</div>
+                            <div class="text-[10px] text-yellow-500 font-bold uppercase">Live Preview</div>
                         </div>
                         <div class="p-6">
                             <div class="grid grid-cols-12 gap-6">
@@ -206,9 +192,7 @@
                                             <div id="dispTeam" class="text-[8px] text-yellow-500 font-bold uppercase mt-1">TEAM • POS</div>
                                         </div>
                                     </div>
-                                    <div class="text-center mt-2 text-[9px] text-gray-500">Card Preview</div>
                                 </div>
-
                                 <div class="col-span-8 space-y-3">
                                     <input type="text" id="pName" class="input-dark" placeholder="Volledige Naam" oninput="updateCard()">
                                     <div class="grid grid-cols-2 gap-3">
@@ -222,10 +206,7 @@
                                         <option>Keeper</option>
                                     </select>
                                     <input type="text" id="pPhotoUrl" class="input-dark" placeholder="Foto URL" oninput="updateCard()">
-                                    
-                                    <button onclick="handleMainSubmit()" class="w-full btn btn-primary justify-center py-3 mt-4">
-                                        Speler Toevoegen
-                                    </button>
+                                    <button onclick="handleMainSubmit()" class="w-full btn btn-primary justify-center py-3 mt-4">Speler Toevoegen</button>
                                 </div>
                             </div>
                         </div>
@@ -233,10 +214,9 @@
                 </div>
 
                 <div class="lg:col-span-5 space-y-6">
-                    
                     <div class="panel h-[400px] flex flex-col">
                         <div class="panel-header">
-                            <div class="panel-title">Actieve Gebruikers</div>
+                            <div class="panel-title">Gebruikers</div>
                             <span id="userCount" class="text-xs text-gray-500 font-mono">0</span>
                         </div>
                         <div class="flex-1 overflow-y-auto custom-scroll">
@@ -251,13 +231,11 @@
 
                     <div class="panel">
                         <div class="panel-header">
-                            <div class="panel-title">System Audit Log</div>
+                            <div class="panel-title">Audit Log</div>
                             <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                         </div>
-                        <div class="log-console" id="auditLog">
-                            </div>
+                        <div class="log-console" id="auditLog"></div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -274,35 +252,23 @@
         let selectedTeams = new Set();
         let currentFilter = 'ALL';
 
-        // --- 1. DYNAMIC TEAM GENERATION CONFIG ---
-        // Generates full club structure: JO7-1 to JO7-4, up to JO19, plus MO and Sen
+        // 1. Genereer Teams (Veel meer teams nu)
         const generateTeamList = () => {
             const list = [];
-            
-            // Functie helper
             const add = (prefix, start, end, amount) => {
                 for(let i=start; i<=end; i++) {
-                    for(let t=1; t<=amount; t++) {
-                        list.push(`${prefix}${i}-${t}`);
-                    }
+                    for(let t=1; t<=amount; t++) list.push(`${prefix}${i}-${t}`);
                 }
             };
-
-            // Onderbouw (JO7 - JO12) - Veel teams
             add("JO", 7, 12, 4); 
-            // Bovenbouw (JO13 - JO19) - Minder teams
             add("JO", 13, 19, 3);
-            // Meiden (MO13 - MO20)
             add("MO", 13, 20, 2);
-            // Senioren
             for(let i=1; i<=8; i++) list.push(`Sen ${i}`);
-            
             return list;
         };
-
         const allTeams = generateTeamList();
 
-        // 2. AUTH CHECK
+        // 2. Init
         const sessionUser = JSON.parse(sessionStorage.getItem('elite_user'));
         if (!sessionUser || sessionUser.role !== 'admin') window.location.href = 'login.html';
         
@@ -313,26 +279,22 @@
             box.scrollTop = box.scrollHeight;
         };
 
-        // 3. INIT
         async function init() {
             log("Admin Console Initialized...");
-            log("Verbinding maken met database...");
-            
             const uData = await loadJSON('users.json');
             allUsers = uData.users || [];
             allPlayers = await loadJSON('players.json');
             if(!Array.isArray(allPlayers)) allPlayers = [];
 
-            log(`Data geladen: ${allUsers.length} gebruikers, ${allPlayers.length} spelers.`);
-            
+            log(`Data: ${allUsers.length} users, ${allPlayers.length} players.`);
             renderUserTable();
             renderTeamFilters();
-            renderTeamGrid(); // Renders default ALL
+            renderTeamGrid();
             populateDropdowns();
             updateCard();
         }
 
-        // 4. SMART UI: TEAM FILTERS & GRID
+        // 3. UI Renders
         function renderTeamFilters() {
             const filters = [
                 { id: 'ALL', label: 'Alles' },
@@ -341,16 +303,13 @@
                 { id: 'MO', label: 'Meiden' },
                 { id: 'Sen', label: 'Senioren' }
             ];
-            
-            const container = document.getElementById('teamFilters');
-            container.innerHTML = filters.map(f => `
+            document.getElementById('teamFilters').innerHTML = filters.map(f => `
                 <div class="filter-chip ${f.id === 'ALL' ? 'active' : ''}" onclick="applyTeamFilter('${f.id}', this)">${f.label}</div>
             `).join('');
         }
 
         window.applyTeamFilter = (filter, el) => {
             currentFilter = filter;
-            // Update active state visuals
             document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
             el.classList.add('active');
             renderTeamGrid();
@@ -358,14 +317,10 @@
 
         function renderTeamGrid() {
             const grid = document.getElementById('teamGrid');
-            
-            // Filter Logic
             const visibleTeams = allTeams.filter(t => {
                 if(currentFilter === 'ALL') return true;
                 if(currentFilter === 'Sen') return t.startsWith('Sen');
                 if(currentFilter === 'MO') return t.startsWith('MO');
-                
-                // Parse numbers for JO ranges
                 if(t.startsWith('JO')) {
                     const age = parseInt(t.split('-')[0].replace('JO', ''));
                     if(currentFilter === 'JO7-JO12') return age <= 12;
@@ -373,7 +328,6 @@
                 }
                 return false;
             });
-
             grid.innerHTML = visibleTeams.map(t => {
                 const isSelected = selectedTeams.has(t) ? 'selected' : '';
                 return `<div class="team-badge ${isSelected}" data-team="${t}" onclick="toggleTeam('${t}', this)">${t}</div>`;
@@ -383,58 +337,6 @@
         window.toggleTeam = (t, el) => {
             selectedTeams.has(t) ? selectedTeams.delete(t) : selectedTeams.add(t);
             el.classList.toggle('selected');
-        };
-
-        function populateDropdowns() {
-            const sel = document.getElementById('pTeamSelect');
-            // For player dropdown, just list all teams sorted nicely
-            sel.innerHTML = allTeams.map(t => `<option value="${t}">${t}</option>`).join('');
-        }
-
-        // 5. OTHER LOGIC
-        window.switchTab = (tab) => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
-            
-            if(tab === 'coach') {
-                document.getElementById('coachFormContainer').classList.remove('hidden');
-                document.getElementById('playerFormContainer').classList.add('hidden');
-                log("Switched to Coach Manager view");
-            } else {
-                document.getElementById('coachFormContainer').classList.add('hidden');
-                document.getElementById('playerFormContainer').classList.remove('hidden');
-                log("Switched to Player Database view");
-            }
-        };
-
-        window.autoGenerateCreds = () => {
-            const name = document.getElementById('uName').value;
-            if(name.length > 3) {
-                const parts = name.toLowerCase().split(' ');
-                const user = parts.length > 1 ? `${parts[0][0]}.${parts[parts.length-1]}` : parts[0];
-                document.getElementById('uUsername').value = user;
-            }
-        };
-
-        window.generatePass = () => {
-            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-            let pass = "EP-";
-            for(let i=0; i<6; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
-            document.getElementById('uPassword').value = pass;
-            log("Secure password generated.");
-        };
-
-        window.updateCard = () => {
-            const name = document.getElementById('pName').value || "NAAM SPELER";
-            const team = document.getElementById('pTeamSelect').value || "TEAM";
-            const num = document.getElementById('pNumber').value || "99";
-            const img = document.getElementById('pPhotoUrl').value;
-            const pos = document.getElementById('pPos').value;
-
-            document.getElementById('dispName').innerText = name;
-            document.getElementById('dispTeam').innerText = `${team} • ${pos.substring(0,3).toUpperCase()}`;
-            document.getElementById('dispNumber').innerText = num;
-            if(img) document.getElementById('pPreviewImg').src = img;
         };
 
         function renderUserTable() {
@@ -453,31 +355,97 @@
                             </div>
                         </div>
                     </td>
-                    <td class="p-3">
-                        <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase ${u.role==='admin'?'bg-red-500/20 text-red-400':'bg-blue-500/20 text-blue-400'}">${u.role}</span>
-                    </td>
-                    <td class="p-3 text-right">
-                        <button onclick="deleteUser(${i})" class="text-red-500 hover:text-white font-bold">×</button>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase ${u.role==='admin'?'bg-red-500/20 text-red-400':'bg-blue-500/20 text-blue-400'}">${u.role}</span></td>
+                    <td class="p-3 text-right space-x-2">
+                         <button onclick="editUser(${i})" class="text-yellow-500 hover:text-white font-bold" title="Edit">✎</button>
+                        <button onclick="deleteUser(${i})" class="text-red-500 hover:text-white font-bold" title="Delete">×</button>
                     </td>
                 </tr>
             `).join('');
+        }
+
+        // --- 4. EDIT FUNCTIONALITEIT ---
+        window.editUser = (i) => {
+            const u = allUsers[i];
+            
+            // Switch tab to form
+            switchTab('coach');
+            
+            // Fill Form
+            document.getElementById('uName').value = u.name;
+            document.getElementById('uUsername').value = u.username;
+            document.getElementById('uPassword').value = u.password;
+            document.getElementById('uRole').value = u.role;
+            document.getElementById('uPhoto').value = u.photo || '';
+            
+            // Set Selected Teams
+            selectedTeams = new Set(u.teams || []);
+            
+            // Refresh Grid Visuals
+            renderTeamGrid();
+            
+            log(`Editing user: ${u.name}`);
+        };
+
+        // 5. Standard Helpers
+        window.switchTab = (tab) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            if(tab === 'coach') {
+                document.getElementById('coachFormContainer').classList.remove('hidden');
+                document.getElementById('playerFormContainer').classList.add('hidden');
+            } else {
+                document.getElementById('coachFormContainer').classList.add('hidden');
+                document.getElementById('playerFormContainer').classList.remove('hidden');
+            }
+        };
+
+        window.autoGenerateCreds = () => {
+            const name = document.getElementById('uName').value;
+            if(name.length > 3 && !document.getElementById('uUsername').value) { // Only if empty
+                const parts = name.toLowerCase().split(' ');
+                const user = parts.length > 1 ? `${parts[0][0]}.${parts[parts.length-1]}` : parts[0];
+                document.getElementById('uUsername').value = user;
+            }
+        };
+
+        window.generatePass = () => {
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            let pass = "EP-";
+            for(let i=0; i<6; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById('uPassword').value = pass;
+        };
+
+        window.updateCard = () => {
+            const name = document.getElementById('pName').value || "NAAM SPELER";
+            const team = document.getElementById('pTeamSelect').value || "TEAM";
+            const num = document.getElementById('pNumber').value || "99";
+            const img = document.getElementById('pPhotoUrl').value;
+            const pos = document.getElementById('pPos').value;
+            document.getElementById('dispName').innerText = name;
+            document.getElementById('dispTeam').innerText = `${team} • ${pos.substring(0,3).toUpperCase()}`;
+            document.getElementById('dispNumber').innerText = num;
+            if(img) document.getElementById('pPreviewImg').src = img;
+        };
+        
+        function populateDropdowns() {
+            document.getElementById('pTeamSelect').innerHTML = allTeams.map(t => `<option value="${t}">${t}</option>`).join('');
         }
 
         window.resetForm = () => {
             document.getElementById('uName').value = '';
             document.getElementById('uUsername').value = '';
             document.getElementById('uPassword').value = '';
+            document.getElementById('uPhoto').value = '';
             selectedTeams.clear();
-            renderTeamGrid(); // Refresh grid selection visuals
+            renderTeamGrid();
         };
 
         window.handleMainSubmit = async () => {
             const token = document.getElementById('ghToken').value;
-            if(!token) { log("ERROR: Geen token ingevoerd."); return alert("GitHub Token vereist"); }
+            if(!token) { log("ERROR: Token vereist."); return alert("GitHub Token vereist"); }
 
-            const isCoach = document.getElementById('tab-coach').classList.contains('active');
-
-            if(isCoach) {
+            if(document.getElementById('tab-coach').classList.contains('active')) {
                 const newUser = {
                     name: document.getElementById('uName').value,
                     username: document.getElementById('uUsername').value,
@@ -492,11 +460,10 @@
                 if(idx !== -1) allUsers[idx] = newUser; 
                 else allUsers.push(newUser);
 
-                log(`Syncing Users DB... (${allUsers.length} records)`);
+                log(`Syncing Users DB...`);
                 await syncGithub(token, 'users.json', { users: allUsers }, `Update User: ${newUser.name}`);
                 renderUserTable();
                 resetForm();
-
             } else {
                 const newPlayer = {
                     id: "p_" + Date.now(),
@@ -509,11 +476,8 @@
                     },
                     ratings: {}, history: {}
                 };
-                
                 allPlayers.push(newPlayer);
-                log(`Syncing Players DB... (${allPlayers.length} records)`);
                 await syncGithub(token, 'players.json', allPlayers, `New Player: ${newPlayer.bio.name}`);
-                
                 document.getElementById('pName').value = '';
                 updateCard();
             }
@@ -525,35 +489,21 @@
                 const get = await fetch(url, { headers: { "Authorization": `token ${token}` } });
                 const json = await get.json();
                 const sha = json.sha;
-
                 const put = await fetch(url, {
                     method: "PUT",
                     headers: { "Authorization": `token ${token}` },
-                    body: JSON.stringify({
-                        message: msg,
-                        content: btoa(JSON.stringify(content, null, 2)),
-                        sha: sha
-                    })
+                    body: JSON.stringify({ message: msg, content: btoa(JSON.stringify(content, null, 2)), sha: sha })
                 });
-
-                if(put.ok) {
-                    log("SUCCESS: Synchronisatie voltooid.");
-                    alert("Opgeslagen!");
-                } else {
-                    throw new Error("GitHub Error");
-                }
-            } catch(e) {
-                log("ERROR: Sync failed. Check console.");
-                console.error(e);
-                alert("Fout bij opslaan.");
-            }
+                if(put.ok) { log("SUCCESS: Opgeslagen."); alert("Opgeslagen!"); }
+                else throw new Error("GitHub Error");
+            } catch(e) { log("ERROR: Sync failed."); console.error(e); alert("Fout bij opslaan."); }
         }
 
         window.deleteUser = async (i) => {
             if(confirm("Gebruiker verwijderen?")) {
                 allUsers.splice(i, 1);
                 renderUserTable();
-                log("User deleted locally. Press Save to sync.");
+                log("User deleted locally. Save to sync.");
             }
         };
 
