@@ -2,419 +2,491 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Elite Pro | Admin Control Panel</title>
+    <title>Elite Pro | Admin Console</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
-        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
-        
-        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; transition: all 0.3s ease; }
-        
-        .input-luxe { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: white; padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; outline: none; transition: 0.3s; }
-        .input-luxe:focus { border-color: var(--gold); background: rgba(255,255,255,0.1); }
-        
-        /* FIX: Zwarte achtergrond voor dropdown opties */
-        .input-luxe option { background-color: #000; color: white; padding: 5px; }
+        /* --- ELITE ENTERPRISE DESIGN SYSTEM --- */
+        :root {
+            --bg-body: #09090b; --bg-surface: #121215; --bg-panel: #18181b; --bg-element: #27272a;
+            --border-subtle: #27272a; --border-strong: #3f3f46;
+            --text-primary: #f4f4f5; --text-secondary: #a1a1aa; --text-tertiary: #52525b;
+            --accent: #D4AF37; --danger: #ef4444; --success: #10b981;
+            --font-main: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace;
+        }
 
+        body { background: var(--bg-body); color: var(--text-primary); font-family: var(--font-main); height: 100vh; overflow: hidden; display: flex; margin: 0; }
+
+        /* SIDEBAR */
+        aside { width: 280px; background: var(--bg-surface); border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; z-index: 20; }
+        .brand-area { padding: 24px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 12px; }
+        .logo-mark { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; }
+        .nav-item { padding: 12px 24px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; transition: 0.2s; }
+        .nav-item:hover, .nav-item.active { background: var(--bg-element); color: white; border-left: 2px solid var(--accent); }
+
+        /* MAIN */
+        main { flex: 1; position: relative; overflow-y: auto; background: var(--bg-body); }
+        .glass-header { position: sticky; top: 0; z-index: 50; background: rgba(9, 9, 11, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; }
+        .content-wrapper { padding: 32px; max-width: 1600px; margin: 0 auto; }
+
+        /* PANELS & INPUTS */
+        .panel { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+        .panel-header { padding: 16px 24px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
+        .panel-title { font-size: 13px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .input-dark { background: var(--bg-element); border: 1px solid var(--border-subtle); color: white; padding: 10px 12px; border-radius: 6px; font-size: 13px; width: 100%; outline: none; transition: 0.2s; }
+        .input-dark:focus { border-color: var(--accent); background: #000; }
+        
+        /* TABS */
+        .tab-btn { padding: 10px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); border-bottom: 2px solid transparent; cursor: pointer; }
+        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+        /* TEAM BADGES */
         .team-badge { 
-            padding: 6px 10px; font-size: 10px; font-weight: 800; border-radius: 6px; 
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
-            cursor: pointer; transition: all 0.2s ease; text-align: center;
+            font-size: 10px; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); 
+            border: 1px solid var(--border-subtle); cursor: pointer; transition: 0.2s; text-align: center;
         }
-        .team-badge:hover { background: rgba(212,175,55,0.1); border-color: var(--gold); }
-        .team-badge.selected { background: var(--gold); color: black; border-color: var(--gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+        .team-badge:hover { border-color: var(--accent); }
+        .team-badge.selected { background: var(--accent); color: black; border-color: var(--accent); font-weight: 800; }
 
-        .cat-btn { font-size: 8px; font-weight: 900; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
-        .cat-btn:hover { background: white; color: black; }
-
-        .gen-btn { background: rgba(212,175,55,0.1); color: var(--gold); border: 1px solid var(--gold); padding: 5px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; transition: 0.2s; }
-        .gen-btn:hover { background: var(--gold); color: black; }
-
-        .tab-btn { background: transparent; color: gray; border-bottom: 2px solid transparent; font-weight: 800; text-transform: uppercase; font-size: 11px; padding: 10px 20px; transition: 0.3s; }
-        .tab-btn.active { color: var(--gold); border-bottom: 2px solid var(--gold); }
-
-        .custom-scroll::-webkit-scrollbar { width: 5px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+        /* PLAYER CARD PREVIEW (Mini) */
+        .card-preview {
+            width: 140px; height: 200px; border-radius: 12px; background: #000; border: 1px solid var(--accent);
+            position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: 0 auto;
+        }
+        .card-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+        .card-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(to top, black, transparent); }
         
-        .nav-item:hover { border-color: rgba(212, 175, 55, 0.5); transform: translateY(-2px); background: rgba(255, 255, 255, 0.05); }
-        .coach-img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); background: #222; }
-        
-        .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
-        .file-upload-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
-        .hidden { display: none; }
+        /* LOG CONSOLE */
+        .log-console { font-family: var(--font-mono); font-size: 10px; color: var(--success); height: 150px; overflow-y: auto; background: #050505; padding: 12px; border-radius: 8px; border: 1px solid var(--border-subtle); }
+        .log-entry { margin-bottom: 4px; display: flex; gap: 8px; }
+        .log-time { color: var(--text-tertiary); }
 
-        /* --- SPELERSKAART CSS --- */
-        .player-card-container {
-            position: relative; width: 220px; height: 320px; border-radius: 1.5rem;
-            overflow: hidden; border: 2px solid var(--gold); margin: 0 auto;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2), 0 20px 40px rgba(0,0,0,0.8);
-            background: #000; transition: transform 0.3s;
-        }
-        .player-card-photo { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
-        .player-card-overlay {
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px 15px;
-            background: linear-gradient(to top, rgba(0,0,0,1) 15%, transparent 100%);
-        }
-        .player-card-number {
-            position: absolute; top: 15px; right: 20px;
-            font-size: 42px; font-weight: 900; color: #fff;
-            text-shadow: 0 0 15px var(--gold); z-index: 10; line-height: 1;
-        }
-        .player-card-name { font-size: 24px; font-weight: 900; font-style: italic; text-transform: uppercase; color: #fff; line-height: 0.85; }
-        .player-card-info { font-size: 9px; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; }
+        /* BUTTONS */
+        .btn { padding: 8px 16px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-primary { background: var(--accent); color: #000; }
+        .btn-ghost { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); }
+        .btn-danger { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
     </style>
 </head>
-<body class="p-8 text-left text-xs">
-    <div class="max-w-7xl mx-auto">
-        <header class="flex justify-between items-center mb-10 border-b border-white/5 pb-6 text-left">
-            <div>
-                <h1 class="text-3xl font-black italic text-white uppercase tracking-tighter underline decoration-yellow-500">Admin<span class="text-yellow-500">Control</span></h1>
-                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">User & Team Management System</p>
+<body>
+
+    <aside>
+        <div class="brand-area">
+            <div class="logo-mark">EP</div>
+            <div class="font-bold text-base tracking-tight">ELITE<span>PRO</span></div>
+        </div>
+        <div class="py-6 flex flex-col gap-1">
+            <div class="nav-item" onclick="window.location.href='index.html'">🏠 Dashboard</div>
+            <div class="nav-item active">⚙️ Admin Console</div>
+            <div class="mt-8 text-[10px] uppercase font-bold text-gray-600 px-6 mb-2 tracking-widest">Modules</div>
+            <div class="nav-item" onclick="window.location.href='overview.html'">📊 Team Hub</div>
+            <div class="nav-item" onclick="window.location.href='planner.html'">♟️ Planner</div>
+        </div>
+        <div class="mt-auto p-6 border-t border-[#27272a]">
+             <div class="flex items-center gap-2 mb-2">
+                 <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                 <span class="text-xs text-white font-bold">Admin Mode</span>
+             </div>
+             <div class="text-[10px] text-gray-500">Root Access Granted</div>
+        </div>
+    </aside>
+
+    <main>
+        <header class="glass-header">
+            <div class="flex flex-col">
+                <h1 class="text-sm font-bold text-white uppercase tracking-wider">System Administration</h1>
+                <span class="text-xs text-gray-500">User Management & Data Integrity</span>
             </div>
-            <div class="flex items-center gap-4">
-                <a href="index.html" class="bg-white/5 border border-white/20 px-6 py-2 rounded-full text-[10px] font-bold uppercase hover:bg-white/10 transition">← Dashboard</a>
+            <div class="flex items-center gap-3">
+                <div class="px-3 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-mono">
+                    <span class="text-gray-400">DB Status:</span> <span class="text-green-500 font-bold">CONNECTED</span>
+                </div>
+                <button onclick="sessionStorage.clear(); window.location.href='login.html';" class="btn btn-ghost text-[10px]">Logout</button>
             </div>
         </header>
 
-        <section class="mb-12">
-            <h3 class="text-gray-500 font-black uppercase text-[10px] mb-6 tracking-[0.2em] text-left">Systeem Navigatie</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                <a href="index.html" class="glass-card p-4 nav-item flex items-center gap-3 group"><span>🏠</span><div class="text-[9px] font-black uppercase leading-tight">Dashboard</div></a>
-                <a href="overview.html" class="glass-card p-4 nav-item flex items-center gap-3 group"><span>📋</span><div class="text-[9px] font-black uppercase leading-tight">Overview</div></a>
-                <a href="comparison.html" class="glass-card p-4 nav-item flex items-center gap-3 group"><span>⚖️</span><div class="text-[9px] font-black uppercase leading-tight">Matrix</div></a>
-                <a href="coach.html" class="glass-card p-4 nav-item flex items-center gap-3 group"><span>🧠</span><div class="text-[9px] font-black uppercase leading-tight">Coach Portal</div></a>
-                <a href="planner.html" class="glass-card p-4 nav-item flex items-center gap-3 group"><span>📅</span><div class="text-[9px] font-black uppercase leading-tight">Planner</div></a>
-                <a href="seasonal_analysis.html" class="glass-card p-4 nav-item flex items-center gap-3 group"><span>📊</span><div class="text-[9px] font-black uppercase leading-tight">Seasonal</div></a>
-                <a href="login.html" class="glass-card p-4 nav-item flex items-center gap-3 group border-dashed"><span>🔒</span><div class="text-[9px] font-black uppercase leading-tight">Logout</div></a>
-            </div>
-        </section>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-6"> <div class="glass-card p-8">
-                    <div class="flex border-b border-white/10 mb-6">
+        <div class="content-wrapper">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <div class="flex border-b border-white/10 mb-2">
                         <button onclick="switchTab('coach')" id="tab-coach" class="tab-btn active">Coach Manager</button>
-                        <button onclick="switchTab('player')" id="tab-player" class="tab-btn">Speler Manager</button>
+                        <button onclick="switchTab('player')" id="tab-player" class="tab-btn">Speler Database</button>
                     </div>
 
-                    <div id="coachFormContainer">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-yellow-500 font-black uppercase text-xs italic">Coach Configureren</h3>
-                            <button type="button" onclick="resetForm()" class="text-[8px] font-black uppercase text-gray-500 hover:text-white transition">Reset</button>
+                    <div id="coachFormContainer" class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">Nieuwe Gebruiker</div>
+                            <button onclick="resetForm()" class="text-[10px] text-gray-500 hover:text-white uppercase font-bold">Reset</button>
                         </div>
-                        <form id="userForm" class="space-y-4">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Volledige Naam</label><input type="text" id="uName" class="input-luxe text-left" required></div>
-                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Login Naam</label><input type="text" id="uUsername" class="input-luxe text-left" required></div>
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Profielfoto (Upload of URL)</label>
-                                <div class="flex gap-2">
-                                    <div class="file-upload-wrapper flex-shrink-0 w-1/3">
-                                        <button type="button" class="input-luxe bg-white/10 border-dashed border-white/20 text-[9px] h-full uppercase font-bold">Bestand</button>
-                                        <input type="file" id="fileInput" accept="image/*">
-                                    </div>
-                                    <input type="text" id="uPhoto" class="input-luxe flex-grow text-left" placeholder="Plak URL...">
-                                </div>
-                                <p id="fileName" class="text-[8px] text-gray-500 mt-1 italic text-left"></p>
-                            </div>
+                        <div class="p-6 space-y-4">
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <div class="flex justify-between items-center mb-2">
-                                        <label class="text-[10px] font-bold text-gray-500 block uppercase">Wachtwoord</label>
-                                        <button type="button" class="gen-btn" onclick="generatePass()">Gen</button>
-                                    </div>
-                                    <input type="text" id="uPassword" class="input-luxe text-left" required>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Naam</label>
+                                    <input type="text" id="uName" class="input-dark" placeholder="Bijv. Mark van Bommel" oninput="autoGenerateCreds()">
                                 </div>
                                 <div>
-                                    <label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Rol</label>
-                                    <select id="uRole" class="input-luxe text-left">
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Username (Auto)</label>
+                                    <input type="text" id="uUsername" class="input-dark font-mono text-yellow-500" readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Wachtwoord</label>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="uPassword" class="input-dark font-mono">
+                                        <button onclick="generatePass()" class="btn btn-ghost px-2">🎲</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Systeem Rol</label>
+                                    <select id="uRole" class="input-dark">
                                         <option value="coach">Hoofdcoach</option>
                                         <option value="assistant">Assistent</option>
                                         <option value="admin">Admin / TC</option>
                                     </select>
                                 </div>
                             </div>
+
                             <div>
-                                <div class="flex justify-between items-end mb-3">
-                                    <label class="text-[10px] font-bold text-gray-500 block uppercase tracking-widest text-left">Koppel Teams</label>
-                                    <div id="categoryGrid" class="flex flex-wrap gap-1"></div>
-                                </div>
-                                <div id="teamGrid" class="grid grid-cols-4 md:grid-cols-6 gap-2 max-h-[180px] overflow-y-auto pr-2 custom-scroll border border-white/5 p-3 rounded-xl"></div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div id="playerFormContainer" class="hidden">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-yellow-500 font-black uppercase text-xs italic">Nieuwe Speler Invoeren</h3>
-                            <button type="button" onclick="resetPlayerForm()" class="text-[8px] font-black uppercase text-gray-500 hover:text-white transition">Reset</button>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="flex justify-center md:justify-start">
-                                <div class="player-card-container">
-                                    <div id="dispNumber" class="player-card-number">--</div>
-                                    <img id="pPreviewImg" class="player-card-photo" src="https://via.placeholder.com/400x600/000000/FFFFFF?text=FOTO" alt="Preview">
-                                    <div class="player-card-overlay">
-                                        <div id="dispName" class="player-card-name">NAAM</div>
-                                        <div id="dispTeam" class="player-card-info">TEAM • POSITIE</div>
-                                    </div>
-                                </div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Foto URL</label>
+                                <input type="text" id="uPhoto" class="input-dark" placeholder="https://...">
                             </div>
 
-                            <form id="playerForm" class="space-y-4">
-                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Naam Speler</label><input type="text" id="pName" class="input-luxe text-left" placeholder="Volledige naam..." required oninput="updateCard()"></div>
-                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Team</label><select id="pTeamSelect" class="input-luxe text-left" onchange="updateCard()"></select></div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Rugnummer</label><input type="number" id="pNumber" class="input-luxe text-left" oninput="updateCard()"></div>
-                                    <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Positie</label>
-                                        <select id="pPos" class="input-luxe text-left" onchange="updateCard()">
-                                            <option>Keeper</option><option>Verdediger</option><option>Middenvelder</option><option>Aanvaller</option>
-                                        </select>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Team Toegang</label>
+                                <div id="teamGrid" class="grid grid-cols-5 gap-2 max-h-[120px] overflow-y-auto custom-scroll border border-white/10 p-2 rounded">
                                     </div>
-                                </div>
-                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Foto URL</label><input type="text" id="pPhotoUrl" class="input-luxe text-left" placeholder="https://..." oninput="updateCard()"></div>
-                                <div><label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase text-left">Email Ouder</label><input type="email" id="pEmail" class="input-luxe text-left"></div>
-                            </form>
+                            </div>
+                            
+                            <div class="pt-4 border-t border-white/5">
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">GitHub API Token (Vereist)</label>
+                                <input type="password" id="ghToken" class="input-dark text-center tracking-widest" placeholder="ghp_...">
+                            </div>
+
+                            <button onclick="handleMainSubmit()" class="w-full btn btn-primary justify-center py-3 mt-2">
+                                Opslaan & Synchroniseren
+                            </button>
                         </div>
                     </div>
 
-                    <div class="pt-6 border-t border-white/5 space-y-3 mt-4">
-                        <input type="password" id="ghToken" placeholder="GitHub Token" class="input-luxe text-center">
-                        <button type="button" onclick="handleMainSubmit()" class="w-full bg-yellow-600 text-black font-black py-4 rounded-xl uppercase text-[10px] tracking-[0.2em] hover:bg-yellow-400 transition shadow-lg">Opslaan & Sync</button>
+                    <div id="playerFormContainer" class="panel hidden">
+                        <div class="panel-header">
+                            <div class="panel-title">Nieuwe Speler</div>
+                            <div class="text-[10px] text-yellow-500 font-bold uppercase">Live Preview Active</div>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-12 gap-6">
+                                <div class="col-span-4">
+                                    <div class="card-preview">
+                                        <div id="dispNumber" class="absolute top-2 right-2 text-2xl font-black text-white drop-shadow-md z-10">14</div>
+                                        <img id="pPreviewImg" class="card-img" src="https://via.placeholder.com/400x600/000000/FFFFFF?text=PRO">
+                                        <div class="card-overlay">
+                                            <div id="dispName" class="text-white font-black uppercase text-sm leading-none italic">NAAM</div>
+                                            <div id="dispTeam" class="text-[8px] text-yellow-500 font-bold uppercase mt-1">TEAM • POS</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-2 text-[9px] text-gray-500">Card Preview</div>
+                                </div>
+
+                                <div class="col-span-8 space-y-3">
+                                    <input type="text" id="pName" class="input-dark" placeholder="Volledige Naam" oninput="updateCard()">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <select id="pTeamSelect" class="input-dark" onchange="updateCard()"></select>
+                                        <input type="number" id="pNumber" class="input-dark" placeholder="Nr" oninput="updateCard()">
+                                    </div>
+                                    <select id="pPos" class="input-dark" onchange="updateCard()">
+                                        <option>Middenvelder</option>
+                                        <option>Aanvaller</option>
+                                        <option>Verdediger</option>
+                                        <option>Keeper</option>
+                                    </select>
+                                    <input type="text" id="pPhotoUrl" class="input-dark" placeholder="Foto URL" oninput="updateCard()">
+                                    
+                                    <button onclick="handleMainSubmit()" class="w-full btn btn-primary justify-center py-3 mt-4">
+                                        Speler Toevoegen
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="lg:col-span-6">
-                <div class="glass-card p-8 h-full">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-yellow-500 font-black uppercase text-xs italic">Staff Bezetting</h3>
-                        <button id="exportUsers" class="text-[9px] font-black uppercase text-gray-500 hover:text-white transition">Export CSV</button>
+                <div class="lg:col-span-5 space-y-6">
+                    
+                    <div class="panel h-[400px] flex flex-col">
+                        <div class="panel-header">
+                            <div class="panel-title">Actieve Gebruikers</div>
+                            <span id="userCount" class="text-xs text-gray-500 font-mono">0</span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto custom-scroll">
+                            <table class="w-full text-left text-[10px]">
+                                <thead class="text-gray-500 border-b border-white/5 bg-black/20">
+                                    <tr><th class="p-3">User</th><th class="p-3">Rol</th><th class="p-3 text-right">Actie</th></tr>
+                                </thead>
+                                <tbody id="userTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="overflow-x-auto custom-scroll max-h-[600px]">
-                        <table class="w-full text-left text-[10px]">
-                            <thead class="text-gray-500 border-b border-white/5 uppercase font-black text-[9px]">
-                                <tr><th class="pb-4">Coach</th><th class="pb-4 text-center">Rol</th><th class="pb-4 text-center">Teams</th><th class="pb-4 text-right">Actie</th></tr>
-                            </thead>
-                            <tbody id="userTableBody"></tbody>
-                        </table>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">System Audit Log</div>
+                            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                        </div>
+                        <div class="log-console" id="auditLog">
+                            </div>
                     </div>
+
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <script type="module">
-        const sessionUser = JSON.parse(sessionStorage.getItem('elite_user'));
-        if (!sessionUser || sessionUser.role !== 'admin') window.location.href = 'login.html';
+        // 1. DATA PROVIDER SIMULATION (DIRECT FETCH FOR ADMIN)
+        const loadJSON = async (file) => {
+            try { const r = await fetch(`./data/${file}`); return await r.json(); } 
+            catch(e) { console.error(e); return []; }
+        };
 
-        const levels = ["JO8", "JO9", "JO10", "JO11", "JO12", "JO13", "JO14", "JO15", "JO16", "JO17", "JO19", "Senioren"];
-        let selectedTeams = new Set();
         let allUsers = [];
         let allPlayers = [];
+        let selectedTeams = new Set();
+        const teams = ["JO8-1","JO9-1","JO10-1","JO11-1","JO12-1","JO13-1","JO14-1","JO15-1","JO16-1","JO17-1","JO19-1","Sen 1"];
 
+        // 2. AUTH CHECK
+        const sessionUser = JSON.parse(sessionStorage.getItem('elite_user'));
+        if (!sessionUser || sessionUser.role !== 'admin') window.location.href = 'login.html';
+        
+        // Add log entry
+        const log = (msg) => {
+            const box = document.getElementById('auditLog');
+            const time = new Date().toLocaleTimeString('nl-NL');
+            box.innerHTML += `<div class="log-entry"><span class="log-time">[${time}]</span> <span>${msg}</span></div>`;
+            box.scrollTop = box.scrollHeight;
+        };
+
+        // 3. INIT
+        async function init() {
+            log("Admin Console Initialized...");
+            log("Verbinding maken met database...");
+            
+            // Load Data
+            const uData = await loadJSON('users.json');
+            allUsers = uData.users || [];
+            allPlayers = await loadJSON('players.json');
+            if(!Array.isArray(allPlayers)) allPlayers = [];
+
+            log(`Data geladen: ${allUsers.length} gebruikers, ${allPlayers.length} spelers.`);
+            
+            renderUserTable();
+            renderTeamGrid();
+            populateDropdowns();
+
+            // Set default card preview
+            updateCard();
+        }
+
+        // 4. SMART UI FUNCTIONS
         window.switchTab = (tab) => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`tab-${tab}`).classList.add('active');
+            
             if(tab === 'coach') {
                 document.getElementById('coachFormContainer').classList.remove('hidden');
                 document.getElementById('playerFormContainer').classList.add('hidden');
+                log("Switched to Coach Manager view");
             } else {
                 document.getElementById('coachFormContainer').classList.add('hidden');
                 document.getElementById('playerFormContainer').classList.remove('hidden');
+                log("Switched to Player Database view");
             }
         };
 
-        const fileInput = document.getElementById('fileInput');
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                document.getElementById('fileName').innerText = `Gekozen: ${file.name}`;
-                const reader = new FileReader();
-                reader.onload = (event) => { document.getElementById('uPhoto').value = event.target.result; };
-                reader.readAsDataURL(file);
+        window.autoGenerateCreds = () => {
+            const name = document.getElementById('uName').value;
+            if(name.length > 3) {
+                // Smart Username: First letter + Last name
+                const parts = name.toLowerCase().split(' ');
+                const user = parts.length > 1 ? `${parts[0][0]}.${parts[parts.length-1]}` : parts[0];
+                document.getElementById('uUsername').value = user;
             }
-        });
+        };
 
-        window.generatePass = () => { document.getElementById('uPassword').value = "Elite-" + Math.floor(1000 + Math.random() * 9000); };
-        
+        window.generatePass = () => {
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            let pass = "EP-";
+            for(let i=0; i<6; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById('uPassword').value = pass;
+            log("Secure password generated.");
+        };
+
+        window.updateCard = () => {
+            const name = document.getElementById('pName').value || "NAAM SPELER";
+            const team = document.getElementById('pTeamSelect').value || "TEAM";
+            const num = document.getElementById('pNumber').value || "99";
+            const img = document.getElementById('pPhotoUrl').value;
+            const pos = document.getElementById('pPos').value;
+
+            document.getElementById('dispName').innerText = name;
+            document.getElementById('dispTeam').innerText = `${team} • ${pos.substring(0,3).toUpperCase()}`;
+            document.getElementById('dispNumber').innerText = num;
+            if(img) document.getElementById('pPreviewImg').src = img;
+        };
+
+        // 5. RENDER FUNCTIONS
+        function renderTeamGrid() {
+            const grid = document.getElementById('teamGrid');
+            grid.innerHTML = teams.map(t => `<div class="team-badge" data-team="${t}" onclick="toggleTeam('${t}', this)">${t}</div>`).join('');
+        }
+
+        window.toggleTeam = (t, el) => {
+            selectedTeams.has(t) ? selectedTeams.delete(t) : selectedTeams.add(t);
+            el.classList.toggle('selected');
+        };
+
+        function populateDropdowns() {
+            const sel = document.getElementById('pTeamSelect');
+            sel.innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
+        }
+
+        function renderUserTable() {
+            const tbody = document.getElementById('userTableBody');
+            document.getElementById('userCount').innerText = allUsers.length;
+            tbody.innerHTML = allUsers.map((u, i) => `
+                <tr class="border-b border-white/5 hover:bg-white/5">
+                    <td class="p-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full bg-gray-700 border border-gray-600 overflow-hidden">
+                                <img src="${u.photo || ''}" class="w-full h-full object-cover" onerror="this.style.display='none'">
+                            </div>
+                            <div>
+                                <div class="font-bold text-white">${u.name}</div>
+                                <div class="text-[9px] text-gray-500">${u.username}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase ${u.role==='admin'?'bg-red-500/20 text-red-400':'bg-blue-500/20 text-blue-400'}">${u.role}</span>
+                    </td>
+                    <td class="p-3 text-right">
+                        <button onclick="deleteUser(${i})" class="text-red-500 hover:text-white font-bold">×</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
         window.resetForm = () => {
-            document.getElementById('userForm').reset();
-            document.getElementById('fileName').innerText = "";
+            document.getElementById('uName').value = '';
+            document.getElementById('uUsername').value = '';
+            document.getElementById('uPassword').value = '';
             selectedTeams.clear();
             document.querySelectorAll('.team-badge').forEach(b => b.classList.remove('selected'));
         };
 
-        window.resetPlayerForm = () => {
-            document.getElementById('playerForm').reset();
-            updateCard();
-        };
-
-        // CARD PREVIEW UPDATE FUNCTIE
-        window.updateCard = () => {
-            const name = document.getElementById('pName').value || "NAAM";
-            const number = document.getElementById('pNumber').value || "--";
-            const team = document.getElementById('pTeamSelect').value;
-            const pos = document.getElementById('pPos').value;
-            const photo = document.getElementById('pPhotoUrl').value || "https://via.placeholder.com/400x600/000000/FFFFFF?text=FOTO";
-
-            document.getElementById('dispName').innerText = name;
-            document.getElementById('dispNumber').innerText = number;
-            document.getElementById('dispTeam').innerText = `${team} • ${pos}`;
-            document.getElementById('pPreviewImg').src = photo;
-        };
-
-        const categoryGrid = document.getElementById('categoryGrid');
-        categoryGrid.innerHTML = levels.map(l => `<button type="button" class="cat-btn" onclick="toggleCategory('${l}')">${l}</button>`).join('');
-
-        const teamGrid = document.getElementById('teamGrid');
-        let adminTeams = [];
-        levels.forEach(l => { for(let i=1; i<=4; i++) adminTeams.push(l === "Senioren" ? `Sen ${i}` : `${l}-${i}`); });
-        
-        // Vul dropdown voor speler formulier
-        const pTeamSelect = document.getElementById('pTeamSelect');
-        pTeamSelect.innerHTML = adminTeams.map(t => `<option value="${t}">${t}</option>`).join('');
-
-        adminTeams.push("ALL");
-        teamGrid.innerHTML = adminTeams.map(t => `<div class="team-badge" data-team="${t}">${t}</div>`).join('');
-
-        teamGrid.onclick = (e) => {
-            if(e.target.classList.contains('team-badge')) {
-                const t = e.target.dataset.team;
-                selectedTeams.has(t) ? selectedTeams.delete(t) : selectedTeams.add(t);
-                e.target.classList.toggle('selected');
-            }
-        };
-
-        window.toggleCategory = (cat) => {
-            const badges = document.querySelectorAll(`.team-badge[data-team^="${cat === 'Senioren' ? 'Sen' : cat}"]`);
-            const allSelected = Array.from(badges).every(b => selectedTeams.has(b.dataset.team));
-            badges.forEach(b => {
-                const t = b.dataset.team;
-                allSelected ? selectedTeams.delete(t) : selectedTeams.add(t);
-                b.classList.toggle('selected', !allSelected);
-            });
-        };
-
-        async function loadData() {
-            try {
-                const resU = await fetch('./data/users.json');
-                const dataU = await resU.json();
-                allUsers = dataU.users;
-                renderTable();
-                try {
-                    const resP = await fetch('./data/players.json');
-                    allPlayers = await resP.json();
-                    if(!Array.isArray(allPlayers)) allPlayers = [];
-                } catch(e) { allPlayers = []; }
-            } catch(e) { console.error("Laden mislukt", e); }
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('userTableBody');
-            tbody.innerHTML = allUsers.map((u, index) => `
-                <tr class="border-b border-white/5 hover:bg-white/5 transition">
-                    <td class="py-4 flex items-center gap-3">
-                        <img src="${u.photo || 'https://via.placeholder.com/150'}" class="coach-img" onerror="this.src='https://via.placeholder.com/150'">
-                        <div><span class="font-bold text-white block uppercase">${u.name}</span><span class="text-[8px] text-gray-500 font-bold tracking-widest italic">${u.username}</span></div>
-                    </td>
-                    <td class="py-4 text-center"><span class="px-2 py-1 rounded bg-white/10 border border-white/5 text-[8px] uppercase font-black text-gray-300">${u.role}</span></td>
-                    <td class="py-4 text-center"><div class="flex flex-wrap justify-center gap-1 max-w-[150px] mx-auto">${u.teams.map(t => `<span class="text-[8px] text-yellow-500 font-black border border-yellow-500/20 bg-yellow-500/5 px-1 rounded">${t}</span>`).join('')}</div></td>
-                    <td class="py-4 text-right space-x-2">
-                        <button onclick="window.editUser(${index})" class="text-blue-400 font-bold uppercase text-[9px] border border-blue-400/20 px-2 py-1 rounded bg-blue-400/5 hover:bg-blue-400/20 transition">Edit</button>
-                        <button onclick="window.deleteUser(${index})" class="text-red-500 font-bold uppercase text-[9px] border border-red-500/20 px-2 py-1 rounded bg-red-500/5 hover:bg-red-500/20 transition">Del</button>
-                    </td>
-                </tr>`).join('');
-        }
-
+        // 6. ACTION HANDLERS (GITHUB SYNC)
         window.handleMainSubmit = async () => {
             const token = document.getElementById('ghToken').value;
-            if(!token) return alert("GitHub Token vereist.");
+            if(!token) { log("ERROR: Geen token ingevoerd."); return alert("GitHub Token vereist"); }
 
-            const isCoachTab = document.getElementById('tab-coach').classList.contains('active');
+            const isCoach = document.getElementById('tab-coach').classList.contains('active');
 
-            if(isCoachTab) {
+            if(isCoach) {
+                // Add User
                 const newUser = {
+                    name: document.getElementById('uName').value,
                     username: document.getElementById('uUsername').value,
                     password: document.getElementById('uPassword').value,
-                    name: document.getElementById('uName').value,
                     role: document.getElementById('uRole').value,
                     photo: document.getElementById('uPhoto').value,
                     teams: Array.from(selectedTeams)
                 };
-                if(!newUser.username) return alert("Vul gebruikersnaam in.");
+                
+                if(!newUser.username) return;
+
+                // Check update or create
                 const idx = allUsers.findIndex(u => u.username === newUser.username);
-                idx !== -1 ? allUsers[idx] = newUser : allUsers.push(newUser);
-                await syncWithGithub(token, `Update User: ${newUser.name}`, { users: allUsers }, 'data/users.json');
+                if(idx !== -1) allUsers[idx] = newUser; 
+                else allUsers.push(newUser);
+
+                log(`Syncing Users DB... (${allUsers.length} records)`);
+                await syncGithub(token, 'users.json', { users: allUsers }, `Update User: ${newUser.name}`);
+                renderUserTable();
                 resetForm();
+
             } else {
-                const pName = document.getElementById('pName').value;
-                if(!pName) return alert("Vul naam speler in.");
+                // Add Player
                 const newPlayer = {
                     id: "p_" + Date.now(),
                     bio: {
-                        name: pName,
+                        name: document.getElementById('pName').value,
                         team: document.getElementById('pTeamSelect').value,
                         number: document.getElementById('pNumber').value,
                         role: document.getElementById('pPos').value,
-                        photo: document.getElementById('pPhotoUrl').value,
-                        email: document.getElementById('pEmail').value
+                        photo: document.getElementById('pPhotoUrl').value
                     },
-                    ratings: {}, comments: {}, history: {}
+                    ratings: {}, history: {}
                 };
+                
                 allPlayers.push(newPlayer);
-                await syncWithGithub(token, `New Player: ${newPlayer.bio.name}`, allPlayers, 'data/players.json');
-                resetPlayerForm();
+                log(`Syncing Players DB... (${allPlayers.length} records)`);
+                await syncGithub(token, 'players.json', allPlayers, `New Player: ${newPlayer.bio.name}`);
+                
+                // Clear Player Form
+                document.getElementById('pName').value = '';
+                updateCard();
             }
         };
 
-        async function syncWithGithub(token, msg, contentObj, path) {
+        async function syncGithub(token, file, content, msg) {
+            const url = `https://api.github.com/repos/playbetter2021/sport-dashboard/contents/data/${file}`;
             try {
-                const url = `https://api.github.com/repos/playbetter2021/sport-dashboard/contents/${path}`;
-                const getRes = await fetch(url, { headers: { "Authorization": `token ${token}` } });
-                let sha = null;
-                if(getRes.ok) {
-                    const file = await getRes.json();
-                    sha = file.sha;
-                }
-                const putRes = await fetch(url, { 
-                    method: "PUT", 
-                    headers: { "Authorization": `token ${token}` }, 
-                    body: JSON.stringify({ message: msg, content: btoa(JSON.stringify(contentObj, null, 2)), sha: sha }) 
+                // Get SHA
+                const get = await fetch(url, { headers: { "Authorization": `token ${token}` } });
+                const json = await get.json();
+                const sha = json.sha;
+
+                // Push
+                const put = await fetch(url, {
+                    method: "PUT",
+                    headers: { "Authorization": `token ${token}` },
+                    body: JSON.stringify({
+                        message: msg,
+                        content: btoa(JSON.stringify(content, null, 2)),
+                        sha: sha
+                    })
                 });
-                if(putRes.ok) {
-                    alert(`${path} succesvol bijgewerkt!`);
-                    if(path === 'data/users.json') loadData();
+
+                if(put.ok) {
+                    log("SUCCESS: Synchronisatie voltooid.");
+                    alert("Opgeslagen!");
                 } else {
-                    const err = await putRes.json();
-                    throw new Error(err.message);
+                    throw new Error("GitHub Error");
                 }
-            } catch (err) { alert("Fout bij synchronisatie: " + err.message); }
+            } catch(e) {
+                log("ERROR: Sync failed. Check console.");
+                console.error(e);
+                alert("Fout bij opslaan.");
+            }
         }
 
-        window.deleteUser = async (idx) => {
-            const token = document.getElementById('ghToken').value;
-            if(!token) return alert("GitHub Token vereist.");
-            if(!confirm(`Trainer ${allUsers[idx].name} verwijderen?`)) return;
-            const name = allUsers[idx].name;
-            allUsers.splice(idx, 1);
-            await syncWithGithub(token, `Delete User: ${name}`, { users: allUsers }, 'data/users.json');
+        window.deleteUser = async (i) => {
+            if(confirm("Gebruiker verwijderen?")) {
+                allUsers.splice(i, 1);
+                renderUserTable();
+                log("User deleted locally. Press Save to sync.");
+            }
         };
 
-        window.editUser = (idx) => {
-            switchTab('coach');
-            const u = allUsers[idx];
-            document.getElementById('uName').value = u.name;
-            document.getElementById('uUsername').value = u.username;
-            document.getElementById('uPassword').value = u.password;
-            document.getElementById('uRole').value = u.role;
-            document.getElementById('uPhoto').value = u.photo || '';
-            selectedTeams = new Set(u.teams);
-            document.querySelectorAll('.team-badge').forEach(b => b.classList.toggle('selected', selectedTeams.has(b.dataset.team)));
-        };
-
-        loadData();
+        init();
     </script>
 </body>
 </html>
