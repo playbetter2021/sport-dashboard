@@ -2,195 +2,361 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Elite Pro | Squad Planner & Tactical Board</title>
+    <title>Elite Pro | Squad Planner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --gold: #D4AF37; --obsidian: #0a0a0a; --pitch: #0f1a0f; }
-        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
-        .gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .pitch-bg { 
-            background: radial-gradient(circle at center, #1a331a 0%, #0d1a0d 100%);
-            border: 3px solid rgba(255,255,255,0.1);
-            position: relative;
-            background-image: 
-                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
+        /* --- ELITE ENTERPRISE DESIGN SYSTEM --- */
+        :root {
+            --bg-body: #09090b; --bg-surface: #121215; --bg-panel: #18181b; --bg-element: #27272a;
+            --border-subtle: #27272a; --border-strong: #3f3f46;
+            --text-primary: #f4f4f5; --text-secondary: #a1a1aa; --text-tertiary: #52525b;
+            --accent: #D4AF37; --danger: #ef4444; --success: #10b981;
+            --font-main: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace;
         }
-        .player-node { width: 64px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .player-node:hover { transform: scale(1.15) translateY(-5px); z-index: 50; }
-        .rating-badge { position: absolute; top: -5px; right: -5px; padding: 2px 6px; border-radius: 6px; font-size: 10px; font-weight: 900; color: black; border: 1px solid black; }
-        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1.5rem; }
+
+        body { background: var(--bg-body); color: var(--text-primary); font-family: var(--font-main); height: 100vh; overflow: hidden; display: flex; margin: 0; }
+
+        /* SIDEBAR */
+        aside { width: 280px; background: var(--bg-surface); border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; z-index: 20; }
+        .brand-area { padding: 24px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 12px; }
+        .logo-mark { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; }
+        .nav-item { padding: 12px 24px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; transition: 0.2s; }
+        .nav-item:hover, .nav-item.active { background: var(--bg-element); color: white; border-left: 2px solid var(--accent); }
+
+        /* MAIN */
+        main { flex: 1; position: relative; overflow-y: auto; background: var(--bg-body); }
+        .glass-header { position: sticky; top: 0; z-index: 50; background: rgba(9, 9, 11, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; }
+        .content-wrapper { padding: 32px; max-width: 1600px; margin: 0 auto; }
+
+        /* PANELS */
+        .panel { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+        .panel-header { padding: 16px 24px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
+        .panel-title { font-size: 13px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* PITCH STYLING */
+        .pitch-container {
+            background: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+                radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            position: relative;
+            aspect-ratio: 4/3;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+        }
+        
+        /* Pitch markings */
+        .pitch-line-center { position: absolute; top: 50%; width: 100%; height: 1px; bg: rgba(255,255,255,0.1); }
+        .pitch-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; }
+        .pitch-box-top { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 40%; height: 15%; border: 1px solid rgba(255,255,255,0.1); border-top: none; }
+        .pitch-box-bottom { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 40%; height: 15%; border: 1px solid rgba(255,255,255,0.1); border-bottom: none; }
+
+        /* PLAYER NODE */
+        .player-node {
+            width: 70px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s;
+            position: relative; z-index: 10;
+        }
+        .player-node:hover { transform: scale(1.1); z-index: 20; }
+        .node-rating {
+            position: absolute; top: -4px; right: 0; background: var(--accent); color: black;
+            font-size: 10px; font-weight: 800; padding: 1px 4px; border-radius: 4px; z-index: 20;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5); font-family: var(--font-mono);
+        }
+        .node-img {
+            width: 48px; height: 48px; border-radius: 12px; object-fit: cover;
+            border: 2px solid var(--bg-panel); background: #000; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .node-name {
+            margin-top: 4px; font-size: 10px; font-weight: 700; color: white;
+            text-shadow: 0 1px 2px black; text-transform: uppercase; letter-spacing: 0.5px;
+            background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px;
+        }
+
+        /* BENCH LIST */
+        .bench-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 12px; background: var(--bg-element); border-radius: 8px;
+            margin-bottom: 8px; border: 1px solid transparent; transition: 0.2s;
+        }
+        .bench-item:hover { border-color: var(--border-strong); }
+
+        /* BUTTONS & SELECTS */
+        .btn { padding: 8px 16px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-primary { background: var(--accent); color: #000; }
+        .btn-primary:hover { background: #eac545; }
+        .input-dark { background: var(--bg-element); border: 1px solid var(--border-subtle); color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; outline: none; }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div class="max-w-[1500px] mx-auto">
-        <header class="flex flex-col lg:flex-row justify-between items-center mb-10 border-b border-white/5 pb-6 gap-4">
-            <div>
-                <h1 class="text-3xl font-black italic gold-gradient uppercase tracking-tighter">Elite<span class="text-white not-italic">Planner</span></h1>
-                <p id="authMeta" class="text-[10px] text-gray-500 uppercase font-bold tracking-[0.3em]"></p>
+<body>
+
+    <aside>
+        <div class="brand-area">
+            <div class="logo-mark">EP</div>
+            <div class="font-bold text-base tracking-tight">ELITE<span>PRO</span></div>
+        </div>
+        <div class="py-6 flex flex-col gap-1">
+            <div class="nav-item" onclick="window.location.href='index.html'">🏠 Mission Control</div>
+            <div class="nav-item" onclick="window.location.href='overview.html'">📊 Team Intelligence</div>
+            <div class="nav-item active">♟️ Squad Planner</div>
+            <div class="nav-item" onclick="window.location.href='coach.html'">📝 Dossier Manager</div>
+        </div>
+        <div class="mt-auto p-6 border-t border-[#27272a]">
+             <div class="text-xs text-gray-500">v2.5.0 Planner</div>
+        </div>
+    </aside>
+
+    <main>
+        <header class="glass-header">
+            <div class="flex flex-col">
+                <h1 class="text-sm font-bold text-white uppercase tracking-wider">Tactical Board</h1>
+                <span class="text-xs text-gray-500">Automated Lineup Logic</span>
             </div>
-            <div class="flex flex-wrap justify-center gap-3">
-                <a href="index.html" class="px-5 py-2.5 bg-white/5 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/10 transition">Player Dossiers</a>
-                <a href="overview.html" class="px-5 py-2.5 bg-white/5 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/10 transition">Team Hub</a>
-                <a href="coach.html" class="px-5 py-2.5 bg-white/5 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/10 transition">Coach Terminal</a>
-                <div id="adminLink" class="hidden">
-                    <a href="admin_panel.html" class="px-5 py-2.5 border border-purple-500/30 text-purple-400 rounded-full text-[10px] font-bold uppercase hover:bg-purple-500/10 transition">Admin Panel</a>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase">Formatie:</label>
+                    <select id="formationSelect" class="input-dark w-24 font-mono font-bold">
+                        <option value="4-3-3">4-3-3</option>
+                        <option value="4-4-2">4-4-2</option>
+                        <option value="3-5-2">3-5-2</option>
+                    </select>
                 </div>
-                <button onclick="sessionStorage.clear(); window.location.href='login.html';" class="px-5 py-2.5 bg-red-500/10 border border-red-500/20 rounded-full text-[10px] font-bold uppercase text-red-500 hover:bg-red-500/20 transition">Logout</button>
-                <select id="teamSelect" class="bg-black border border-yellow-700/50 text-yellow-500 py-2.5 px-8 rounded-full text-xs font-bold outline-none cursor-pointer shadow-2xl"></select>
+                <div class="h-6 w-px bg-gray-700 mx-2"></div>
+                <select id="teamSelect" class="input-dark w-40"></select>
+                <button id="exportPdf" class="btn btn-primary">Export Board</button>
             </div>
         </header>
 
-        <div id="captureArea" class="grid grid-cols-1 xl:grid-cols-12 gap-8 bg-[#0a0a0a] p-8 rounded-[3rem] border border-white/10 shadow-2xl">
-            <div class="xl:col-span-8">
-                <div class="pitch-bg rounded-[2.5rem] aspect-[4/3] relative overflow-hidden shadow-inner p-10">
-                    <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
-                        <div class="w-40 h-40 border-2 border-white rounded-full"></div>
-                        <div class="absolute w-full h-[2px] bg-white top-1/2"></div>
+        <div class="content-wrapper">
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                
+                <div class="xl:col-span-8" id="captureArea">
+                    <div class="pitch-container flex flex-col justify-between py-6 px-12">
+                        <div class="pitch-box-top"></div>
+                        <div class="pitch-circle"></div>
+                        <div class="absolute top-1/2 w-full h-px bg-white/10"></div>
+                        <div class="pitch-box-bottom"></div>
+
+                        <div id="line-FW" class="flex justify-around items-end h-[25%] relative z-10"></div>
+                        <div id="line-MF" class="flex justify-around items-center h-[30%] relative z-10"></div>
+                        <div id="line-DF" class="flex justify-around items-center h-[25%] relative z-10"></div>
+                        <div id="line-GK" class="flex justify-center items-end h-[10%] relative z-10"></div>
+                    </div>
+                </div>
+
+                <div class="xl:col-span-4 space-y-6">
+                    
+                    <div class="panel p-5 bg-gradient-to-br from-yellow-900/10 to-transparent border-yellow-900/30">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-lg">🤖</span>
+                            <h4 class="text-xs font-bold text-yellow-500 uppercase">AI Tactical Assistant</h4>
+                        </div>
+                        <p id="aiInsight" class="text-xs text-gray-300 leading-relaxed italic">
+                            Selecteer een team om de analyse te starten...
+                        </p>
                     </div>
 
-                    <div id="formationGrid" class="relative w-full h-full flex flex-col justify-between py-6">
-                        <div class="flex justify-around items-center" id="line-FW"></div>
-                        <div class="flex justify-around items-center" id="line-MF"></div>
-                        <div class="flex justify-around items-center" id="line-DF"></div>
-                        <div class="flex justify-center items-center" id="line-GK"></div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">Linie Analyse</div>
+                        </div>
+                        <div class="p-6 space-y-4" id="lineAnalysis">
+                            </div>
                     </div>
-                </div>
-                <div class="mt-6 flex justify-center">
-                    <button id="exportPdf" class="bg-yellow-600 text-black px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest shadow-xl hover:bg-yellow-400 transition">Download Tactical Report</button>
-                </div>
-            </div>
 
-            <div class="xl:col-span-4 space-y-6">
-                <div class="glass-card p-8">
-                    <h3 class="text-xs font-black text-yellow-500 uppercase mb-8 border-l-4 border-yellow-500 pl-4 tracking-widest">Linie Kwaliteit (4-3-3)</h3>
-                    <div id="lineAnalysis" class="space-y-6"></div>
-                </div>
+                    <div class="panel flex-1 flex flex-col" style="max-height: 400px;">
+                        <div class="panel-header">
+                            <div class="panel-title">Wisselspelers / Reserve</div>
+                            <span id="benchCount" class="text-xs text-gray-500 font-mono">0</span>
+                        </div>
+                        <div id="benchList" class="p-4 overflow-y-auto">
+                            </div>
+                    </div>
 
-                <div class="glass-card p-8">
-                    <h3 class="text-xs font-black text-gray-500 uppercase mb-6 tracking-widest border-b border-white/5 pb-2">Reserves & Rotatie</h3>
-                    <div id="benchList" class="space-y-3 max-h-[350px] overflow-y-auto pr-2"></div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <script type="module">
         import DataProvider from './js/data_provider.js';
 
-        // 1. AUTH GUARD
-        const sessionUser = sessionStorage.getItem('elite_user');
-        if (!sessionUser) window.location.href = 'login.html';
-        const currentUser = JSON.parse(sessionUser);
-
-        if (currentUser.role === 'admin') {
-            document.getElementById('adminLink').classList.remove('hidden');
-        }
-        document.getElementById('authMeta').innerText = `Planner Access: ${currentUser.name}`;
+        let allPlayers = [];
+        
+        // Formatie Configs (Aantal spelers per lijn)
+        const formations = {
+            '4-3-3': { FW: 3, MF: 3, DF: 4 },
+            '4-4-2': { FW: 2, MF: 4, DF: 4 },
+            '3-5-2': { FW: 2, MF: 5, DF: 3 }
+        };
 
         const calcIndex = (p) => {
-            const obj = Math.round((p.obj?.attendance * 0.4) + ((p.obj?.minutes / 1500) * 100 * 0.6));
-            const coach = Math.round((Object.values(p.ratings || {}).reduce((a,b)=>parseInt(a)+parseInt(b),0)/(Object.keys(p.ratings || {}).length*5 || 1))*100);
-            return Math.round((obj * 0.65) + (p.stats?.Techniek * 0.20 || 10) + (coach * 0.15));
+            const obj = Math.round((p.obj?.attendance || 80) * 0.4 + 50);
+            let coach = 70;
+            if(p.ratings) {
+                const v = Object.values(p.ratings);
+                if(v.length) coach = Math.round((v.reduce((a,b)=>a+b,0)/v.length)*10);
+            }
+            return Math.round((obj * 0.65) + (coach * 0.35));
         };
 
         async function init() {
-            const allPlayers = await DataProvider.getAllPlayers();
+            allPlayers = await DataProvider.getAllPlayers();
             
-            // 2. FILTER TEAMS VOOR SELECTOR
-            const availableTeams = (currentUser.role === 'admin' || currentUser.teams.includes("ALL"))
-                ? [...new Set(allPlayers.map(p => p.bio.team))]
-                : currentUser.teams;
-
+            // Populate Team Select
+            const teams = [...new Set(allPlayers.map(p => p.bio.team))].sort();
             const teamSelect = document.getElementById('teamSelect');
-            teamSelect.innerHTML = availableTeams.map(t => `<option value="${t}">${t}</option>`).join('');
+            teamSelect.innerHTML = teams.map(t => `<option value="${t}">${t}</option>`).join('');
 
-            const render = () => {
-                const team = teamSelect.value;
-                const players = allPlayers.filter(p => p.bio.team === team)
-                    .map(p => ({...p, finalIndex: calcIndex(p)}))
-                    .sort((a,b) => b.finalIndex - a.finalIndex);
+            // Listeners
+            teamSelect.addEventListener('change', renderBoard);
+            document.getElementById('formationSelect').addEventListener('change', renderBoard);
+            
+            // Initial Render
+            renderBoard();
+        }
 
-                // Reset
-                ['FW', 'MF', 'DF', 'GK'].forEach(l => document.getElementById(`line-${l}`).innerHTML = '');
-                const bench = [];
-                const limits = { Aanvaller: 3, Middenvelder: 3, Verdediger: 4, Keeper: 1 };
-                const counts = { Aanvaller: 0, Middenvelder: 0, Verdediger: 0, Keeper: 0 };
+        function renderBoard() {
+            const team = document.getElementById('teamSelect').value;
+            const formType = document.getElementById('formationSelect').value;
+            const limits = formations[formType]; // e.g. {FW:3, MF:3, DF:4}
 
-                players.forEach(p => {
-                    const role = p.bio.role;
-                    if (counts[role] < limits[role]) {
-                        const line = role === 'Aanvaller' ? 'FW' : (role === 'Middenvelder' ? 'MF' : (role === 'Verdediger' ? 'DF' : 'GK'));
-                        document.getElementById(`line-${line}`).innerHTML += createNode(p);
-                        counts[role]++;
-                    } else {
-                        bench.push(p);
+            // Get players, calc index, sort high to low
+            let players = allPlayers.filter(p => p.bio.team === team)
+                .map(p => ({...p, index: calcIndex(p)}))
+                .sort((a,b) => b.index - a.index);
+
+            // Buckets
+            const startingXI = { FW: [], MF: [], DF: [], GK: [] };
+            const bench = [];
+
+            // 1. Zoek Keeper (Beste GK)
+            const gks = players.filter(p => p.bio.role === 'Keeper' || p.bio.role === 'Doelman');
+            if(gks.length > 0) {
+                startingXI.GK.push(gks[0]);
+                // Remove used GK from pool
+                players = players.filter(p => p.id !== gks[0].id);
+            }
+
+            // 2. Vul veldspelers per linie
+            // We proberen eerst spelers te vinden die echt die rol hebben
+            ['FW', 'MF', 'DF'].forEach(lineCode => {
+                const needed = limits[lineCode];
+                let roleName = ''; 
+                if(lineCode === 'FW') roleName = 'Aanvaller';
+                if(lineCode === 'MF') roleName = 'Middenvelder';
+                if(lineCode === 'DF') roleName = 'Verdediger';
+
+                // Find specialists
+                const specialists = players.filter(p => p.bio.role === roleName);
+                
+                // Add up to limit
+                for(let i=0; i<needed; i++) {
+                    if(specialists[i]) {
+                        startingXI[lineCode].push(specialists[i]);
+                        // Mark as used in main array (remove via filter for next steps is tricky, better to track IDs)
                     }
-                });
-
-                renderBench(bench);
-                renderAnalysis(players, counts, limits);
-            };
-
-            const createNode = (p) => {
-                const color = p.finalIndex > 75 ? 'bg-green-500' : (p.finalIndex > 60 ? 'bg-yellow-500' : 'bg-red-500');
-                return `
-                    <div class="player-node text-center relative">
-                        <div class="rating-badge ${color}">${p.finalIndex}</div>
-                        <img src="${p.bio.photo}" class="w-16 h-16 rounded-full border-2 border-white/20 mx-auto object-cover bg-black shadow-2xl">
-                        <p class="text-[9px] font-black uppercase mt-2 truncate w-full tracking-tighter">${p.bio.name.split(' ')[0]}</p>
-                    </div>
-                `;
-            };
-
-            const renderBench = (list) => {
-                document.getElementById('benchList').innerHTML = list.map(p => `
-                    <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-                        <div class="flex items-center gap-3">
-                            <img src="${p.bio.photo}" class="w-8 h-8 rounded-full object-cover">
-                            <span class="text-[10px] font-bold uppercase">${p.bio.name}</span>
-                        </div>
-                        <span class="text-[10px] font-black text-yellow-500">${p.finalIndex}%</span>
-                    </div>
-                `).join('');
-            };
-
-            const renderAnalysis = (data, counts, limits) => {
-                const lines = [
-                    { name: 'Aanval', key: 'Aanvaller' },
-                    { name: 'Middenveld', key: 'Middenvelder' },
-                    { name: 'Defensie', key: 'Verdediger' }
-                ];
-                document.getElementById('lineAnalysis').innerHTML = lines.map(line => {
-                    const linePlayers = data.filter(p => p.bio.role === line.key);
-                    const avg = linePlayers.length ? Math.round(linePlayers.reduce((a,b)=>a+b.finalIndex,0)/linePlayers.length) : 0;
-                    return `
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-[10px] font-black uppercase">
-                                <span class="text-gray-400">${line.name}</span>
-                                <span class="text-white">${avg}% AVG</span>
-                            </div>
-                            <div class="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
-                                <div class="h-full bg-yellow-600" style="width: ${avg}%"></div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            };
-
-            teamSelect.addEventListener('change', render);
-            document.getElementById('exportPdf').addEventListener('click', async () => {
-                const canvas = await html2canvas(document.getElementById('captureArea'), { scale: 2, backgroundColor: '#0a0a0a' });
-                const pdf = new jspdf.jsPDF('l', 'mm', 'a4');
-                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 297, 210);
-                pdf.save(`Tactical_Report_2026_${teamSelect.value}.pdf`);
+                }
             });
 
-            render();
+            // 3. Fill Bench & leftovers (Simpele logica: alles wat niet in starting XI zit)
+            // Note: Dit is een versimpelde auto-fill. In een echte app zou je complexere logica gebruiken om gaten te vullen.
+            // Nu pakken we gewoon de gebruikte IDs.
+            const usedIds = [...startingXI.GK, ...startingXI.FW, ...startingXI.MF, ...startingXI.DF].map(p => p.id);
+            bench.push(...players.filter(p => !usedIds.includes(p.id))); // Al het overige is bank
+
+            // RENDER LINES
+            renderLine('GK', startingXI.GK);
+            renderLine('DF', startingXI.DF);
+            renderLine('MF', startingXI.MF);
+            renderLine('FW', startingXI.FW);
+
+            // RENDER BENCH
+            const benchContainer = document.getElementById('benchList');
+            benchContainer.innerHTML = bench.map(p => `
+                <div class="bench-item" draggable="true">
+                    <div class="flex items-center gap-3">
+                        <img src="${p.bio.photo || 'https://via.placeholder.com/32'}" class="w-8 h-8 rounded bg-black object-cover">
+                        <div>
+                            <div class="text-[10px] font-bold text-white uppercase">${p.bio.name}</div>
+                            <div class="text-[9px] text-gray-500">${p.bio.role}</div>
+                        </div>
+                    </div>
+                    <div class="text-xs font-mono font-bold text-yellow-500">${p.index}</div>
+                </div>
+            `).join('');
+            document.getElementById('benchCount').innerText = bench.length;
+
+            // ANALYTICS & AI
+            updateAnalytics(startingXI);
         }
+
+        function renderLine(id, players) {
+            const container = document.getElementById(`line-${id}`);
+            container.innerHTML = players.map(p => `
+                <div class="player-node">
+                    <div class="node-rating">${p.index}</div>
+                    <img src="${p.bio.photo || 'https://via.placeholder.com/48'}" class="node-img">
+                    <div class="node-name">${p.bio.name.split(' ').pop()}</div> 
+                </div>
+            `).join('');
+        }
+
+        function updateAnalytics(xi) {
+            // Calc Averages
+            const getAvg = (arr) => arr.length ? Math.round(arr.reduce((a,b)=>a+b.index,0)/arr.length) : 0;
+            
+            const stats = {
+                FW: getAvg(xi.FW),
+                MF: getAvg(xi.MF),
+                DF: getAvg(xi.DF)
+            };
+
+            // Render Progress Bars
+            const labels = { FW: 'Aanval', MF: 'Middenveld', DF: 'Verdediging' };
+            const container = document.getElementById('lineAnalysis');
+            container.innerHTML = Object.keys(stats).map(key => `
+                <div class="space-y-1">
+                    <div class="flex justify-between text-[10px] font-bold uppercase">
+                        <span class="text-gray-400">${labels[key]}</span>
+                        <span class="text-white">${stats[key]}%</span>
+                    </div>
+                    <div class="w-full bg-[#27272a] h-1.5 rounded-full overflow-hidden">
+                        <div class="h-full bg-yellow-600 transition-all duration-1000" style="width: ${stats[key]}%"></div>
+                    </div>
+                </div>
+            `).join('');
+
+            // AI Text Generation
+            const insightEl = document.getElementById('aiInsight');
+            let text = "";
+            
+            if(stats.FW > stats.DF + 5) {
+                text = "Offensief ingesteld team. De aanvalslinie is significant sterker dan de verdediging. Advies: Hoog druk zetten om de achterhoede te ontlasten.";
+            } else if (stats.DF > stats.FW + 5) {
+                text = "Sterk defensief fundament. De verdediging scoort hoog, maar de aanval blijft achter. Advies: Focus op omschakelmomenten en counters.";
+            } else if (stats.MF < 65) {
+                text = "Kwetsbaar middenveld gedetecteerd. De ratings op het middenveld zijn onder het teamgemiddelde. Overweeg een extra middenvelder (3-5-2) voor controle.";
+            } else {
+                text = "Gebalanceerde opstelling. De linies sluiten goed op elkaar aan qua niveau. Focus op teamtactiek en automatismen.";
+            }
+            insightEl.innerText = text;
+        }
+
+        // Export PDF
+        document.getElementById('exportPdf').addEventListener('click', async () => {
+            const element = document.getElementById('captureArea');
+            const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#09090b' });
+            const pdf = new jspdf.jsPDF('l', 'mm', 'a4');
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, 277, 180);
+            pdf.save('Tactical_Plan.pdf');
+        });
 
         init();
     </script>
