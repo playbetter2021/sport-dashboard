@@ -3,103 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <title>Elite Pro | Team Intelligence Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --gold: #D4AF37; --obsidian: #0a0a0a; }
-        body { background-color: var(--obsidian); color: #e5e5e5; font-family: 'Inter', sans-serif; }
-        .gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 1rem; }
-        .alert-stagnation { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05); }
-        .status-badge { font-size: 8px; font-weight: 900; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
-        .mini-chart { height: 40px !important; width: 100px !important; }
-        select { background-color: #111; color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.3); padding: 8px 20px; border-radius: 20px; outline: none; font-size: 11px; font-weight: bold; cursor: pointer; }
+        /* --- DESIGN SYSTEM (Consistent met Coach/Mission Control) --- */
+        :root {
+            --bg-body: #09090b; --bg-surface: #121215; --bg-panel: #18181b; --bg-element: #27272a;
+            --border-subtle: #27272a; --border-strong: #3f3f46;
+            --text-primary: #f4f4f5; --text-secondary: #a1a1aa; --text-tertiary: #52525b;
+            --accent: #D4AF37; --danger: #ef4444; --success: #10b981;
+            --font-main: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body { background: var(--bg-body); color: var(--text-primary); font-family: var(--font-main); height: 100vh; overflow: hidden; display: flex; margin: 0; }
+
+        /* SIDEBAR */
+        aside { width: 280px; background: var(--bg-surface); border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; z-index: 20; }
+        .brand-area { padding: 24px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 12px; }
+        .logo-mark { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; }
+        .nav-item { padding: 12px 24px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; transition: 0.2s; }
+        .nav-item:hover, .nav-item.active { background: var(--bg-element); color: white; border-left: 2px solid var(--accent); }
+
+        /* MAIN */
+        main { flex: 1; position: relative; overflow-y: auto; background: var(--bg-body); }
+        .glass-header { position: sticky; top: 0; z-index: 50; background: rgba(9, 9, 11, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; }
+        .content-wrapper { padding: 32px; max-width: 1600px; margin: 0 auto; }
+
+        /* PANELS */
+        .panel { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+        .panel-header { padding: 16px 24px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
+        .panel-title { font-size: 13px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* KPI CARDS */
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 32px; }
+        .kpi-card { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; position: relative; }
+        .kpi-label { font-size: 10px; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .kpi-value { font-size: 28px; font-weight: 800; color: white; font-family: var(--font-mono); }
+        .kpi-sub { font-size: 11px; margin-top: 4px; color: var(--text-secondary); }
+
+        /* DATA TABLE */
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 12px 20px; color: var(--text-tertiary); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border-subtle); background: rgba(255,255,255,0.01); }
+        td { padding: 12px 20px; color: var(--text-primary); border-bottom: 1px solid var(--border-subtle); vertical-align: middle; }
+        tr:hover td { background: var(--bg-element); cursor: pointer; }
+        
+        .avatar-cell { display: flex; items-center; gap: 12px; }
+        .avatar-small { width: 32px; height: 32px; border-radius: 8px; background: #000; object-fit: cover; border: 1px solid var(--border-subtle); }
+        .role-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); color: var(--text-secondary); text-transform: uppercase; }
+        
+        /* SPARKLINE CANVAS */
+        .sparkline { width: 100px; height: 30px; display: block; }
+
+        /* BUTTONS & INPUTS */
+        .btn { padding: 8px 16px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .btn-primary { background: var(--accent); color: #000; }
+        .btn-primary:hover { background: #eac545; }
+        .btn-ghost { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); }
+        .btn-ghost:hover { border-color: var(--text-primary); color: white; }
+        
+        select.input-dark { background: var(--bg-element); border: 1px solid var(--border-subtle); color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; outline: none; }
     </style>
 </head>
-<body class="p-6 md:p-10">
-    <div class="max-w-[1600px] mx-auto">
-        <header class="flex flex-col lg:flex-row justify-between items-center mb-10 border-b border-white/5 pb-6 gap-4">
-            <div>
-                <h1 class="text-3xl font-black italic gold-gradient uppercase tracking-tighter">Elite<span class="text-white not-italic">Hub</span></h1>
-                <p id="adminStatus" class="text-[10px] text-gray-500 uppercase font-bold tracking-[0.3em]"></p>
+<body>
+
+    <aside>
+        <div class="brand-area">
+            <div class="logo-mark">EP</div>
+            <div class="font-bold text-base tracking-tight">ELITE<span>PRO</span></div>
+        </div>
+        <div class="py-6 flex flex-col gap-1">
+            <div class="nav-item" onclick="window.location.href='index.html'">🏠 Mission Control</div>
+            <div class="nav-item active">📊 Team Intelligence</div>
+            <div class="nav-item" onclick="window.location.href='comparison.html'">⚖️ Comparison</div>
+            <div class="nav-item" onclick="window.location.href='coach.html'">📝 Dossier Manager</div>
+        </div>
+        <div class="mt-auto p-6 border-t border-[#27272a]">
+             <div class="text-xs text-gray-500">v2.5.0 Analysis Module</div>
+        </div>
+    </aside>
+
+    <main>
+        <header class="glass-header">
+            <div class="flex flex-col">
+                <h1 class="text-sm font-bold text-white uppercase tracking-wider">Team Intelligence Hub</h1>
+                <span id="adminStatus" class="text-xs text-gray-500">Global Overview</span>
             </div>
-            <div class="flex flex-wrap items-center justify-center gap-3">
-                <div class="flex items-center gap-2 mr-2">
-                    <label class="text-[9px] font-black text-gray-500 uppercase">Filter Team:</label>
-                    <select id="teamFilter"><option value="ALL">ALLE TEAMS</option></select>
-                </div>
-                
-                <button id="exportTeamReport" class="px-5 py-2 bg-yellow-600 text-black rounded-full text-[10px] font-black uppercase hover:bg-yellow-400 transition shadow-lg shadow-yellow-600/20">Export PDF</button>
-                <a href="index.html" class="px-5 py-2 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/5 transition">Dossiers</a>
-                <a href="planner.html" class="px-5 py-2 border border-white/20 rounded-full text-[10px] font-bold uppercase hover:bg-white/5 transition">Planner</a>
-                <div id="adminBtn" class="hidden">
-                    <a href="admin_panel.html" class="px-5 py-2 border border-purple-500/30 text-purple-400 rounded-full text-[10px] font-bold uppercase hover:bg-purple-500/10 transition">Admin Panel</a>
-                </div>
-                <button onclick="sessionStorage.clear(); window.location.href='login.html';" class="px-5 py-2 bg-red-500/10 border border-red-500/20 rounded-full text-[10px] font-bold uppercase text-red-500 hover:bg-red-500/20 transition">Logout</button>
+            <div class="flex items-center gap-3">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">Filter:</label>
+                <select id="teamFilter" class="input-dark w-40">
+                    <option value="ALL">Alle Teams</option>
+                </select>
+                <div class="h-6 w-px bg-gray-700 mx-2"></div>
+                <button id="exportTeamReport" class="btn btn-primary">Export PDF</button>
             </div>
         </header>
 
-        <div id="kpiGrid" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            <div class="glass-card p-6"><p class="text-[9px] text-gray-500 uppercase font-black mb-1">Selectie Gemiddelde</p><div id="avgScore" class="text-3xl font-black text-white">0%</div></div>
-            <div class="glass-card p-6"><p class="text-[9px] text-gray-500 uppercase font-black mb-1">Elite Potentials (>75)</p><div id="selectionCap" class="text-3xl font-black text-green-500">0</div></div>
-            <div class="glass-card p-6"><p class="text-[9px] text-gray-500 uppercase font-black mb-1">Stagnatie Risico</p><div id="stagnationCount" class="text-3xl font-black text-red-500">0</div></div>
-            <div class="glass-card p-6 border-l-4 border-yellow-600"><p class="text-[9px] text-gray-500 uppercase font-black mb-1">Top Groeier</p><div id="topGrower" class="text-xl font-black text-white uppercase italic">-</div></div>
-        </div>
-
-        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
-            <div class="xl:col-span-9" id="captureArea">
-                <div class="glass-card overflow-hidden">
-                    <table class="w-full text-left">
-                        <thead class="bg-white/5 text-[10px] uppercase font-black text-gray-500 border-b border-white/10">
-                            <tr>
-                                <th class="p-5">Speler / Team</th>
-                                <th class="p-5">Huidige Index</th>
-                                <th class="p-5">Groei</th>
-                                <th class="p-5">Trend Curve</th>
-                                <th class="p-5 text-right">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="hubBody" class="divide-y divide-white/5 text-sm"></tbody>
-                    </table>
+        <div class="content-wrapper">
+            
+            <div id="kpiGrid" class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Selectie Index</div>
+                    <div id="avgScore" class="kpi-value">0%</div>
+                    <div class="kpi-sub">Gemiddelde performance</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Elite Potentials</div>
+                    <div id="selectionCap" class="kpi-value text-green-500">0</div>
+                    <div class="kpi-sub">Spelers > 75 index</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Stagnatie Risico</div>
+                    <div id="stagnationCount" class="kpi-value text-red-500">0</div>
+                    <div class="kpi-sub">Negatieve groei curve</div>
+                </div>
+                <div class="kpi-card" style="border-left: 2px solid var(--accent);">
+                    <div class="kpi-label">Top Groeier</div>
+                    <div id="topGrower" class="kpi-value text-lg truncate">--</div>
+                    <div class="kpi-sub text-yellow-500">Hoogste progressie</div>
                 </div>
             </div>
 
-            <div class="xl:col-span-3 space-y-6">
-                <div class="glass-card p-6">
-                    <h3 class="text-[10px] font-black text-yellow-500 uppercase mb-6 tracking-widest border-b border-white/5 pb-2">Staff Compliance</h3>
-                    <div id="staffTracker" class="space-y-4"></div>
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                
+                <div class="xl:col-span-9">
+                    <div class="panel" id="captureArea">
+                        <div class="panel-header">
+                            <div class="panel-title">Speler Performance Matrix</div>
+                            <div class="text-[10px] text-gray-500">Sorteer op: Index (High-Low)</div>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table class="w-full">
+                                <thead>
+                                    <tr>
+                                        <th>Speler / Team</th>
+                                        <th>Huidige Index</th>
+                                        <th>Groei</th>
+                                        <th>Trend Curve (Seizoen)</th>
+                                        <th class="text-right">Rol</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hubBody">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="xl:col-span-3 space-y-6">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">Staff Compliance</div>
+                        </div>
+                        <div class="p-6">
+                            <div class="text-xs text-gray-500 mb-4">Percentage dossiers compleet per team.</div>
+                            <div id="staffTracker" class="space-y-5">
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="panel p-6 bg-gradient-to-br from-yellow-900/10 to-transparent border-yellow-900/20">
+                        <h4 class="text-xs font-bold text-yellow-500 uppercase mb-2">💡 Quick Insight</h4>
+                        <p id="quickInsight" class="text-xs text-gray-400 leading-relaxed italic">
+                            Data analyseert...
+                        </p>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </div>
+    </main>
 
     <script type="module">
         import DataProvider from './js/data_provider.js';
 
-        // 1. AUTH & ADMIN CHECK
-        const sessionUser = sessionStorage.getItem('elite_user');
-        if (!sessionUser) window.location.href = 'login.html';
-        const currentUser = JSON.parse(sessionUser);
-        document.getElementById('adminStatus').innerText = `${currentUser.role.toUpperCase()}: ${currentUser.name}`;
-        if(currentUser.role === 'admin') document.getElementById('adminBtn').classList.remove('hidden');
+        let allPlayers = [], filteredPlayers = [];
 
-        let allPlayers = [];
-        let filteredPlayers = [];
-
+        // Simple calc logic (consistent with other pages)
         const calcIndex = (p) => {
-            if(!p.obj || !p.ratings) return 0;
-            const obj = Math.round((p.obj.attendance * 0.4) + ((p.obj.minutes / 1500) * 100 * 0.6));
-            const coach = Math.round((Object.values(p.ratings).reduce((a,b)=>parseInt(a)+parseInt(b),0)/(Object.keys(p.ratings).length*5 || 1))*100);
-            return Math.round((obj * 0.65) + (p.stats?.Techniek * 0.20 || 10) + (coach * 0.15));
+            if(!p.obj && !p.ratings) return 0;
+            const obj = Math.round(((p.obj?.attendance || 80) * 0.4) + 50);
+            
+            // Safe reduce for ratings
+            let coach = 70;
+            if(p.ratings) {
+                const values = Object.values(p.ratings);
+                if(values.length > 0) coach = Math.round((values.reduce((a,b)=>a+b,0) / values.length) * 10);
+            }
+            
+            // Weighting
+            return Math.round((obj * 0.65) + (coach * 0.35));
         };
 
-        // 2. INITIALISATIE
         async function init() {
-            const data = await DataProvider.getAllPlayers();
-            allPlayers = (currentUser.role === 'admin') ? data : data.filter(p => currentUser.teams.includes(p.bio.team));
-
+            allPlayers = await DataProvider.getAllPlayers();
+            
+            // Populate Dropdown
             const teams = [...new Set(allPlayers.map(p => p.bio.team))].sort();
             const filterSelect = document.getElementById('teamFilter');
             teams.forEach(t => {
@@ -112,84 +215,167 @@
             render();
         }
 
-        // 3. RENDERING
         function render() {
             const selectedTeam = document.getElementById('teamFilter').value;
             filteredPlayers = (selectedTeam === "ALL") ? allPlayers : allPlayers.filter(p => p.bio.team === selectedTeam);
 
-            let totalIndex = 0, eliteCount = 0, stagnations = 0;
-            let grower = { name: '-', val: -100 };
-            const teamStats = {};
+            // Sort by Index High -> Low
+            filteredPlayers.sort((a,b) => calcIndex(b) - calcIndex(a));
 
             const hubBody = document.getElementById('hubBody');
             hubBody.innerHTML = "";
 
-            filteredPlayers.forEach(p => {
-                const sStart = p.history?.["1e seizoenshelft"] ? calcIndex({...p, ...p.history["1e seizoenshelft"], ratings: p.history["1e seizoenshelft"].ratings}) : null;
-                const sCurrent = calcIndex(p);
-                const growth = sStart ? (sCurrent - sStart) : 0;
+            // KPI Trackers
+            let totalIndex = 0, eliteCount = 0, stagnations = 0;
+            let grower = { name: '-', val: -999 };
+            const teamStats = {};
 
+            filteredPlayers.forEach(p => {
+                // Determine Historical Data for Sparkline & Growth
+                const s1 = p.history?.["1e seizoenshelft"] ? calcIndex({...p, ...p.history["1e seizoenshelft"]}) : 65; // Mock start
+                const s2 = p.history?.["2e seizoenshelft"] ? calcIndex({...p, ...p.history["2e seizoenshelft"]}) : null;
+                const sCurrent = calcIndex(p);
+                
+                // Growth calc (Current vs Start)
+                const growth = sCurrent - s1;
+                
+                // KPI Updates
                 totalIndex += sCurrent;
                 if(sCurrent > 75) eliteCount++;
-                if(growth < -5) stagnations++;
+                if(growth < 0) stagnations++;
                 if(growth > grower.val) grower = { name: p.bio.name, val: growth };
 
-                if(!teamStats[p.bio.team]) teamStats[p.bio.team] = { count: 0, rated: 0 };
+                // Team Compliance Stats
+                if(!teamStats[p.bio.team]) teamStats[p.bio.team] = { count: 0, locked: 0 };
                 teamStats[p.bio.team].count++;
-                if(p.meta?.lastModifiedBy) teamStats[p.bio.team].rated++;
+                // Check if current period is locked (mock 'Eindbeoordeling')
+                if(p.history?.['Eindbeoordeling']?.status === 'locked') teamStats[p.bio.team].locked++;
 
+                // Render Row
                 const row = document.createElement('tr');
-                row.className = `hover:bg-white/5 transition cursor-pointer ${growth < -5 ? 'alert-stagnation' : ''}`;
-                row.onclick = () => window.location.href = `index.html?id=${p.id}`;
+                row.className = "group border-b border-[#27272a]";
                 row.innerHTML = `
-                    <td class="p-5"><div class="flex items-center gap-3"><img src="${p.bio.photo}" class="w-8 h-8 rounded-full object-cover"><div><p class="font-bold text-white uppercase text-[11px]">${p.bio.name}</p><p class="text-[9px] text-gray-500">${p.bio.team}</p></div></div></td>
-                    <td class="p-5 font-black text-lg">${sCurrent}%</td>
-                    <td class="p-5 font-bold ${growth >= 0 ? 'text-green-500' : 'text-red-500'}">${growth > 0 ? '+' : ''}${growth}</td>
-                    <td class="p-5"><canvas id="c-${p.id}" class="mini-chart"></canvas></td>
-                    <td class="p-5 text-right"><span class="status-badge bg-gray-500/20 text-gray-400">${p.bio.role}</span></td>
+                    <td>
+                        <div class="avatar-cell">
+                            <img src="${p.bio.photo || 'https://via.placeholder.com/32'}" class="avatar-small">
+                            <div>
+                                <div class="text-xs font-bold text-white group-hover:text-yellow-500 transition">${p.bio.name}</div>
+                                <div class="text-[10px] text-gray-500">${p.bio.team}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="text-sm font-bold text-white font-mono">${sCurrent}</span>
+                    </td>
+                    <td>
+                        <span class="text-xs font-bold ${growth >= 0 ? 'text-green-500' : 'text-red-500'}">
+                            ${growth > 0 ? '+' : ''}${growth}
+                        </span>
+                    </td>
+                    <td class="py-2">
+                        <canvas id="c-${p.id}" class="sparkline"></canvas>
+                    </td>
+                    <td class="text-right">
+                        <span class="role-badge">${p.bio.role}</span>
+                    </td>
                 `;
+                
+                // Click to go to dossier (Using localStorage method we built)
+                row.onclick = () => {
+                    localStorage.setItem('selected_player_id', p.id);
+                    window.location.href = 'coach.html';
+                };
+
                 hubBody.appendChild(row);
-                setTimeout(() => renderSparkline(p), 50);
+
+                // Render Sparkline (Async to let DOM paint)
+                setTimeout(() => {
+                    const ctx = document.getElementById(`c-${p.id}`);
+                    if(ctx) {
+                        const dataPoints = [s1, s2 || (s1+sCurrent)/2, sCurrent]; // Interpolate if missing middle
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: { 
+                                labels: [1,2,3], 
+                                datasets: [{ 
+                                    data: dataPoints, 
+                                    borderColor: growth >= 0 ? '#10b981' : '#ef4444', 
+                                    borderWidth: 2, 
+                                    pointRadius: 0, 
+                                    tension: 0.4 
+                                }] 
+                            },
+                            options: { 
+                                responsive: false, 
+                                maintainAspectRatio: false, 
+                                scales: { x: { display: false }, y: { display: false, min: 40, max: 100 } }, 
+                                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                                animation: false
+                            }
+                        });
+                    }
+                }, 0);
             });
 
-            document.getElementById('avgScore').innerText = filteredPlayers.length ? Math.round(totalIndex / filteredPlayers.length) + "%" : "0%";
+            // Update Header KPIs
+            const avg = filteredPlayers.length ? Math.round(totalIndex / filteredPlayers.length) : 0;
+            document.getElementById('avgScore').innerText = avg + "%";
             document.getElementById('selectionCap').innerText = eliteCount;
             document.getElementById('stagnationCount').innerText = stagnations;
-            document.getElementById('topGrower').innerText = grower.name.split(' ')[0] + " (+" + (grower.val === -100 ? 0 : grower.val) + ")";
-            renderStaffTracker(teamStats);
-        }
+            document.getElementById('topGrower').innerText = grower.name;
 
-        function renderSparkline(p) {
-            const ctx = document.getElementById(`c-${p.id}`);
-            const dataPoints = ["1e seizoenshelft", "2e seizoenshelft", "Eindbeoordeling"].map(l => {
-                if(l === "Eindbeoordeling") return calcIndex(p);
-                return p.history?.[l] ? calcIndex({...p, ...p.history[l], ratings: p.history[l].ratings}) : null;
-            }).filter(v => v !== null);
-            new Chart(ctx, { type: 'line', data: { labels: dataPoints, datasets: [{ data: dataPoints, borderColor: '#D4AF37', borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 }] }, options: { scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } }, responsive: false, animation: false } });
-        }
+            // Render Staff Compliance
+            const staffContainer = document.getElementById('staffTracker');
+            staffContainer.innerHTML = Object.entries(teamStats).map(([team, s]) => {
+                const pct = Math.round((s.locked / s.count) * 100) || 0;
+                let barColor = 'bg-yellow-600';
+                if(pct > 80) barColor = 'bg-green-500';
+                else if(pct < 30) barColor = 'bg-red-500';
 
-        function renderStaffTracker(stats) {
-            const container = document.getElementById('staffTracker');
-            container.innerHTML = Object.entries(stats).map(([team, s]) => {
-                const pct = Math.round((s.rated / s.count) * 100);
-                return `<div class="space-y-1"><div class="flex justify-between text-[9px] font-bold uppercase"><span class="text-gray-400">${team}</span><span class="${pct === 100 ? 'text-green-500' : 'text-yellow-500'}">${pct}%</span></div><div class="w-full bg-white/5 h-1 rounded-full overflow-hidden"><div class="h-full bg-yellow-600" style="width: ${pct}%"></div></div></div>`;
+                return `
+                <div>
+                    <div class="flex justify-between text-[10px] font-bold uppercase mb-1">
+                        <span class="text-gray-400">${team}</span>
+                        <span class="text-white">${pct}%</span>
+                    </div>
+                    <div class="w-full bg-[#27272a] h-1.5 rounded-full overflow-hidden">
+                        <div class="h-full ${barColor}" style="width: ${pct}%"></div>
+                    </div>
+                </div>`;
             }).join('');
+
+            // AI Insight
+            document.getElementById('quickInsight').innerText = 
+                `De selectie scoort gemiddeld ${avg}%. ${eliteCount} spelers presteren op Elite niveau. ` +
+                `Focus nodig op de ${stagnations} spelers die stagneren ten opzichte van de seizoensstart.`;
         }
 
-        // 4. EXPORT LOGICA
+        // Export PDF
         document.getElementById('exportTeamReport').addEventListener('click', async () => {
-            const selectedTeam = document.getElementById('teamFilter').value;
+            const btn = document.getElementById('exportTeamReport');
+            btn.innerText = "Generating...";
+            
             const element = document.getElementById('captureArea');
-            const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#0a0a0a' });
+            const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#18181b' });
+            
             const pdf = new jspdf.jsPDF('l', 'mm', 'a4');
-            pdf.setFillColor(10, 10, 10);
-            pdf.rect(0, 0, 297, 20, 'F');
-            pdf.setTextColor(212, 175, 55);
-            pdf.setFontSize(14);
-            pdf.text(`ELITE PERFORMANCE REPORT 2026 - TEAM: ${selectedTeam}`, 10, 13);
             const imgData = canvas.toDataURL('image/png');
-            pdf.addImage(imgData, 'PNG', 10, 30, 277, 0);
-            pdf.save(`Elite_Report_${selectedTeam}.pdf`);
+            
+            // Header in PDF
+            pdf.setFillColor(24, 24, 27); // Zinc 900
+            pdf.rect(0, 0, 297, 20, 'F');
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(12);
+            pdf.text("ELITE PRO | TEAM INTELLIGENCE REPORT", 10, 13);
+            
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = 280;
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            
+            pdf.addImage(imgData, 'PNG', 10, 25, pdfWidth, pdfHeight);
+            pdf.save(`Elite_Team_Report.pdf`);
+            
+            btn.innerText = "Export PDF";
         });
 
         init();
