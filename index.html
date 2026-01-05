@@ -2,291 +2,351 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Elite Pro | Intelligence Mission Control</title>
+    <title>Elite Pro | Mission Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { 
-            --gold: #D4AF37; 
-            --obsidian: #050505; 
-            --card-bg: rgba(20, 20, 20, 0.7);
-            --border-glow: rgba(212, 175, 55, 0.2);
+        /* --- ELITE ENTERPRISE DESIGN SYSTEM (Consistent met Coach/Compare) --- */
+        :root {
+            --bg-body: #09090b;       
+            --bg-surface: #121215;    
+            --bg-panel: #18181b;      
+            --bg-element: #27272a;    
+            --border-subtle: #27272a;
+            --border-strong: #3f3f46;
+            --text-primary: #f4f4f5;  
+            --text-secondary: #a1a1aa; 
+            --text-tertiary: #52525b;  
+            --accent: #D4AF37;        
+            --accent-glow: rgba(212, 175, 55, 0.15);
+            --danger: #ef4444;
+            --success: #10b981;
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
-        body { 
-            background-color: var(--obsidian); 
-            background-image: radial-gradient(circle at top right, rgba(212, 175, 55, 0.03), transparent 600px);
-            color: #e5e5e5; 
-            font-family: 'Inter', sans-serif; 
-            overflow-x: hidden; 
-        }
-
-        .gold-gradient { 
-            background: linear-gradient(135deg, #D4AF37 0%, #F9E272 50%, #B8860B 100%); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-        }
-
-        .glass-card { 
-            background: var(--card-bg); 
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.03); 
-            border-radius: 1.25rem; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            height: 100vh;
             overflow: hidden;
+            display: flex;
+            margin: 0;
         }
 
-        .glass-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--border-glow);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(212, 175, 55, 0.05);
+        /* --- SIDEBAR --- */
+        aside {
+            width: 280px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            z-index: 20;
         }
 
-        .accent-line {
-            position: absolute;
-            left: 0;
-            top: 25%;
-            height: 50%;
-            width: 3px;
-            border-radius: 0 4px 4px 0;
+        .brand-area { padding: 24px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 12px; }
+        .logo-mark { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), #b8860b); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 14px; box-shadow: 0 0 15px var(--accent-glow); }
+        .brand-text { font-weight: 700; font-size: 16px; letter-spacing: -0.5px; }
+        .brand-text span { color: var(--accent); }
+
+        .nav-section { padding: 24px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .nav-item { padding: 12px 24px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; transition: 0.2s; border-radius: 6px; }
+        .nav-item:hover { background: var(--bg-element); color: white; }
+        .nav-item.active { background: var(--bg-element); color: white; border-left: 2px solid var(--accent); border-radius: 0 6px 6px 0; }
+        
+        .system-footer { padding: 16px 24px; border-top: 1px solid var(--border-subtle); background: #0c0c0e; font-size: 11px; color: var(--text-tertiary); }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, rgba(212,175,55,0.05), transparent 50%), var(--bg-body);
         }
 
-        .skill-bar { height: 6px; background: rgba(255,255,255,0.03); border-radius: 10px; overflow: hidden; }
-        .skill-fill { height: 100%; background: linear-gradient(90deg, #B8860B, var(--gold)); transition: width 1.5s ease; }
-
-        #playerSelector {
-            background: rgba(10, 10, 10, 0.9);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        /* Header */
+        .glass-header {
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 16px 32px;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .welcome-animate { animation: fadeInScale 0.6s ease-out; }
-        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        .content-wrapper { padding: 32px; max-width: 1400px; margin: 0 auto; }
+
+        /* KPI Cards */
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 32px; }
+        .kpi-card {
+            background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px;
+            position: relative; overflow: hidden;
+        }
+        .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--bg-panel), var(--accent), var(--bg-panel)); opacity: 0; transition: 0.3s; }
+        .kpi-card:hover::before { opacity: 1; }
+        .kpi-label { font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .kpi-value { font-size: 28px; font-weight: 700; color: white; font-family: var(--font-mono); }
+        .kpi-trend { font-size: 11px; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+        .trend-up { color: var(--success); }
+        .trend-neutral { color: var(--text-tertiary); }
+
+        /* Module Cards (Big Links) */
+        .module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+        .module-card {
+            background: linear-gradient(145deg, var(--bg-panel), var(--bg-surface));
+            border: 1px solid var(--border-subtle); border-radius: 16px; padding: 32px;
+            display: flex; justify-content: space-between; items-center;
+            cursor: pointer; transition: all 0.3s ease; position: relative;
+        }
+        .module-card:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5); }
+        .module-card:hover .module-icon { color: var(--accent); transform: scale(1.1); }
+        
+        .module-info h3 { font-size: 18px; font-weight: 700; color: white; margin-bottom: 4px; }
+        .module-info p { font-size: 12px; color: var(--text-secondary); max-width: 250px; }
+        .module-icon { font-size: 40px; color: var(--text-tertiary); transition: 0.3s; }
+
+        /* Dashboard Bottom (Charts & Lists) */
+        .dash-split { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+        
+        .panel { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; }
+        .panel-title { font-size: 13px; font-weight: 700; color: white; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Activity List */
+        .activity-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-avatar { width: 32px; height: 32px; border-radius: 6px; background: #000; object-fit: cover; }
+        .activity-content { flex: 1; }
+        .activity-text { font-size: 12px; color: var(--text-primary); }
+        .activity-meta { font-size: 10px; color: var(--text-tertiary); }
+        .status-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
+        .badge-locked { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-draft { background: rgba(255, 165, 0, 0.1); color: orange; }
+
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div class="max-w-[1600px] mx-auto space-y-10">
-        
-        <header class="flex flex-col lg:flex-row justify-between items-center border-b border-white/5 pb-10 gap-6">
-            <div>
-                <h1 class="text-5xl font-black italic gold-gradient uppercase tracking-tighter leading-none">Elite<span class="text-white not-italic">Intelligence</span></h1>
-                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-[0.5em] mt-3">Intelligence Division • Mission Control</p>
+<body>
+
+    <aside>
+        <div class="brand-area">
+            <div class="logo-mark">EP</div>
+            <div class="brand-text">ELITE<span>PRO</span></div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-item active">
+                <span>🏠</span> Mission Control
             </div>
-            
-            <div class="relative w-full lg:w-96">
-                <select id="playerSelector" class="w-full text-white py-4 px-10 rounded-2xl text-xs font-black outline-none appearance-none cursor-pointer focus:border-yellow-500 transition shadow-2xl">
-                    <option value="">LADEN VAN TERMINAL...</option>
-                </select>
-                <span class="absolute right-6 top-1/2 -translate-y-1/2 text-yellow-500 pointer-events-none">▼</span>
+            <div class="nav-item" onclick="window.location.href='coach.html'">
+                <span>📊</span> Coach Dashboard
+            </div>
+            <div class="nav-item" onclick="window.location.href='comparison.html'">
+                <span>⚖️</span> Intelligence Matrix
+            </div>
+            <div class="mt-8 text-[10px] uppercase font-bold text-gray-600 px-6 mb-2 tracking-widest">Settings</div>
+            <div class="nav-item">
+                <span>⚙️</span> Systeem Config
+            </div>
+        </div>
+
+        <div class="system-footer">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                <span>System Online</span>
+            </div>
+            <div>v2.5.0 (Enterprise)</div>
+        </div>
+    </aside>
+
+    <main>
+        <header class="glass-header">
+            <div class="flex flex-col">
+                <h1 class="text-sm font-bold text-white uppercase tracking-wider">Mission Control</h1>
+                <span class="text-xs text-gray-500">Welkom terug, Hoofd Opleiding</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden md:block">
+                    <div class="text-xs font-bold text-white" id="currentDate">--</div>
+                    <div class="text-[10px] text-gray-500">Last Sync: Just now</div>
+                </div>
+                <div class="w-8 h-8 rounded bg-yellow-600 flex items-center justify-center text-xs font-bold text-black">HO</div>
             </div>
         </header>
 
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="glass-card p-6">
-                <div class="accent-line bg-yellow-500"></div>
-                <p class="text-[9px] uppercase font-black text-gray-500 tracking-widest mb-1">Active Assignment</p>
-                <p class="text-3xl font-black text-white italic" id="stat-team-display">Laden...</p>
-            </div>
-            <div class="glass-card p-6">
-                <div class="accent-line bg-blue-500"></div>
-                <p class="text-[9px] uppercase font-black text-gray-500 tracking-widest mb-1">Total Assets</p>
-                <p class="text-3xl font-black text-white italic" id="stat-total-display">--</p>
-            </div>
-            <div class="glass-card p-6">
-                <div class="accent-line bg-green-500"></div>
-                <p class="text-[9px] uppercase font-black text-gray-500 tracking-widest mb-1">Elite Index</p>
-                <p class="text-3xl font-black text-white italic" id="stat-avg-display">--</p>
-            </div>
-            <div class="glass-card p-6">
-                <div class="accent-line bg-purple-500"></div>
-                <p class="text-[9px] uppercase font-black text-gray-500 tracking-widest mb-1">Status</p>
-                <div class="flex items-center gap-2">
-                    <p class="text-3xl font-black text-green-500 italic">SECURE</p>
-                    <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+        <div class="content-wrapper">
+            
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Totale Selectie</div>
+                    <div class="kpi-value" id="kpiTotal">0</div>
+                    <div class="kpi-trend trend-neutral">Actieve Spelers</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Dossiers Compleet</div>
+                    <div class="kpi-value" id="kpiLocked">0</div>
+                    <div class="kpi-trend trend-up">↑ Klaar voor export</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">In Concept</div>
+                    <div class="kpi-value" id="kpiDraft" style="color: orange;">0</div>
+                    <div class="kpi-trend trend-neutral">Vereist actie</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Team Performance</div>
+                    <div class="kpi-value" id="kpiAvg">0.0</div>
+                    <div class="kpi-trend trend-up" style="color: var(--accent);">Gemiddelde Index</div>
                 </div>
             </div>
-        </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <main class="lg:col-span-8 space-y-8">
-                
-                <div id="welcomeScreen" class="welcome-animate">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <a href="planner.html" class="glass-card p-10 border-b-4 border-blue-600 group">
-                            <span class="text-5xl block mb-6 group-hover:scale-110 transition duration-500">📅</span>
-                            <h4 class="text-xl font-black text-white uppercase italic tracking-tighter">Trainings Planner</h4>
-                            <p class="text-xs text-gray-500 mt-2">Stel sessies samen en beheer de teamagenda.</p>
-                        </a>
-                        <a href="coach.html" class="glass-card p-10 border-b-4 border-purple-600 group">
-                            <span class="text-5xl block mb-6 group-hover:scale-110 transition duration-500">🧠</span>
-                            <h4 class="text-xl font-black text-white uppercase italic tracking-tighter">Coach Ratings</h4>
-                            <p class="text-xs text-gray-500 mt-2">Verwerk spelerbeoordelingen direct na de actie.</p>
-                        </a>
+            <div class="module-grid">
+                <div class="module-card" onclick="window.location.href='coach.html'">
+                    <div class="module-info">
+                        <h3>Coach Dashboard</h3>
+                        <p>Beheer individuele dossiers, technische analyses en POP-gesprekken.</p>
                     </div>
-                    <div class="grid grid-cols-3 gap-4 mt-6">
-                        <a href="overview.html" class="glass-card p-6 text-center hover:bg-white/5 transition">
-                            <span class="block text-2xl mb-2">📋</span>
-                            <span class="text-[9px] font-black uppercase text-white tracking-widest">Squad Archive</span>
-                        </a>
-                        <a href="comparison.html" class="glass-card p-6 text-center hover:bg-white/5 transition">
-                            <span class="block text-2xl mb-2">⚖️</span>
-                            <span class="text-[9px] font-black uppercase text-white tracking-widest">Selection Matrix</span>
-                        </a>
-                        <a href="seasonal_analysis.html" class="glass-card p-6 text-center hover:bg-white/5 transition">
-                            <span class="block text-2xl mb-2">📊</span>
-                            <span class="text-[9px] font-black uppercase text-white tracking-widest">Analysis</span>
-                        </a>
+                    <div class="module-icon">📊</div>
+                </div>
+                <div class="module-card" onclick="window.location.href='comparison.html'">
+                    <div class="module-info">
+                        <h3>Intelligence Matrix</h3>
+                        <p>Vergelijk spelers head-to-head en analyseer data voor promotie.</p>
+                    </div>
+                    <div class="module-icon">⚖️</div>
+                </div>
+            </div>
+
+            <div class="dash-split">
+                <div class="panel">
+                    <div class="panel-title">
+                        Performance Distributie
+                        <select class="bg-black border border-white/10 text-[10px] rounded px-2 py-1 outline-none text-gray-400">
+                            <option>Huidig Seizoen</option>
+                        </select>
+                    </div>
+                    <div class="flex-1 w-full h-64 relative">
+                        <canvas id="teamChart"></canvas>
                     </div>
                 </div>
 
-                <div id="playerDossier" class="hidden welcome-animate space-y-8">
-                    <div id="captureArea" class="glass-card p-10 bg-[#050505]">
-                        <div class="grid grid-cols-12 gap-10">
-                            <div class="col-span-4 space-y-6">
-                                <div class="rounded-3xl overflow-hidden border border-white/10 relative">
-                                    <img id="pPhoto" class="w-full h-[500px] object-cover bg-neutral-900" src="">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                                    <div class="absolute bottom-6 left-6">
-                                        <h2 id="pName" class="text-4xl font-black uppercase italic text-white leading-none tracking-tighter"></h2>
-                                        <p id="pMeta" class="text-[9px] text-yellow-500 font-bold mt-2 uppercase tracking-[0.3em]"></p>
-                                    </div>
-                                </div>
-                                <div class="glass-card p-6 bg-white/[0.02]">
-                                    <canvas id="trendChart" height="150"></canvas>
-                                </div>
-                            </div>
-                            <div class="col-span-8 space-y-8">
-                                <div class="grid grid-cols-3 gap-4">
-                                    <div class="glass-card p-6 text-center border-b-2 border-yellow-500"><p class="text-[9px] text-gray-500 uppercase font-black mb-1">Elite Index</p><div id="finalScore" class="text-4xl font-black text-white italic">0</div></div>
-                                    <div class="glass-card p-6 text-center border-b-2 border-blue-500"><p class="text-[9px] text-gray-500 uppercase font-black mb-1">Atten.</p><div id="attScore" class="text-4xl font-black text-white italic">0%</div></div>
-                                    <div class="glass-card p-6 text-center border-b-2 border-green-500"><p class="text-[9px] text-gray-500 uppercase font-black mb-1">Growth</p><div id="growthVal" class="text-4xl font-black text-white italic">0</div></div>
-                                </div>
-                                <div id="statsGrids" class="grid grid-cols-3 gap-4">
-                                    </div>
-                                <div class="glass-card p-8 border-2 border-yellow-500/10 bg-gradient-to-br from-yellow-500/5 to-transparent">
-                                    <h4 class="text-xs font-black text-white uppercase italic mb-4 tracking-widest">Strategic Roadmap 2026</h4>
-                                    <p id="summerText" class="text-xs text-gray-400 italic leading-relaxed"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex justify-center">
-                        <button id="downloadBtn" class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-black px-16 py-5 rounded-full text-[10px] uppercase tracking-[0.3em] hover:scale-105 transition shadow-2xl">Export Performance Dossier</button>
+                <div class="panel">
+                    <div class="panel-title">Recente Activiteit</div>
+                    <div id="activityList" class="flex flex-col h-64 overflow-y-auto pr-2">
+                        <div class="text-xs text-gray-500 italic text-center mt-10">Laden...</div>
                     </div>
                 </div>
-            </main>
+            </div>
 
-            <aside class="lg:col-span-4">
-                <div class="glass-card p-8 sticky top-8">
-                    <div class="flex flex-col items-center text-center pb-8 border-b border-white/5">
-                        <div id="user-initials" class="w-20 h-20 rounded-3xl bg-gradient-to-br from-yellow-500 to-yellow-700 flex items-center justify-center text-3xl font-black text-black shadow-lg mb-6 uppercase">??</div>
-                        <h4 id="user-name" class="text-xl font-black text-white uppercase italic tracking-tight">Laden...</h4>
-                        <p id="user-role-display" class="text-[10px] text-yellow-500 font-bold uppercase tracking-[0.2em] mt-1 italic">Authorized Coach</p>
-                    </div>
-                    <div class="pt-8 space-y-3">
-                        <div id="adminLink" class="hidden">
-                            <a href="admin_panel.html" class="flex items-center justify-between p-4 rounded-2xl bg-purple-500/5 border border-purple-500/10 text-purple-400 hover:bg-purple-500/10 transition">
-                                <span class="text-[10px] font-black uppercase tracking-widest">Admin Control</span>
-                                <span>🛠️</span>
-                            </a>
-                        </div>
-                        <button onclick="sessionStorage.clear(); window.location.href='login.html';" class="w-full flex items-center justify-between p-4 rounded-2xl bg-red-500/5 border border-red-500/10 text-red-500 hover:bg-red-500/10 transition">
-                            <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
-                            <span>🔒</span>
-                        </button>
-                    </div>
-                </div>
-            </aside>
         </div>
-    </div>
+    </main>
 
     <script type="module">
         import DataProvider from './js/data_provider.js';
 
-        const sessionUser = sessionStorage.getItem('elite_user');
-        if (!sessionUser) window.location.href = 'login.html';
-        const currentUser = JSON.parse(sessionUser);
+        async function initDashboard() {
+            // Set Date
+            const now = new Date();
+            document.getElementById('currentDate').innerText = now.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' });
 
-        let chartTrend = null, filteredPlayers = [];
-
-        async function init() {
-            const allPlayers = await DataProvider.getAllPlayers();
-            if(!allPlayers.length) return;
-
-            document.getElementById('user-name').innerText = currentUser.name;
-            document.getElementById('user-role-display').innerText = currentUser.role;
-            document.getElementById('user-initials').innerText = currentUser.name.split(' ').map(n => n[0]).join('');
+            // Fetch Data
+            const players = await DataProvider.getAllPlayers();
             
-            if (currentUser.role === 'admin') {
-                document.getElementById('adminLink').classList.remove('hidden');
-                filteredPlayers = allPlayers;
-                document.getElementById('stat-team-display').innerText = "HQ COMMAND";
+            // KPI Calculations (Mock logic based on 'history')
+            const total = players.length;
+            let locked = 0;
+            let draft = 0;
+            let totalScore = 0;
+            let scoreCount = 0;
+
+            const recentUpdates = [];
+
+            players.forEach(p => {
+                // Check status in latest period (mock: '1e seizoenshelft')
+                const history = p.history?.['1e seizoenshelft'];
+                if(history) {
+                    if(history.status === 'locked') locked++;
+                    if(history.status === 'draft') draft++;
+                    
+                    // Calc average rating
+                    if(history.ratings) {
+                        const ratings = Object.values(history.ratings);
+                        const avg = ratings.reduce((a,b)=>a+b,0) / ratings.length;
+                        totalScore += avg;
+                        scoreCount++;
+                    }
+
+                    // Push to recent if updated recently (Mock: we just take those with history)
+                    recentUpdates.push({
+                        name: p.bio.name,
+                        team: p.bio.team,
+                        status: history.status,
+                        time: new Date(history.lastUpdated || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                        photo: p.bio.photo
+                    });
+                }
+            });
+
+            // Update DOM KPIs
+            document.getElementById('kpiTotal').innerText = total;
+            document.getElementById('kpiLocked').innerText = locked;
+            document.getElementById('kpiDraft').innerText = draft;
+            document.getElementById('kpiAvg').innerText = scoreCount > 0 ? (totalScore / scoreCount).toFixed(1) : "0.0";
+
+            // Update Activity List
+            const activityContainer = document.getElementById('activityList');
+            if(recentUpdates.length > 0) {
+                activityContainer.innerHTML = recentUpdates.slice(0, 5).map(item => `
+                    <div class="activity-item">
+                        <img src="${item.photo || 'https://via.placeholder.com/32'}" class="activity-avatar">
+                        <div class="activity-content">
+                            <div class="activity-text font-bold text-white">${item.name}</div>
+                            <div class="activity-meta">${item.team} • ${item.time}</div>
+                        </div>
+                        <span class="status-badge ${item.status === 'locked' ? 'badge-locked' : 'badge-draft'}">
+                            ${item.status === 'locked' ? 'DONE' : 'WIP'}
+                        </span>
+                    </div>
+                `).join('');
             } else {
-                filteredPlayers = allPlayers.filter(p => currentUser.teams.includes(p.bio.team));
-                document.getElementById('stat-team-display').innerText = currentUser.teams[0] || "SELECTIE";
+                activityContainer.innerHTML = '<div class="text-xs text-gray-500 text-center mt-4">Geen recente wijzigingen gevonden.</div>';
             }
 
-            document.getElementById('stat-total-display').innerText = filteredPlayers.length;
-            document.getElementById('stat-avg-display').innerText = "77%";
-
-            const selector = document.getElementById('playerSelector');
-            selector.innerHTML = '<option value="">SELECTEER ASSET...</option>' + 
-                filteredPlayers.map(p => `<option value="${p.id}">${p.bio.name}</option>`).join('');
-
-            selector.addEventListener('change', e => {
-                if(e.target.value) {
-                    document.getElementById('welcomeScreen').classList.add('hidden');
-                    document.getElementById('playerDossier').classList.remove('hidden');
-                    update(e.target.value);
+            // Render Chart
+            const ctx = document.getElementById('teamChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['O13', 'O14', 'O15', 'O16', 'O17', 'O18'],
+                    datasets: [{
+                        label: 'Gemiddelde Index',
+                        data: [6.5, 7.2, 6.8, 7.5, 7.1, 8.0], // Mock data, replace with real calc if needed
+                        backgroundColor: '#D4AF37',
+                        borderRadius: 4
+                    }, {
+                        label: 'Target',
+                        data: [7, 7, 7.5, 7.5, 8, 8],
+                        type: 'line',
+                        borderColor: '#52525b',
+                        borderDash: [5, 5],
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 10, grid: { color: '#27272a' } },
+                        x: { grid: { display: false } }
+                    }
                 }
             });
         }
 
-        const update = (id) => {
-            const p = filteredPlayers.find(x => x.id === id);
-            if(!p) return;
-            document.getElementById('pName').innerText = p.bio.name;
-            document.getElementById('pPhoto').src = p.bio.photo;
-            document.getElementById('pMeta').innerText = `${p.bio.team} • Intelligence Class A`;
-            document.getElementById('finalScore').innerText = 77;
-            document.getElementById('attScore').innerText = (p.obj?.attendance || 0) + "%";
-            document.getElementById('growthVal').innerText = "+8";
-            document.getElementById('summerText').innerText = "De data suggereert een intensief focus-traject op explosieve versnelling en tactisch spelinzicht. Gezien de huidige Elite Index van 77% is een stijging naar 85% haalbaar door de roadmap strikt te volgen.";
-
-            renderTrend();
-        };
-
-        const renderTrend = () => {
-            const ctx = document.getElementById('trendChart');
-            if(chartTrend) chartTrend.destroy();
-            chartTrend = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ["Q1", "Q2", "Q3", "Q4"],
-                    datasets: [{ 
-                        data: [65, 72, 70, 77], 
-                        borderColor: '#D4AF37', 
-                        tension: 0.4, 
-                        fill: true, 
-                        backgroundColor: 'rgba(212,175,55,0.05)',
-                        pointRadius: 0
-                    }]
-                },
-                options: { 
-                    scales: { 
-                        y: { display: false }, 
-                        x: { grid: { display: false }, ticks: { color: '#444', font: { size: 8 } } } 
-                    }, 
-                    plugins: { legend: { display: false } } 
-                }
-            });
-        };
-
-        init();
+        initDashboard();
     </script>
 </body>
 </html>
